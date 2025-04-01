@@ -14,6 +14,10 @@ A comprehensive guide to the NestJS template with authentication, authorization,
     - [Directory Structure](#directory-structure)
     - [Clean Architecture](#clean-architecture)
     - [CQRS Pattern](#cqrs-pattern)
+    - [Domain-Driven Design](#domain-driven-design)
+    - [Value Objects](#value-objects)
+    - [Repository Pattern](#repository-pattern)
+    - [Mapper Pattern](#mapper-pattern)
 5. [Authentication](#authentication)
     - [JWT Authentication](#jwt-authentication)
     - [API Endpoints](#authentication-endpoints)
@@ -66,7 +70,10 @@ This NestJS template provides a robust foundation for building secure, well-stru
 - 🏗️ **Architecture**:
     - Clean Architecture principles
     - Command Query Responsibility Segregation (CQRS)
-    - Domain-Driven Design concepts (Value Objects, Repositories)
+    - Domain-Driven Design concepts
+        - Comprehensive Value Objects for stronger typing and encapsulation
+        - Repository pattern with proper domain/persistence separation
+        - Rich domain model with encapsulated behavior
     - Dependency Injection
 
 - 🛠️ **Technologies**:
@@ -155,13 +162,217 @@ nestjs-template/
 The application follows a clean architecture approach with the following layers:
 
 1. **Domain Layer** (`core/`): Contains the business entities, value objects, and core business logic.
+   - **Entities**: Rich domain objects with behavior (User, Role, Permission, etc.)
+   - **Value Objects**: Immutable objects representing domain concepts (Email, Name, VerificationCode, etc.)
+   - **Services**: Domain services implementing core business logic
+   - **Repository Interfaces**: Abstractions for data access
+
 2. **Application Layer** (`application/`): Contains application-specific logic, command handlers, and DTOs.
+   - **Commands/Queries**: CQRS implementation with handlers
+   - **DTOs**: Data Transfer Objects for input/output
+   - **Mappers**: Transform domain objects to/from DTOs
+
 3. **Infrastructure Layer** (`infrastructure/`): Contains database repositories, external services, and other infrastructure concerns.
+   - **Repositories**: Concrete implementations of repository interfaces
+   - **Database**: Database connection and ORM configurations
+   - **External Services**: Integration with external systems
+
 4. **Presentation Layer** (`presentation/`): Contains controllers, guards, and other presentation concerns.
+   - **Controllers**: HTTP endpoints with request/response handling
+   - **Guards**: Authentication and authorization checks
+   - **Filters**: Exception handling and logging
 
 ### CQRS Pattern
 
 The application uses the Command Query Responsibility Segregation (CQRS) pattern, separating command operations (write) from query operations (read).
+
+### Domain-Driven Design
+
+The application follows Domain-Driven Design (DDD) principles, focusing on the core domain and domain logic. Domain concepts are represented as first-class citizens:
+
+- **Entities**: Objects with identity and lifecycle (User, Role, Permission)
+- **Value Objects**: Immutable objects representing concepts without identity (Email, Password)
+- **Aggregates**: Clusters of entities and value objects treated as a unit
+- **Repositories**: Collections of objects with data access methods
+- **Domain Services**: Complex operations that don't fit in entities or value objects
+
+### Value Objects
+
+The application uses Value Objects to encapsulate domain concepts, providing:
+
+1. **Type Safety**: Strong typing for domain values
+2. **Validation**: Ensures values meet business rules
+3. **Immutability**: Prevents unexpected changes
+4. **Encapsulation**: Hides implementation details
+5. **Domain Logic**: Business rules live with the data
+
+#### Core Value Objects
+
+| Value Object | Description | Validation Rules |
+|--------------|-------------|------------------|
+| `Email` | Email addresses with validation | Format validation with regex |
+| `Password` | Passwords with strength requirements | Min length, requires mixed case, numbers, symbols |
+| `FirstName`/`LastName` | Person name components | Length limits, formatting |
+| `VerificationCode` | Codes for email verification | Format validation, generation |
+| `Token` | Security tokens with validation | UUID validation, generation |
+| `ResourceAction` | Permission components | Resource and action validation |
+| `PermissionName` | Permission identifiers | Format validation (resource:action) |
+| `UserId` | Type-safe user identifiers | UUID validation |
+
+#### Usage Example
+
+Instead of using primitive strings:
+
+```typescript
+// Without value objects - using primitives
+function createUser(email: string, firstName: string): User {
+  // Must validate email format here
+  if (!isValidEmail(email)) throw new Error('Invalid email');
+  
+  // And here
+  return new User(email, firstName);
+}
+```
+
+Value objects handle validation internally:
+
+```typescript
+// With value objects
+function createUser(email: Email, firstName: FirstName): User {
+  // Email and FirstName are already validated
+  return new User(email, firstName);
+}
+
+// Creating a user with value objects
+const email = new Email('user@example.com'); // Throws if invalid
+const firstName = new FirstName('John'); // Throws if invalid
+const user = createUser(email, firstName);
+```
+
+### Repository Pattern
+
+The application implements the Repository pattern to decouple the domain model from the data access logic:
+
+1. **Repository Interfaces** (in `core/repositories/`): Define contracts for data access
+2. **Repository Implementations** (in `infrastructure/repositories/`): Implement these contracts using specific technologies (Prisma)
+
+#### Domain/Persistence Mapping
+
+Repositories handle mapping between domain objects with value objects and database primitives:
+
+```typescript
+// Database stores primitives
+// {
+//   id: "123e4567-e89b-12d3-a456-426614174000",
+//   email: "user@example.com", 
+//   firstName: "John",
+//   lastName: "Smith"
+// }
+
+// Mapping from database to domain in repository
+private mapToModel(record: UserRecord): User {
+  // Create value objects from primitives
+  const email = new Email(record.email);
+  const firstName = new FirstName(record.firstName);
+  const lastName = new LastName(record.lastName);
+  
+  // Create entity with value objects
+  const user = new User(email, firstName, lastName);
+  user.id = record.id;
+  
+  return user;
+}
+
+// Mapping from domain to database in repository
+async create(user: User): Promise<User> {
+  const record = await this.database.create({
+    id: user.id,
+    email: user.email.getValue(), // Extract primitive from value object
+    firstName: user.firstName.getValue(),
+    lastName: user.lastName.getValue()
+  });
+  
+  return this.mapToModel(record);
+}
+```
+
+#### Error Handling
+
+All repositories inherit from `BaseRepository` which provides consistent error handling:
+
+```typescript
+protected async executeWithErrorHandling<R>(
+  operation: string,
+  action: () => Promise<R>,
+  fallbackValue?: R
+): Promise<R> {
+  try {
+    return await action();
+  } catch (error) {
+    return this.handleError(operation, error, fallbackValue);
+  }
+}
+```
+
+### Mapper Pattern
+
+The application uses the Mapper pattern to transform between domain entities and response/request DTOs:
+
+#### Purpose
+
+1. **Separation of Concerns**: Keep domain entities focused on business logic
+2. **Consistent Transformation**: Standard way to convert between layers
+3. **Value Object Handling**: Extract primitives from value objects for API responses
+
+#### Implementation
+
+Mappers are implemented in the application layer to convert between domain entities and DTOs:
+
+```typescript
+// User mapper example
+export class UserMapper {
+  // Maps a User entity to a UserDetailResponse DTO
+  static toDetailResponse(user: User): UserDetailResponse {
+    return {
+      id: user.id,
+      email: user.email.getValue(), // Extract primitive from value object
+      firstName: user.firstName.getValue(),
+      lastName: user.lastName.getValue(),
+      isActive: user.isActive,
+      otpEnabled: user.otpEnabled,
+      lastLoginAt: user.lastLoginAt,
+      roles: user.roles.map(role => ({
+        id: role.id,
+        name: role.name
+      })),
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt
+    };
+  }
+  
+  // More mapping methods for different response types...
+}
+```
+
+#### Usage
+
+Commands and queries use these mappers to return consistent responses:
+
+```typescript
+@CommandHandler(LoginCommand)
+export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
+  async execute(command: LoginCommand): Promise<AuthResponse> {
+    const user = await this.authService.login(/*...*/);
+    
+    // Use mapper to convert domain entity to response DTO
+    return {
+      accessToken,
+      refreshToken,
+      user: UserMapper.toAuthResponse(user, true)
+    };
+  }
+}
+```
 
 ## Authentication
 
