@@ -2,10 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { PasswordReset } from '@core/entities/password-reset.entity';
 import { IPasswordResetRepository } from '@core/repositories/password-reset.repository.interface';
 import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
+import { BaseRepository } from './base.repository';
 
 @Injectable()
-export class PasswordResetRepository implements IPasswordResetRepository {
-  constructor(private readonly prisma: PrismaService) {}
+export class PasswordResetRepository extends BaseRepository<PasswordReset> implements IPasswordResetRepository {
+  constructor(private readonly prisma: PrismaService) {
+    super();
+  }
 
   async findById(id: string): Promise<PasswordReset | null> {
     const record = await this.prisma.passwordReset.findUnique({
@@ -73,36 +76,30 @@ export class PasswordResetRepository implements IPasswordResetRepository {
   }
 
   async delete(id: string): Promise<boolean> {
-    try {
+    return this.executeWithErrorHandling('delete', async () => {
       await this.prisma.passwordReset.delete({
         where: { id }
       });
       return true;
-    } catch (error) {
-      return false;
-    }
+    }, false);
   }
 
   async deleteByUserId(userId: string): Promise<boolean> {
-    try {
+    return this.executeWithErrorHandling('deleteByUserId', async () => {
       await this.prisma.passwordReset.deleteMany({
         where: { userId }
       });
       return true;
-    } catch (error) {
-      return false;
-    }
+    }, false);
   }
 
   async deleteByEmail(email: string): Promise<boolean> {
-    try {
+    return this.executeWithErrorHandling('deleteByEmail', async () => {
       await this.prisma.passwordReset.deleteMany({
         where: { email }
       });
       return true;
-    } catch (error) {
-      return false;
-    }
+    }, false);
   }
 
   private mapToModel(record: any): PasswordReset {

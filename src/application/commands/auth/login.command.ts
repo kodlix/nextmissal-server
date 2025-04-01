@@ -8,12 +8,10 @@ export class LoginCommand implements ICommand {
 
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UnauthorizedException, Injectable, Inject } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
 import { UserService } from '@core/services/user.service';
 import { AuthService } from '@core/services/auth.service';
 import { IRoleRepository } from '@core/repositories/role.repository.interface';
-import { v4 as uuidv4 } from 'uuid';
+import { TokenProvider } from '@presentation/modules/auth/providers/token.provider';
 
 @Injectable()
 @CommandHandler(LoginCommand)
@@ -21,8 +19,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
   constructor(
     private readonly userService: UserService,
     private readonly authService: AuthService,
-    private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
+    private readonly tokenProvider: TokenProvider,
     @Inject('RoleRepository')
     private readonly roleRepository: IRoleRepository,
   ) {}
@@ -73,21 +70,11 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
     }
 
     // Generate JWT tokens
-    const payload = { 
-      sub: user.id, 
-      email: user.email,
-      emailVerified: true, // We know it's verified at this point
-      roles: user.roles.map(role => role.name),
-      permissions: Array.from(userPermissions),
-    };
-    
-    const accessToken = this.jwtService.sign(payload, {
-      secret: this.configService.get('JWT_SECRET'),
-      expiresIn: this.configService.get('JWT_ACCESS_EXPIRATION'),
-    });
-    
-    const refreshToken = uuidv4();
-    await this.authService.createRefreshToken(user.id, refreshToken);
+    const { accessToken, refreshToken } = await this.tokenProvider.generateTokens(
+      user, 
+      Array.from(userPermissions),
+      true // Email is verified at this point
+    );
 
     return {
       accessToken,

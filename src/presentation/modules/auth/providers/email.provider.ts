@@ -1,43 +1,65 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 
 @Injectable()
-export class EmailProvider {
+export class EmailProvider implements OnModuleInit {
   private transporter: nodemailer.Transporter;
+  private transporterInitialized = false;
 
-  constructor(private readonly configService: ConfigService) {
-    // For production, use real SMTP credentials
-    // For development, you can use an ethereal test account
-    this.initializeTransporter();
+  constructor(private readonly configService: ConfigService) {}
+
+  async onModuleInit() {
+    await this.initializeTransporter();
   }
 
   private async initializeTransporter() {
-    // If in development mode, create a test account
-    if (this.configService.get('NODE_ENV') !== 'production') {
-      const testAccount = await nodemailer.createTestAccount();
-
-      this.transporter = nodemailer.createTransport({
-        host: 'smtp.ethereal.email',
-        port: 587,
-        secure: false,
-        auth: {
-          user: testAccount.user,
-          pass: testAccount.pass,
-        },
-      });
-    } else {
-      // For production, use real SMTP settings from config
-      this.transporter = nodemailer.createTransport({
-        host: this.configService.get('SMTP_HOST'),
-        port: this.configService.get('SMTP_PORT'),
-        secure: this.configService.get('SMTP_SECURE') === 'true',
-        auth: {
-          user: this.configService.get('SMTP_USER'),
-          pass: this.configService.get('SMTP_PASSWORD'),
-        },
-      });
+    if (this.transporterInitialized) {
+      return;
     }
+
+    try {
+      // If in development mode, create a test account
+      if (this.configService.get('NODE_ENV') !== 'production') {
+        const testAccount = await nodemailer.createTestAccount();
+        
+        this.transporter = nodemailer.createTransport({
+          host: 'smtp.ethereal.email',
+          port: 587,
+          secure: false,
+          auth: {
+            user: testAccount.user,
+            pass: testAccount.pass,
+          },
+        });
+      } else {
+        // For production, use real SMTP settings from config
+        this.transporter = nodemailer.createTransport({
+          host: this.configService.get('SMTP_HOST'),
+          port: this.configService.get('SMTP_PORT'),
+          secure: this.configService.get('SMTP_SECURE') === 'true',
+          auth: {
+            user: this.configService.get('SMTP_USER'),
+            pass: this.configService.get('SMTP_PASSWORD'),
+          },
+        });
+      }
+      
+      this.transporterInitialized = true;
+    } catch (error) {
+      console.error('Failed to initialize email transport:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get the transporter, initializing it if necessary
+   */
+  private async getTransporter(): Promise<nodemailer.Transporter> {
+    if (!this.transporterInitialized) {
+      await this.initializeTransporter();
+    }
+    return this.transporter;
   }
 
   /**
@@ -47,8 +69,9 @@ export class EmailProvider {
    * @returns Promise with the result of the operation
    */
   async sendVerificationCode(email: string, code: string): Promise<any> {
+    const transporter = await this.getTransporter();
     const appName = this.configService.get('APP_NAME', 'Our Application');
-
+    
     const mailOptions = {
       from: `"${appName}" <${this.configService.get('SMTP_FROM', 'noreply@example.com')}>`,
       to: email,
@@ -69,26 +92,28 @@ export class EmailProvider {
       `,
     };
 
-    const result = await this.transporter.sendMail(mailOptions);
-
+    const result = await transporter.sendMail(mailOptions);
+    
     // For test accounts, log the preview URL
     if (this.configService.get('NODE_ENV') !== 'production') {
       console.log('Preview URL: %s', nodemailer.getTestMessageUrl(result));
     }
-
+    
     return result;
   }
 
   /**
    * Send a password reset email to a user
    * @param email The recipient's email address
-   * @param resetToken The password reset link
+   * @param resetToken The password reset token
    * @returns Promise with the result of the operation
    */
   async sendPasswordResetEmail(email: string, resetToken: string): Promise<any> {
+    const transporter = await this.getTransporter();
     const appName = this.configService.get('APP_NAME', 'Our Application');
-    const resetLink = `${this.configService.get('FRONTEND_URL')}/reset-password?token=${resetToken}`;
-
+    const frontendUrl = this.configService.get('FRONTEND_URL', 'https://example.com');
+    const resetLink = `${frontendUrl}/reset-password?token=${resetToken}`;
+    
     const mailOptions = {
       from: `"${appName}" <${this.configService.get('SMTP_FROM', 'noreply@example.com')}>`,
       to: email,
@@ -111,13 +136,13 @@ export class EmailProvider {
       `,
     };
 
-    const result = await this.transporter.sendMail(mailOptions);
-
+    const result = await transporter.sendMail(mailOptions);
+    
     // For test accounts, log the preview URL
     if (this.configService.get('NODE_ENV') !== 'production') {
       console.log('Preview URL: %s', nodemailer.getTestMessageUrl(result));
     }
-
+    
     return result;
   }
 
@@ -128,9 +153,10 @@ export class EmailProvider {
    * @returns Promise with the result of the operation
    */
   async sendWelcomeEmail(email: string, firstName: string): Promise<any> {
+    const transporter = await this.getTransporter();
     const appName = this.configService.get('APP_NAME', 'Our Application');
     const loginLink = this.configService.get('FRONTEND_URL', 'https://example.com');
-
+    
     const mailOptions = {
       from: `"${appName}" <${this.configService.get('SMTP_FROM', 'noreply@example.com')}>`,
       to: email,
@@ -158,13 +184,13 @@ export class EmailProvider {
       `,
     };
 
-    const result = await this.transporter.sendMail(mailOptions);
-
+    const result = await transporter.sendMail(mailOptions);
+    
     // For test accounts, log the preview URL
     if (this.configService.get('NODE_ENV') !== 'production') {
       console.log('Preview URL: %s', nodemailer.getTestMessageUrl(result));
     }
-
+    
     return result;
   }
 }

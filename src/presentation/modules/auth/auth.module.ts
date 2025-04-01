@@ -15,6 +15,7 @@ import { RefreshTokenRepository } from '@infrastructure/repositories/refresh-tok
 import { EmailVerificationRepository } from '@infrastructure/repositories/email-verification.repository';
 import { PasswordResetRepository } from '@infrastructure/repositories/password-reset.repository';
 import { EmailProvider } from './providers/email.provider';
+import { TokenProvider } from './providers/token.provider';
 
 // Services
 import { UserService } from '@core/services/user.service';
@@ -97,8 +98,9 @@ const commandHandlers = [
       useClass: PasswordResetRepository,
     },
     
-    // Email Provider
+    // Providers
     EmailProvider,
+    TokenProvider,
 
     // Strategy
     JwtStrategy,
