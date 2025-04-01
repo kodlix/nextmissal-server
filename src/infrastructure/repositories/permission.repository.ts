@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Permission } from '@core/entities/permission.entity';
 import { IPermissionRepository } from '@core/repositories/permission.repository.interface';
 import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
+import { Permission as PrismaPermission } from '@prisma/client';
 
 @Injectable()
 export class PermissionRepository implements IPermissionRepository {
@@ -16,7 +17,7 @@ export class PermissionRepository implements IPermissionRepository {
       return null;
     }
 
-    return this.mapToModel(permissionRecord);
+    return this.mapToModel(permissionRecord as unknown as PrismaPermission);
   }
 
   async findByName(name: string): Promise<Permission | null> {
@@ -28,19 +29,19 @@ export class PermissionRepository implements IPermissionRepository {
       return null;
     }
 
-    return this.mapToModel(permissionRecord);
+    return this.mapToModel(permissionRecord as unknown as PrismaPermission);
   }
 
   async findAll(): Promise<Permission[]> {
     const permissionRecords = await this.prisma.permission.findMany();
-    return permissionRecords.map(record => this.mapToModel(record));
+    return permissionRecords.map(record => this.mapToModel(record as unknown as PrismaPermission));
   }
 
   async findByResource(resource: string): Promise<Permission[]> {
     const permissionRecords = await this.prisma.permission.findMany({
       where: { resource },
     });
-    return permissionRecords.map(record => this.mapToModel(record));
+    return permissionRecords.map(record => this.mapToModel(record as unknown as PrismaPermission));
   }
 
   async create(permission: Permission): Promise<Permission> {
@@ -54,7 +55,7 @@ export class PermissionRepository implements IPermissionRepository {
       },
     });
 
-    return this.mapToModel(createdPermission);
+    return this.mapToModel(createdPermission as unknown as PrismaPermission);
   }
 
   async update(permission: Permission): Promise<Permission> {
@@ -68,7 +69,7 @@ export class PermissionRepository implements IPermissionRepository {
       },
     });
 
-    return this.mapToModel(updatedPermission);
+    return this.mapToModel(updatedPermission as unknown as PrismaPermission);
   }
 
   async delete(id: string): Promise<boolean> {
@@ -82,7 +83,7 @@ export class PermissionRepository implements IPermissionRepository {
     }
   }
 
-  private mapToModel(record: any): Permission {
+  private mapToModel(record: PrismaPermission): Permission {
     const permission = new Permission(
       record.name,
       record.description,

@@ -1,6 +1,10 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Permission } from '../entities/permission.entity';
 import { IPermissionRepository } from '../repositories/permission.repository.interface';
+import { 
+  EntityNotFoundException, 
+  EntityAlreadyExistsException 
+} from '@core/exceptions/domain-exceptions';
 
 @Injectable()
 export class PermissionService {
@@ -18,7 +22,7 @@ export class PermissionService {
     // Check if permission already exists
     const existingPermission = await this.permissionRepository.findByName(name);
     if (existingPermission) {
-      throw new Error('Permission with this name already exists');
+      throw new EntityAlreadyExistsException('Permission', 'name');
     }
 
     const permission = new Permission(name, description, resource, action);
@@ -34,13 +38,13 @@ export class PermissionService {
   ): Promise<Permission> {
     const permission = await this.permissionRepository.findById(id);
     if (!permission) {
-      throw new Error('Permission not found');
+      throw new EntityNotFoundException('Permission', id);
     }
 
     if (name) {
       const existingPermission = await this.permissionRepository.findByName(name);
       if (existingPermission && existingPermission.id !== id) {
-        throw new Error('Permission with this name already exists');
+        throw new EntityAlreadyExistsException('Permission', 'name');
       }
       permission.name = name;
     }
@@ -64,7 +68,7 @@ export class PermissionService {
   async deletePermission(id: string): Promise<boolean> {
     const permission = await this.permissionRepository.findById(id);
     if (!permission) {
-      throw new Error('Permission not found');
+      throw new EntityNotFoundException('Permission', id);
     }
 
     return this.permissionRepository.delete(id);

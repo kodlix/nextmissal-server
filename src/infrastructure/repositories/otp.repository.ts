@@ -3,6 +3,7 @@ import { Otp } from '@core/entities/otp.entity';
 import { IOtpRepository } from '@core/repositories/otp.repository.interface';
 import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
+import { Otp as PrismaOtp } from '@prisma/client';
 
 @Injectable()
 export class OtpRepository implements IOtpRepository {
@@ -20,7 +21,7 @@ export class OtpRepository implements IOtpRepository {
       return null;
     }
 
-    return this.mapToModel(otpRecord);
+    return this.mapToModel(otpRecord as unknown as PrismaOtp);
   }
 
   async findByUserId(userId: string): Promise<Otp | null> {
@@ -33,7 +34,7 @@ export class OtpRepository implements IOtpRepository {
       return null;
     }
 
-    return this.mapToModel(otpRecord);
+    return this.mapToModel(otpRecord as unknown as PrismaOtp);
   }
 
   async create(otp: Otp): Promise<Otp> {
@@ -48,7 +49,7 @@ export class OtpRepository implements IOtpRepository {
       },
     });
 
-    return this.mapToModel(createdOtp);
+    return this.mapToModel(createdOtp as unknown as PrismaOtp);
   }
 
   async update(otp: Otp): Promise<Otp> {
@@ -61,7 +62,7 @@ export class OtpRepository implements IOtpRepository {
       },
     });
 
-    return this.mapToModel(updatedOtp);
+    return this.mapToModel(updatedOtp as unknown as PrismaOtp);
   }
 
   async delete(id: string): Promise<boolean> {
@@ -75,13 +76,13 @@ export class OtpRepository implements IOtpRepository {
     }
   }
 
-  private mapToModel(record: any): Otp {
+  private mapToModel(record: PrismaOtp): Otp {
     const expirationMinutes = this.configService.get<number>('OTP_EXPIRATION', 5);
     const otp = new Otp(record.userId, record.secret, expirationMinutes);
     
     otp.id = record.id;
     otp.expiresAt = record.expiresAt;
-    otp.verifiedAt = record.verifiedAt;
+    otp.verifiedAt = record.verifiedAt || undefined;
     otp.createdAt = record.createdAt;
     
     return otp;

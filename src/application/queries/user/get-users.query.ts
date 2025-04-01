@@ -5,6 +5,7 @@ export class GetUsersQuery implements IQuery {}
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Injectable, Inject } from '@nestjs/common';
 import { IUserRepository } from '@core/repositories/user.repository.interface';
+import { UserDetailResponse } from '@application/dtos/responses/user.response';
 
 @Injectable()
 @QueryHandler(GetUsersQuery)
@@ -14,7 +15,7 @@ export class GetUsersQueryHandler implements IQueryHandler<GetUsersQuery> {
     private readonly userRepository: IUserRepository
   ) {}
 
-  async execute(): Promise<any> {
+  async execute(): Promise<UserDetailResponse[]> {
     const users = await this.userRepository.findAll();
 
     return users.map(user => ({

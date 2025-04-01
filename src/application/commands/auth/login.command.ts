@@ -1,18 +1,20 @@
 import { ICommand } from '@nestjs/cqrs';
 import { LoginDto } from '@application/dtos/auth/login.dto';
+import { AuthResponse } from '@application/dtos/responses/user.response';
 
 export class LoginCommand implements ICommand {
   constructor(public readonly loginDto: LoginDto) {}
 }
 
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from '@core/services/user.service';
 import { AuthService } from '@core/services/auth.service';
 import { v4 as uuidv4 } from 'uuid';
 
+@Injectable()
 @CommandHandler(LoginCommand)
 export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
   constructor(
@@ -22,7 +24,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
     private readonly configService: ConfigService,
   ) {}
 
-  async execute(command: LoginCommand): Promise<any> {
+  async execute(command: LoginCommand): Promise<AuthResponse> {
     const { email, password } = command.loginDto;
     
     // Validate credentials

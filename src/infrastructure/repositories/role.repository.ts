@@ -3,6 +3,14 @@ import { Role } from '@core/entities/role.entity';
 import { Permission } from '@core/entities/permission.entity';
 import { IRoleRepository } from '@core/repositories/role.repository.interface';
 import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
+import { Prisma, Role as PrismaRole, RolePermission as PrismaRolePermission, Permission as PrismaPermission } from '@prisma/client';
+
+// Define a type for Role with its related permissions
+type RoleWithPermissions = PrismaRole & {
+  permissions?: (PrismaRolePermission & {
+    permission: PrismaPermission
+  })[]
+};
 
 @Injectable()
 export class RoleRepository implements IRoleRepository {
@@ -24,7 +32,7 @@ export class RoleRepository implements IRoleRepository {
       return null;
     }
 
-    return this.mapToModel(roleRecord);
+    return this.mapToModel(roleRecord as RoleWithPermissions);
   }
 
   async findByName(name: string): Promise<Role | null> {
@@ -43,7 +51,7 @@ export class RoleRepository implements IRoleRepository {
       return null;
     }
 
-    return this.mapToModel(roleRecord);
+    return this.mapToModel(roleRecord as RoleWithPermissions);
   }
 
   async findAll(): Promise<Role[]> {
@@ -57,7 +65,7 @@ export class RoleRepository implements IRoleRepository {
       },
     });
 
-    return roleRecords.map(record => this.mapToModel(record));
+    return roleRecords.map(record => this.mapToModel(record as RoleWithPermissions));
   }
 
   async findDefaultRole(): Promise<Role | null> {
@@ -76,7 +84,7 @@ export class RoleRepository implements IRoleRepository {
       return null;
     }
 
-    return this.mapToModel(roleRecord);
+    return this.mapToModel(roleRecord as RoleWithPermissions);
   }
 
   async create(role: Role): Promise<Role> {
@@ -101,7 +109,7 @@ export class RoleRepository implements IRoleRepository {
       },
     });
 
-    return this.mapToModel(createdRole);
+    return this.mapToModel(createdRole as RoleWithPermissions);
   }
 
   async update(role: Role): Promise<Role> {
@@ -134,7 +142,7 @@ export class RoleRepository implements IRoleRepository {
       },
     });
 
-    return this.mapToModel(updatedRole);
+    return this.mapToModel(updatedRole as RoleWithPermissions);
   }
 
   async delete(id: string): Promise<boolean> {
@@ -148,7 +156,7 @@ export class RoleRepository implements IRoleRepository {
     }
   }
 
-  private mapToModel(record: any): Role {
+  private mapToModel(record: RoleWithPermissions): Role {
     const role = new Role(
       record.name,
       record.description,

@@ -14,6 +14,7 @@ import { AdminModule } from './presentation/modules/admin/admin.module';
 import { LoggingInterceptor } from '@presentation/interceptors/logging.interceptor';
 import { TransformInterceptor } from '@presentation/interceptors/transform.interceptor';
 import { AllExceptionsFilter } from '@presentation/filters/all-exceptions.filter';
+import { DomainExceptionsFilter } from '@presentation/filters/domain-exceptions.filter';
 import { JwtAuthGuard } from '@presentation/guards/jwt-auth.guard';
 
 // Config
@@ -52,6 +53,10 @@ import configuration from '@infrastructure/config/configuration';
     },
     
     // Global filters
+    {
+      provide: APP_FILTER,
+      useClass: DomainExceptionsFilter,
+    },
     {
       provide: APP_FILTER,
       useClass: AllExceptionsFilter,

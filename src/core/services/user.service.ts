@@ -4,6 +4,10 @@ import { User } from '../entities/user.entity';
 import { Role } from '../entities/role.entity';
 import { IUserRepository } from '../repositories/user.repository.interface';
 import { IRoleRepository } from '../repositories/role.repository.interface';
+import { 
+  EntityNotFoundException, 
+  EntityAlreadyExistsException 
+} from '@core/exceptions/domain-exceptions';
 
 @Injectable()
 export class UserService {
@@ -23,7 +27,7 @@ export class UserService {
     // Check if user already exists
     const existingUser = await this.userRepository.findByEmail(email);
     if (existingUser) {
-      throw new Error('User with this email already exists');
+      throw new EntityAlreadyExistsException('User', 'email');
     }
 
     // Hash the password
@@ -63,7 +67,7 @@ export class UserService {
   ): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new EntityNotFoundException('User', userId);
     }
 
     if (firstName) {
@@ -81,7 +85,7 @@ export class UserService {
   async changePassword(userId: string, newPassword: string): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new EntityNotFoundException('User', userId);
     }
 
     user.passwordHash = await this.hashPassword(newPassword);
@@ -92,12 +96,12 @@ export class UserService {
   async assignRoleToUser(userId: string, roleId: string): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new EntityNotFoundException('User', userId);
     }
 
     const role = await this.roleRepository.findById(roleId);
     if (!role) {
-      throw new Error('Role not found');
+      throw new EntityNotFoundException('Role', roleId);
     }
 
     user.addRole(role);
@@ -107,7 +111,7 @@ export class UserService {
   async removeRoleFromUser(userId: string, roleId: string): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new EntityNotFoundException('User', userId);
     }
 
     user.removeRole(roleId);

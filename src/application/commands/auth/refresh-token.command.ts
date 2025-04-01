@@ -1,5 +1,6 @@
 import { ICommand } from '@nestjs/cqrs';
 import { RefreshTokenDto } from '@application/dtos/auth/refresh-token.dto';
+import { AuthRefreshTokenResponse } from '@application/dtos/responses/user.response';
 
 export class RefreshTokenCommand implements ICommand {
   constructor(public readonly refreshTokenDto: RefreshTokenDto) {}
@@ -24,7 +25,7 @@ export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenC
     private readonly configService: ConfigService,
   ) {}
 
-  async execute(command: RefreshTokenCommand): Promise<any> {
+  async execute(command: RefreshTokenCommand): Promise<AuthRefreshTokenResponse> {
     const { refreshToken } = command.refreshTokenDto;
     
     // Validate refresh token

@@ -8,6 +8,11 @@ import { RefreshToken } from '../entities/refresh-token.entity';
 import { IUserRepository } from '../repositories/user.repository.interface';
 import { IOtpRepository } from '../repositories/otp.repository.interface';
 import { IRefreshTokenRepository } from '../repositories/refresh-token.repository.interface';
+import { 
+  EntityNotFoundException, 
+  OtpExpiredException,
+  AuthenticationException 
+} from '@core/exceptions/domain-exceptions';
 
 @Injectable()
 export class AuthService {
@@ -42,7 +47,7 @@ export class AuthService {
   async generateOtp(userId: string): Promise<string> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new EntityNotFoundException('User', userId);
     }
 
     // Generate a temporary secret
@@ -73,12 +78,15 @@ export class AuthService {
   async verifyOtp(userId: string, token: string): Promise<boolean> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new EntityNotFoundException('User', userId);
     }
 
     const otp = await this.otpRepository.findByUserId(userId);
-    if (!otp || otp.isExpired()) {
-      throw new Error('OTP expired or not found');
+    if (!otp) {
+      throw new EntityNotFoundException('OTP');
+    }
+    if (otp.isExpired()) {
+      throw new OtpExpiredException();
     }
 
     const isValid = speakeasy.totp.verify({
@@ -100,7 +108,7 @@ export class AuthService {
   async setupTwoFactorAuth(userId: string): Promise<{ secret: string, qrCodeUrl: string }> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new EntityNotFoundException('User', userId);
     }
 
     // Generate a new secret
@@ -140,7 +148,7 @@ export class AuthService {
   async disableTwoFactorAuth(userId: string): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new EntityNotFoundException('User', userId);
     }
 
     user.disableOtp();
@@ -188,7 +196,7 @@ export class AuthService {
   async updateLastLogin(userId: string): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new EntityNotFoundException('User', userId);
     }
 
     user.updateLastLogin();

@@ -1,5 +1,6 @@
 import { ICommand } from '@nestjs/cqrs';
 import { VerifyOtpDto } from '@application/dtos/auth/verify-otp.dto';
+import { AuthTokenResponse } from '@application/dtos/responses/user.response';
 
 export class VerifyOtpCommand implements ICommand {
   constructor(
@@ -27,7 +28,7 @@ export class VerifyOtpCommandHandler implements ICommandHandler<VerifyOtpCommand
     private readonly configService: ConfigService,
   ) {}
 
-  async execute(command: VerifyOtpCommand): Promise<any> {
+  async execute(command: VerifyOtpCommand): Promise<AuthTokenResponse> {
     const { userId, verifyOtpDto } = command;
     
     // Verify OTP

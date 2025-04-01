@@ -3,6 +3,7 @@ import { RefreshToken } from '@core/entities/refresh-token.entity';
 import { IRefreshTokenRepository } from '@core/repositories/refresh-token.repository.interface';
 import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
+import { RefreshToken as PrismaRefreshToken } from '@prisma/client';
 
 @Injectable()
 export class RefreshTokenRepository implements IRefreshTokenRepository {
@@ -20,7 +21,7 @@ export class RefreshTokenRepository implements IRefreshTokenRepository {
       return null;
     }
 
-    return this.mapToModel(tokenRecord);
+    return this.mapToModel(tokenRecord as unknown as PrismaRefreshToken);
   }
 
   async findByToken(token: string): Promise<RefreshToken | null> {
@@ -32,7 +33,7 @@ export class RefreshTokenRepository implements IRefreshTokenRepository {
       return null;
     }
 
-    return this.mapToModel(tokenRecord);
+    return this.mapToModel(tokenRecord as unknown as PrismaRefreshToken);
   }
 
   async findByUserId(userId: string): Promise<RefreshToken[]> {
@@ -40,7 +41,7 @@ export class RefreshTokenRepository implements IRefreshTokenRepository {
       where: { userId },
     });
 
-    return tokenRecords.map(record => this.mapToModel(record));
+    return tokenRecords.map(record => this.mapToModel(record as unknown as PrismaRefreshToken));
   }
 
   async create(token: RefreshToken): Promise<RefreshToken> {
@@ -55,7 +56,7 @@ export class RefreshTokenRepository implements IRefreshTokenRepository {
       },
     });
 
-    return this.mapToModel(createdToken);
+    return this.mapToModel(createdToken as unknown as PrismaRefreshToken);
   }
 
   async update(token: RefreshToken): Promise<RefreshToken> {
@@ -68,7 +69,7 @@ export class RefreshTokenRepository implements IRefreshTokenRepository {
       },
     });
 
-    return this.mapToModel(updatedToken);
+    return this.mapToModel(updatedToken as unknown as PrismaRefreshToken);
   }
 
   async deleteByUserId(userId: string): Promise<boolean> {
@@ -94,13 +95,13 @@ export class RefreshTokenRepository implements IRefreshTokenRepository {
     return result.count;
   }
 
-  private mapToModel(record: any): RefreshToken {
+  private mapToModel(record: PrismaRefreshToken): RefreshToken {
     const refreshExpiration = parseInt(this.configService.get('JWT_REFRESH_EXPIRATION', '7').replace('d', ''), 10);
     const token = new RefreshToken(record.userId, record.token, refreshExpiration);
     
     token.id = record.id;
     token.expiresAt = record.expiresAt;
-    token.revokedAt = record.revokedAt;
+    token.revokedAt = record.revokedAt || undefined;
     token.createdAt = record.createdAt;
     
     return token;

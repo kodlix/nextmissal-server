@@ -4,6 +4,18 @@ import { IUserRepository } from '@core/repositories/user.repository.interface';
 import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 import { Role } from '@core/entities/role.entity';
 import { Permission } from '@core/entities/permission.entity';
+import { Prisma, User as PrismaUser, UserRole as PrismaUserRole, RolePermission as PrismaRolePermission, Role as PrismaRole, Permission as PrismaPermission } from '@prisma/client';
+
+// Define a type for User with its relations (roles with nested permissions)
+type UserWithRelations = PrismaUser & {
+  roles: (PrismaUserRole & {
+    role: PrismaRole & {
+      permissions: (PrismaRolePermission & {
+        permission: PrismaPermission
+      })[]
+    }
+  })[]
+};
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -33,7 +45,7 @@ export class UserRepository implements IUserRepository {
       return null;
     }
 
-    return this.mapToModel(userRecord);
+    return this.mapToModel(userRecord as UserWithRelations);
   }
 
   async findByEmail(email: string): Promise<User | null> {
@@ -60,7 +72,7 @@ export class UserRepository implements IUserRepository {
       return null;
     }
 
-    return this.mapToModel(userRecord);
+    return this.mapToModel(userRecord as UserWithRelations);
   }
 
   async findAll(): Promise<User[]> {
@@ -82,7 +94,7 @@ export class UserRepository implements IUserRepository {
       },
     });
 
-    return userRecords.map(record => this.mapToModel(record));
+    return userRecords.map(record => this.mapToModel(record as UserWithRelations));
   }
 
   async findUsersByRoleId(roleId: string): Promise<User[]> {
@@ -111,7 +123,7 @@ export class UserRepository implements IUserRepository {
       },
     });
 
-    return userRecords.map(record => this.mapToModel(record));
+    return userRecords.map(record => this.mapToModel(record as UserWithRelations));
   }
 
   async create(user: User): Promise<User> {
@@ -149,11 +161,11 @@ export class UserRepository implements IUserRepository {
       },
     });
 
-    return this.mapToModel(createdUser);
+    return this.mapToModel(createdUser as UserWithRelations);
   }
 
   async update(user: User): Promise<User> {
-    // First delete all roles associations to recreate them
+    // First, delete all role associations to recreate them
     await this.prisma.userRole.deleteMany({
       where: {
         userId: user.id,
@@ -195,7 +207,7 @@ export class UserRepository implements IUserRepository {
       },
     });
 
-    return this.mapToModel(updatedUser);
+    return this.mapToModel(updatedUser as UserWithRelations);
   }
 
   async delete(id: string): Promise<boolean> {
@@ -209,22 +221,22 @@ export class UserRepository implements IUserRepository {
     }
   }
 
-  private mapToModel(record: any): User {
+  private mapToModel(record: UserWithRelations): User {
     const user = new User(
       record.email,
       record.passwordHash,
       record.firstName,
       record.lastName,
     );
-    
+
     user.id = record.id;
     user.isActive = record.isActive;
     user.otpEnabled = record.otpEnabled;
-    user.otpSecret = record.otpSecret;
-    user.lastLoginAt = record.lastLoginAt;
+    user.otpSecret = record.otpSecret || undefined;
+    user.lastLoginAt = record.lastLoginAt || undefined;
     user.createdAt = record.createdAt;
     user.updatedAt = record.updatedAt;
-    
+
     // Map roles
     user.roles = record.roles.map(roleRelation => {
       const roleRecord = roleRelation.role;
@@ -233,11 +245,11 @@ export class UserRepository implements IUserRepository {
         roleRecord.description,
         roleRecord.isDefault,
       );
-      
+
       role.id = roleRecord.id;
       role.createdAt = roleRecord.createdAt;
       role.updatedAt = roleRecord.updatedAt;
-      
+
       // Map permissions
       if (roleRecord.permissions) {
         role.permissions = roleRecord.permissions.map(permissionRelation => {
@@ -248,18 +260,18 @@ export class UserRepository implements IUserRepository {
             permissionRecord.resource,
             permissionRecord.action,
           );
-          
+
           permission.id = permissionRecord.id;
           permission.createdAt = permissionRecord.createdAt;
           permission.updatedAt = permissionRecord.updatedAt;
-          
+
           return permission;
         });
       }
-      
+
       return role;
     });
-    
+
     return user;
   }
 }

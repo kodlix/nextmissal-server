@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { IUserRepository } from '@core/repositories/user.repository.interface';
+import { JwtPayload } from '@application/dtos/responses/user.response';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -18,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any) {
+  async validate(payload: JwtPayload): Promise<JwtPayload> {
     // Check if the user still exists
     const user = await this.userRepository.findById(payload.sub);
     if (!user || !user.isActive) {
