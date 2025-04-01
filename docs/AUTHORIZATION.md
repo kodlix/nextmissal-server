@@ -45,6 +45,7 @@ Both mechanisms are integrated with database entities, allowing for dynamic assi
 3. The JWT token includes both roles and permissions
 4. Guards use the JWT payload to check access rules
 5. Controllers and routes can specify required roles or permissions using decorators
+6. When a user logs out, all their refresh tokens are revoked
 
 ## Database Schema
 

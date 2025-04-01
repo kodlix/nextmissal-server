@@ -23,6 +23,7 @@ import { RegisterUserCommandHandler } from '@application/commands/auth/register-
 import { LoginCommandHandler } from '@application/commands/auth/login.command';
 import { VerifyOtpCommandHandler } from '@application/commands/auth/verify-otp.command';
 import { RefreshTokenCommandHandler } from '@application/commands/auth/refresh-token.command';
+import { LogoutCommandHandler } from '@application/commands/auth/logout.command';
 
 // Strategies
 import { JwtStrategy } from './strategies/jwt.strategy';
@@ -32,6 +33,7 @@ const commandHandlers = [
   LoginCommandHandler,
   VerifyOtpCommandHandler,
   RefreshTokenCommandHandler,
+  LogoutCommandHandler,
 ];
 
 @Module({

@@ -22,6 +22,7 @@ import { RegisterUserCommand } from '@application/commands/auth/register-user.co
 import { LoginCommand } from '@application/commands/auth/login.command';
 import { VerifyOtpCommand } from '@application/commands/auth/verify-otp.command';
 import { RefreshTokenCommand } from '@application/commands/auth/refresh-token.command';
+import { LogoutCommand } from '@application/commands/auth/logout.command';
 
 // Guards & Decorators
 import { JwtAuthGuard } from '@presentation/guards/jwt-auth.guard';
@@ -98,12 +99,11 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ summary: 'Logout the current user' })
+  @ApiOperation({ summary: 'Logout the current user and revoke all refresh tokens' })
   @ApiResponse({ status: HttpStatus.OK, description: 'User logged out successfully' })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'User not authenticated' })
   async logout(@CurrentUser() user) {
-    // Revoke the refresh token for this user
-    // This will be handled by the AuthService
-    return { message: 'Logged out successfully' };
+    return this.commandBus.execute(new LogoutCommand(user.sub));
   }
 
   @Get('me')
