@@ -6,6 +6,7 @@ import {
   Body,
   Put,
   Delete,
+  Patch,
   HttpCode,
   HttpStatus,
   UseGuards,
@@ -17,15 +18,26 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@ne
 import { RolesGuard } from '@presentation/guards/roles.guard';
 import { Roles } from '@shared/decorators/roles.decorator';
 import { RolesEnum } from '@shared/constants/roles.constants';
+import { CurrentUser } from '@shared/decorators/current-user.decorator';
 
 // DTOs
 import { CreateUserDto } from '@application/dtos/user/create-user.dto';
 import { UpdateUserDto } from '@application/dtos/user/update-user.dto';
 import { ChangePasswordDto } from '@application/dtos/user/change-password.dto';
+import { ActivateUserDto } from '@application/dtos/user/activate-user.dto';
+import { AssignRoleDto } from '@application/dtos/user/assign-role.dto';
 
 // Queries
 import { GetUserQuery } from '@application/queries/user/get-user.query';
 import { GetUsersQuery } from '@application/queries/user/get-users.query';
+
+// Commands
+import { UpdateUserCommand } from '@application/commands/user/update-user.command';
+import { ChangePasswordCommand } from '@application/commands/user/change-password.command';
+import { ActivateUserCommand } from '@application/commands/user/activate-user.command';
+import { AssignRoleCommand } from '@application/commands/user/assign-role.command';
+import { RemoveRoleCommand } from '@application/commands/user/remove-role.command';
+import { VerifyPasswordCommand } from '@application/commands/user/verify-password.command';
 
 @ApiTags('users')
 @Controller('users')
@@ -84,8 +96,33 @@ export class UserController {
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    // This would normally use a command
-    return { message: 'User updated successfully' };
+    return this.commandBus.execute(
+      new UpdateUserCommand(
+        id,
+        updateUserDto.firstName,
+        updateUserDto.lastName,
+        updateUserDto.email,
+      )
+    );
+  }
+  
+  @Put('/profile')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update current user profile' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Profile updated successfully' })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data' })
+  async updateCurrentUserProfile(
+    @CurrentUser() userId: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return this.commandBus.execute(
+      new UpdateUserCommand(
+        userId,
+        updateUserDto.firstName,
+        updateUserDto.lastName,
+        updateUserDto.email,
+      )
+    );
   }
 
   @Delete(':id')
@@ -114,7 +151,105 @@ export class UserController {
     @Param('id') id: string,
     @Body() changePasswordDto: ChangePasswordDto,
   ) {
-    // This would normally use a command
+    await this.commandBus.execute(
+      new ChangePasswordCommand(
+        id,
+        changePasswordDto.newPassword,
+        changePasswordDto.currentPassword,
+      )
+    );
+    
     return { message: 'Password changed successfully' };
+  }
+  
+  @Post('/profile/change-password')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Change current user password' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Password changed successfully' })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data' })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Current password is incorrect' })
+  async changeCurrentUserPassword(
+    @CurrentUser() userId: string,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {
+    await this.commandBus.execute(
+      new ChangePasswordCommand(
+        userId,
+        changePasswordDto.newPassword,
+        changePasswordDto.currentPassword,
+      )
+    );
+    
+    return { message: 'Password changed successfully' };
+  }
+  
+  @Post('/profile/verify-password')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Verify current user password' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Password verification result' })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data' })
+  async verifyCurrentUserPassword(
+    @CurrentUser() userId: string,
+    @Body('password') password: string,
+  ) {
+    const isValid = await this.commandBus.execute(
+      new VerifyPasswordCommand(userId, password)
+    );
+    
+    return { valid: isValid };
+  }
+  
+  @Patch(':id/activate')
+  @Roles(RolesEnum.ADMIN)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Activate or deactivate user (Admin only)' })
+  @ApiParam({ name: 'id', description: 'User ID', example: '550e8400-e29b-41d4-a716-446655440000' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'User activation status updated' })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' })
+  @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'User does not have admin role' })
+  async activateUser(
+    @Param('id') id: string,
+    @Body() activateUserDto: ActivateUserDto,
+  ) {
+    return this.commandBus.execute(
+      new ActivateUserCommand(id, activateUserDto.active)
+    );
+  }
+  
+  @Post(':id/roles')
+  @Roles(RolesEnum.ADMIN)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Assign role to user (Admin only)' })
+  @ApiParam({ name: 'id', description: 'User ID', example: '550e8400-e29b-41d4-a716-446655440000' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Role assigned successfully' })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User or role not found' })
+  @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'User does not have admin role' })
+  async assignRoleToUser(
+    @Param('id') id: string,
+    @Body() assignRoleDto: AssignRoleDto,
+  ) {
+    return this.commandBus.execute(
+      new AssignRoleCommand(id, assignRoleDto.roleId)
+    );
+  }
+  
+  @Delete(':id/roles/:roleId')
+  @Roles(RolesEnum.ADMIN)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Remove role from user (Admin only)' })
+  @ApiParam({ name: 'id', description: 'User ID', example: '550e8400-e29b-41d4-a716-446655440000' })
+  @ApiParam({ name: 'roleId', description: 'Role ID', example: '550e8400-e29b-41d4-a716-446655440000' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Role removed successfully' })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' })
+  @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'User does not have admin role' })
+  async removeRoleFromUser(
+    @Param('id') id: string,
+    @Param('roleId') roleId: string,
+  ) {
+    return this.commandBus.execute(
+      new RemoveRoleCommand(id, roleId)
+    );
   }
 }

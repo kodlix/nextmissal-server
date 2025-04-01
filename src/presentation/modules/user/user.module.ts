@@ -16,9 +16,26 @@ import { UserService } from '@core/services/user.service';
 import { GetUserQueryHandler } from '@application/queries/user/get-user.query';
 import { GetUsersQueryHandler } from '@application/queries/user/get-users.query';
 
+// Command Handlers
+import { UpdateUserCommandHandler } from '@application/commands/user/update-user.command';
+import { ChangePasswordCommandHandler } from '@application/commands/user/change-password.command';
+import { ActivateUserCommandHandler } from '@application/commands/user/activate-user.command';
+import { AssignRoleCommandHandler } from '@application/commands/user/assign-role.command';
+import { RemoveRoleCommandHandler } from '@application/commands/user/remove-role.command';
+import { VerifyPasswordCommandHandler } from '@application/commands/user/verify-password.command';
+
 const queryHandlers = [
   GetUserQueryHandler,
   GetUsersQueryHandler,
+];
+
+const commandHandlers = [
+  UpdateUserCommandHandler,
+  ChangePasswordCommandHandler,
+  ActivateUserCommandHandler,
+  AssignRoleCommandHandler,
+  RemoveRoleCommandHandler,
+  VerifyPasswordCommandHandler,
 ];
 
 @Module({
@@ -29,7 +46,10 @@ const queryHandlers = [
   controllers: [UserController],
   providers: [
     // Services
-    UserService,
+    {
+      provide: UserService,
+      useClass: UserService,
+    },
     
     // Repository tokens
     {
@@ -43,6 +63,9 @@ const queryHandlers = [
     
     // Query handlers
     ...queryHandlers,
+    
+    // Command handlers
+    ...commandHandlers,
   ],
   exports: [UserService],
 })

@@ -8,11 +8,13 @@ import { RefreshToken } from '../entities/refresh-token.entity';
 import { IUserRepository } from '../repositories/user.repository.interface';
 import { IOtpRepository } from '../repositories/otp.repository.interface';
 import { IRefreshTokenRepository } from '../repositories/refresh-token.repository.interface';
-import { 
-  EntityNotFoundException, 
+import {
+  EntityNotFoundException,
   OtpExpiredException,
-  AuthenticationException 
+  OtpInvalidException,
+  AuthenticationException
 } from '@core/exceptions/domain-exceptions';
+import { Email } from '@core/value-objects/email.vo';
 
 @Injectable()
 export class AuthService {
@@ -85,6 +87,7 @@ export class AuthService {
     if (!otp) {
       throw new EntityNotFoundException('OTP');
     }
+
     if (otp.isExpired()) {
       throw new OtpExpiredException();
     }
@@ -100,9 +103,10 @@ export class AuthService {
     if (isValid) {
       otp.markAsVerified();
       await this.otpRepository.update(otp);
+      return true;
+    } else {
+      throw new OtpInvalidException();
     }
-
-    return isValid;
   }
 
   async setupTwoFactorAuth(userId: string): Promise<{ secret: string, qrCodeUrl: string }> {
@@ -132,17 +136,27 @@ export class AuthService {
 
   async verifyTwoFactorToken(userId: string, token: string): Promise<boolean> {
     const user = await this.userRepository.findById(userId);
-    if (!user || !user.otpEnabled || !user.otpSecret) {
-      return false;
+    if (!user) {
+      throw new EntityNotFoundException('User', userId);
     }
 
-    return speakeasy.totp.verify({
+    if (!user.otpEnabled || !user.otpSecret) {
+      throw new AuthenticationException('Two-factor authentication is not enabled for this user');
+    }
+
+    const isValid = speakeasy.totp.verify({
       secret: user.otpSecret,
       encoding: 'base32',
       token,
       step: this.otpConfig.step,
       digits: this.otpConfig.digits,
     });
+
+    if (!isValid) {
+      throw new OtpInvalidException();
+    }
+
+    return true;
   }
 
   async disableTwoFactorAuth(userId: string): Promise<User> {
@@ -169,28 +183,46 @@ export class AuthService {
     return this.refreshTokenRepository.create(refreshToken);
   }
 
-  async validateRefreshToken(token: string): Promise<RefreshToken | null> {
+  async validateRefreshToken(token: string): Promise<RefreshToken> {
     const refreshToken = await this.refreshTokenRepository.findByToken(token);
-    if (!refreshToken || refreshToken.isExpired() || refreshToken.isRevoked()) {
-      return null;
+    if (!refreshToken) {
+      throw new AuthenticationException('Invalid refresh token');
+    }
+
+    if (refreshToken.isExpired()) {
+      throw new AuthenticationException('Refresh token has expired');
+    }
+
+    if (refreshToken.isRevoked()) {
+      throw new AuthenticationException('Refresh token has been revoked');
     }
 
     return refreshToken;
   }
 
-  async revokeRefreshToken(token: string): Promise<boolean> {
+  async revokeRefreshToken(token: string): Promise<void> {
     const refreshToken = await this.refreshTokenRepository.findByToken(token);
     if (!refreshToken) {
-      return false;
+      throw new AuthenticationException('Invalid refresh token');
+    }
+
+    if (refreshToken.isRevoked()) {
+      // The Token is already revoked, no action needed
+      return;
     }
 
     refreshToken.revoke();
     await this.refreshTokenRepository.update(refreshToken);
-    return true;
   }
 
-  async revokeAllRefreshTokens(userId: string): Promise<boolean> {
-    return this.refreshTokenRepository.deleteByUserId(userId);
+  async revokeAllRefreshTokens(userId: string): Promise<void> {
+    // Check if user exists
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new EntityNotFoundException('User', userId);
+    }
+
+    await this.refreshTokenRepository.deleteByUserId(userId);
   }
 
   async updateLastLogin(userId: string): Promise<User> {

@@ -6,8 +6,11 @@ import { IUserRepository } from '../repositories/user.repository.interface';
 import { IRoleRepository } from '../repositories/role.repository.interface';
 import { 
   EntityNotFoundException, 
-  EntityAlreadyExistsException 
+  EntityAlreadyExistsException,
+  AuthenticationException
 } from '@core/exceptions/domain-exceptions';
+import { Email } from '@core/value-objects/email.vo';
+import { Password } from '@core/value-objects/password.vo';
 
 @Injectable()
 export class UserService {
@@ -19,22 +22,28 @@ export class UserService {
   ) {}
 
   async createUser(
-    email: string,
-    password: string,
+    emailStr: string,
+    passwordStr: string,
     firstName: string,
     lastName: string,
   ): Promise<User> {
+    // Validate email using value object
+    const email = new Email(emailStr);
+    
+    // Validate password using value object
+    const password = new Password(passwordStr);
+    
     // Check if user already exists
-    const existingUser = await this.userRepository.findByEmail(email);
+    const existingUser = await this.userRepository.findByEmail(email.getValue());
     if (existingUser) {
       throw new EntityAlreadyExistsException('User', 'email');
     }
 
     // Hash the password
-    const passwordHash = await this.hashPassword(password);
+    const passwordHash = await this.hashPassword(password.getValue());
 
     // Create a new user
-    const user = new User(email, passwordHash, firstName, lastName);
+    const user = new User(email.getValue(), passwordHash, firstName, lastName);
 
     // Assign default role
     const defaultRole = await this.roleRepository.findDefaultRole();
@@ -46,24 +55,33 @@ export class UserService {
     return this.userRepository.create(user);
   }
 
-  async validateCredentials(email: string, password: string): Promise<User | null> {
-    const user = await this.userRepository.findByEmail(email);
-    if (!user || !user.isActive) {
+  async validateCredentials(emailStr: string, passwordStr: string): Promise<User | null> {
+    try {
+      // Validate email format
+      const email = new Email(emailStr);
+      
+      const user = await this.userRepository.findByEmail(email.getValue());
+      if (!user || !user.isActive) {
+        return null;
+      }
+  
+      const isPasswordValid = await this.comparePasswords(passwordStr, user.passwordHash);
+      if (!isPasswordValid) {
+        return null;
+      }
+  
+      return user;
+    } catch (error) {
+      // If email is invalid, return null instead of throwing
       return null;
     }
-
-    const isPasswordValid = await this.comparePasswords(password, user.passwordHash);
-    if (!isPasswordValid) {
-      return null;
-    }
-
-    return user;
   }
 
   async updateUserDetails(
     userId: string,
     firstName?: string,
     lastName?: string,
+    emailStr?: string,
   ): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
@@ -77,18 +95,59 @@ export class UserService {
     if (lastName) {
       user.lastName = lastName;
     }
+    
+    if (emailStr) {
+      // Validate email using value object
+      const email = new Email(emailStr);
+      
+      // Check if email is already in use by another user
+      const existingUser = await this.userRepository.findByEmail(email.getValue());
+      if (existingUser && existingUser.id !== userId) {
+        throw new EntityAlreadyExistsException('User', 'email');
+      }
+      
+      user.email = email.getValue();
+    }
 
     user.updatedAt = new Date();
     return this.userRepository.update(user);
   }
 
-  async changePassword(userId: string, newPassword: string): Promise<User> {
+  async verifyCurrentPassword(userId: string, currentPassword: string): Promise<boolean> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new EntityNotFoundException('User', userId);
     }
 
-    user.passwordHash = await this.hashPassword(newPassword);
+    return this.comparePasswords(currentPassword, user.passwordHash);
+  }
+
+  async changePassword(
+    userId: string, 
+    newPasswordStr: string, 
+    currentPassword?: string
+  ): Promise<User> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new EntityNotFoundException('User', userId);
+    }
+
+    // If current password is provided, verify it
+    if (currentPassword) {
+      const isCurrentPasswordValid = await this.comparePasswords(
+        currentPassword, 
+        user.passwordHash
+      );
+      
+      if (!isCurrentPasswordValid) {
+        throw new AuthenticationException('Current password is incorrect');
+      }
+    }
+
+    // Validate new password using value object
+    const newPassword = new Password(newPasswordStr);
+    
+    user.passwordHash = await this.hashPassword(newPassword.getValue());
     user.updatedAt = new Date();
     return this.userRepository.update(user);
   }
@@ -115,6 +174,26 @@ export class UserService {
     }
 
     user.removeRole(roleId);
+    return this.userRepository.update(user);
+  }
+  
+  async activateUser(userId: string): Promise<User> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new EntityNotFoundException('User', userId);
+    }
+    
+    user.activate();
+    return this.userRepository.update(user);
+  }
+  
+  async deactivateUser(userId: string): Promise<User> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new EntityNotFoundException('User', userId);
+    }
+    
+    user.deactivate();
     return this.userRepository.update(user);
   }
 
