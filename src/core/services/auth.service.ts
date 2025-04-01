@@ -5,9 +5,13 @@ import { ConfigService } from '@nestjs/config';
 import { User } from '../entities/user.entity';
 import { Otp } from '../entities/otp.entity';
 import { RefreshToken } from '../entities/refresh-token.entity';
+import { EmailVerification } from '../entities/email-verification.entity';
+import { PasswordReset } from '../entities/password-reset.entity';
 import { IUserRepository } from '../repositories/user.repository.interface';
 import { IOtpRepository } from '../repositories/otp.repository.interface';
 import { IRefreshTokenRepository } from '../repositories/refresh-token.repository.interface';
+import { IEmailVerificationRepository } from '../repositories/email-verification.repository.interface';
+import { IPasswordResetRepository } from '../repositories/password-reset.repository.interface';
 import {
   EntityNotFoundException,
   OtpExpiredException,
@@ -25,6 +29,10 @@ export class AuthService {
     private readonly otpRepository: IOtpRepository,
     @Inject('RefreshTokenRepository')
     private readonly refreshTokenRepository: IRefreshTokenRepository,
+    @Inject('EmailVerificationRepository')
+    private readonly emailVerificationRepository: IEmailVerificationRepository,
+    @Inject('PasswordResetRepository')
+    private readonly passwordResetRepository: IPasswordResetRepository,
     private readonly configService: ConfigService,
   ) {}
 
@@ -233,5 +241,186 @@ export class AuthService {
 
     user.updateLastLogin();
     return this.userRepository.update(user);
+  }
+
+  /**
+   * Generate a verification code for email verification
+   * @param email The email to send verification to
+   * @returns The generated verification code
+   */
+  async generateEmailVerificationCode(email: string): Promise<string> {
+    try {
+      // Validate email format
+      new Email(email);
+      
+      // Delete any existing verification codes for this email
+      await this.emailVerificationRepository.deleteByEmail(email);
+      
+      // Generate a 6-digit code
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      
+      // Create and save the verification entity
+      const emailVerification = new EmailVerification(
+        email,
+        code,
+        this.otpConfig.expiration
+      );
+      
+      await this.emailVerificationRepository.create(emailVerification);
+      
+      return code;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Verify an email verification code
+   * @param email The email to verify
+   * @param code The verification code
+   * @returns Boolean indicating if verification was successful
+   */
+  async verifyEmailCode(email: string, code: string): Promise<boolean> {
+    try {
+      // Validate email format
+      new Email(email);
+      
+      // Find the verification record
+      const verification = await this.emailVerificationRepository.findByEmailAndCode(email, code);
+      
+      if (!verification) {
+        throw new OtpInvalidException();
+      }
+      
+      if (verification.isExpired()) {
+        throw new OtpExpiredException();
+      }
+      
+      // Mark as verified
+      verification.markAsVerified();
+      await this.emailVerificationRepository.update(verification);
+      
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Check if an email is verified
+   * @param email The email to check
+   * @returns Boolean indicating if the email is verified
+   */
+  async isEmailVerified(email: string): Promise<boolean> {
+    try {
+      // Validate email format
+      new Email(email);
+      
+      // Find the verification record
+      const verification = await this.emailVerificationRepository.findByEmail(email);
+      
+      return verification ? verification.isVerified() : false;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
+   * Create a password reset token for a user
+   * @param email The email of the user
+   * @returns The generated password reset token
+   * @throws EntityNotFoundException if user not found
+   */
+  async createPasswordResetToken(email: string): Promise<string> {
+    try {
+      // Validate email format
+      new Email(email);
+      
+      // Find the user
+      const user = await this.userRepository.findByEmail(email);
+      if (!user) {
+        throw new EntityNotFoundException('User', `with email ${email}`);
+      }
+      
+      // Delete any existing password reset tokens for this user
+      await this.passwordResetRepository.deleteByUserId(user.id);
+      
+      // Create a new password reset token
+      const passwordReset = new PasswordReset(
+        user.id,
+        email,
+        60 // 1 hour expiration
+      );
+      
+      await this.passwordResetRepository.create(passwordReset);
+      
+      return passwordReset.token;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * Validate a password reset token
+   * @param token The password reset token
+   * @returns The user associated with the token
+   * @throws EntityNotFoundException if token not found
+   * @throws OtpExpiredException if token is expired
+   * @throws OtpInvalidException if token is already used
+   */
+  async validatePasswordResetToken(token: string): Promise<User> {
+    // Find the password reset record
+    const passwordReset = await this.passwordResetRepository.findByToken(token);
+    if (!passwordReset) {
+      throw new EntityNotFoundException('Password reset token', token);
+    }
+    
+    // Check if token is expired
+    if (passwordReset.isExpired()) {
+      throw new OtpExpiredException();
+    }
+    
+    // Check if token is already used
+    if (passwordReset.isUsed()) {
+      throw new OtpInvalidException();
+    }
+    
+    // Find the user
+    const user = await this.userRepository.findById(passwordReset.userId);
+    if (!user) {
+      throw new EntityNotFoundException('User', passwordReset.userId);
+    }
+    
+    return user;
+  }
+
+  /**
+   * Reset a user's password
+   * @param token The password reset token
+   * @param newPassword The new password
+   * @returns Boolean indicating success
+   * @throws EntityNotFoundException if token not found
+   * @throws OtpExpiredException if token is expired
+   * @throws OtpInvalidException if token is already used
+   */
+  async resetPassword(token: string, newPassword: string): Promise<boolean> {
+    // Validate the token and get the user
+    const user = await this.validatePasswordResetToken(token);
+    
+    // Get the password reset record
+    const passwordReset = await this.passwordResetRepository.findByToken(token);
+    
+    // Set the new password
+    user.setPassword(newPassword);
+    await this.userRepository.update(user);
+    
+    // Mark the token as used
+    passwordReset.markAsUsed();
+    await this.passwordResetRepository.update(passwordReset);
+    
+    // Revoke all refresh tokens for this user
+    await this.refreshTokenRepository.deleteByUserId(user.id);
+    
+    return true;
   }
 }

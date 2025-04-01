@@ -27,6 +27,7 @@ model User {
   roles         UserRole[]
   otps          Otp[]
   refreshTokens RefreshToken[]
+  passwordResets PasswordReset[]
 }
 
 model Role {
@@ -91,4 +92,30 @@ model RefreshToken {
   expiresAt DateTime
   revokedAt DateTime?
   createdAt DateTime  @default(now())
+}
+
+model EmailVerification {
+  id         String    @id @default(uuid())
+  email      String    
+  code       String
+  expiresAt  DateTime
+  verifiedAt DateTime?
+  createdAt  DateTime  @default(now())
+  
+  @@index([email])
+}
+
+model PasswordReset {
+  id        String    @id @default(uuid())
+  userId    String
+  email     String    
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([email])
+  @@index([token])
 }

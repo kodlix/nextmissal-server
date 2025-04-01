@@ -71,4 +71,9 @@ export class User {
     this.lastLoginAt = new Date();
     this.updatedAt = new Date();
   }
+
+  setPassword(passwordHash: string): void {
+    this.passwordHash = passwordHash;
+    this.updatedAt = new Date();
+  }
 }

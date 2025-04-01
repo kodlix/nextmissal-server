@@ -10,6 +10,7 @@ export interface UserBaseResponse {
   email: string;
   firstName: string;
   lastName: string;
+  emailVerified?: boolean;
 }
 
 export interface UserDetailResponse extends UserBaseResponse {
@@ -37,6 +38,13 @@ export interface OtpRequiredResponse {
   message: string;
 }
 
+export interface EmailVerificationRequiredResponse {
+  requiresEmailVerification: true;
+  userId: string;
+  email: string;
+  message: string;
+}
+
 export interface AuthRefreshTokenResponse {
   accessToken: string;
   refreshToken: string;
@@ -45,10 +53,11 @@ export interface AuthRefreshTokenResponse {
 export interface JwtPayload {
   sub: string;
   email: string;
+  emailVerified?: boolean;
   roles: string[];
   permissions?: string[];
   iat?: number;
   exp?: number;
 }
 
-export type AuthResponse = AuthTokenResponse | OtpRequiredResponse;
+export type AuthResponse = AuthTokenResponse | OtpRequiredResponse | EmailVerificationRequiredResponse;

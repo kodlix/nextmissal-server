@@ -57,10 +57,14 @@ export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenC
       }
     }
 
+    // Check if email is verified
+    const isEmailVerified = await this.authService.isEmailVerified(user.email);
+    
     // Generate new JWT tokens
     const payload = { 
       sub: user.id, 
       email: user.email,
+      emailVerified: isEmailVerified,
       roles: user.roles.map(role => role.name),
       permissions: Array.from(userPermissions),
     };

@@ -7,6 +7,7 @@ import {
   Request,
   UseGuards,
   Get,
+  Param,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
@@ -16,6 +17,8 @@ import { RegisterDto } from '@application/dtos/auth/register.dto';
 import { LoginDto } from '@application/dtos/auth/login.dto';
 import { VerifyOtpDto } from '@application/dtos/auth/verify-otp.dto';
 import { RefreshTokenDto } from '@application/dtos/auth/refresh-token.dto';
+import { SendVerificationEmailDto, VerifyEmailDto } from '@application/dtos/auth/email-verification.dto';
+import { RequestPasswordResetDto, ResetPasswordDto } from '@application/dtos/auth/password-reset.dto';
 
 // Commands
 import { RegisterUserCommand } from '@application/commands/auth/register-user.command';
@@ -23,6 +26,11 @@ import { LoginCommand } from '@application/commands/auth/login.command';
 import { VerifyOtpCommand } from '@application/commands/auth/verify-otp.command';
 import { RefreshTokenCommand } from '@application/commands/auth/refresh-token.command';
 import { LogoutCommand } from '@application/commands/auth/logout.command';
+import { SendVerificationEmailCommand } from '@application/commands/auth/send-verification-email.command';
+import { VerifyEmailCommand } from '@application/commands/auth/verify-email.command';
+import { CheckEmailVerificationStatusCommand } from '@application/commands/auth/check-email-verification-status.command';
+import { RequestPasswordResetCommand } from '@application/commands/auth/request-password-reset.command';
+import { ResetPasswordCommand } from '@application/commands/auth/reset-password.command';
 
 // Guards & Decorators
 import { JwtAuthGuard } from '@presentation/guards/jwt-auth.guard';
@@ -118,5 +126,64 @@ export class AuthController {
       email: user.email,
       roles: user.roles,
     };
+  }
+
+  @Public()
+  @Post('email/send-verification')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Send email verification code' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Verification email sent successfully' })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid email format' })
+  async sendVerificationEmail(@Body() sendVerificationEmailDto: SendVerificationEmailDto) {
+    return this.commandBus.execute(new SendVerificationEmailCommand(sendVerificationEmailDto));
+  }
+
+  @Public()
+  @Post('email/verify')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ 
+    summary: 'Verify email with verification code',
+    description: 'Verify email with the code received. If successful, returns auth tokens like the login endpoint.'
+  })
+  @ApiResponse({ 
+    status: HttpStatus.OK, 
+    description: 'Email verified successfully. Returns access token, refresh token, and user data if verification successful.' 
+  })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid or expired verification code' })
+  async verifyEmail(@Body() verifyEmailDto: VerifyEmailDto) {
+    return this.commandBus.execute(new VerifyEmailCommand(verifyEmailDto));
+  }
+  
+  @Public()
+  @Get('email/status/:email')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Check if an email is verified' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Returns the verification status of the email' })
+  async checkEmailVerificationStatus(@Param('email') email: string) {
+    const isVerified = await this.commandBus.execute(
+      new CheckEmailVerificationStatusCommand(email)
+    );
+    return { verified: isVerified };
+  }
+
+  @Public()
+  @Post('password/request-reset')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Request a password reset email' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Password reset email sent successfully' })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid email format' })
+  async requestPasswordReset(@Body() requestPasswordResetDto: RequestPasswordResetDto) {
+    return this.commandBus.execute(new RequestPasswordResetCommand(requestPasswordResetDto));
+  }
+
+  @Public()
+  @Post('password/reset')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Reset password with a token' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Password reset successfully' })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Invalid or expired token' })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid password format' })
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.commandBus.execute(new ResetPasswordCommand(resetPasswordDto));
   }
 }

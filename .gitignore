@@ -40,3 +40,11 @@ lerna-debug.log*
 .env.development
 .env.test
 .env.production
+
+# Docker volumes
+/postgres_data
+/redis_data
+
+# Prisma
+/prisma/.env
+/prisma/migrations/dev
