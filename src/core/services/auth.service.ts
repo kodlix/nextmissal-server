@@ -19,6 +19,9 @@ import {
   AuthenticationException
 } from '@core/exceptions/domain-exceptions';
 import { Email } from '@core/value-objects/email.vo';
+import { UserId } from '@core/value-objects/user-id.vo';
+import { Token } from '@core/value-objects/token.vo';
+import { VerificationCode } from '@core/value-objects/verification-code.vo';
 
 @Injectable()
 export class AuthService {
@@ -68,7 +71,7 @@ export class AuthService {
 
     // Create a new OTP entity
     const otp = new Otp(
-      userId,
+      new UserId(userId),
       secret,
       this.otpConfig.expiration,
     );
@@ -183,8 +186,8 @@ export class AuthService {
 
     // Create a new refresh token
     const refreshToken = new RefreshToken(
-      userId,
-      token,
+      new UserId(userId),
+      new Token(token),
       this.tokenConfig.refreshExpiration,
     );
 
@@ -252,22 +255,22 @@ export class AuthService {
     try {
       // Validate email format
       new Email(email);
-      
+
       // Delete any existing verification codes for this email
       await this.emailVerificationRepository.deleteByEmail(email);
-      
+
       // Generate a 6-digit code
       const code = Math.floor(100000 + Math.random() * 900000).toString();
-      
+
       // Create and save the verification entity
       const emailVerification = new EmailVerification(
-        email,
-        code,
+        new Email(email),
+        new VerificationCode(code),
         this.otpConfig.expiration
       );
-      
+
       await this.emailVerificationRepository.create(emailVerification);
-      
+
       return code;
     } catch (error) {
       throw error;
@@ -284,22 +287,22 @@ export class AuthService {
     try {
       // Validate email format
       new Email(email);
-      
+
       // Find the verification record
       const verification = await this.emailVerificationRepository.findByEmailAndCode(email, code);
-      
+
       if (!verification) {
         throw new OtpInvalidException();
       }
-      
+
       if (verification.isExpired()) {
         throw new OtpExpiredException();
       }
-      
+
       // Mark as verified
       verification.markAsVerified();
       await this.emailVerificationRepository.update(verification);
-      
+
       return true;
     } catch (error) {
       throw error;
@@ -315,10 +318,10 @@ export class AuthService {
     try {
       // Validate email format
       new Email(email);
-      
+
       // Find the verification record
       const verification = await this.emailVerificationRepository.findByEmail(email);
-      
+
       return verification ? verification.isVerified() : false;
     } catch (error) {
       return false;
@@ -335,26 +338,26 @@ export class AuthService {
     try {
       // Validate email format
       new Email(email);
-      
+
       // Find the user
       const user = await this.userRepository.findByEmail(email);
       if (!user) {
         throw new EntityNotFoundException('User', `with email ${email}`);
       }
-      
+
       // Delete any existing password reset tokens for this user
       await this.passwordResetRepository.deleteByUserId(user.id);
-      
+
       // Create a new password reset token
       const passwordReset = new PasswordReset(
-        user.id,
-        email,
-        60 // 1 hour expiration
+        new UserId(user.id),
+        new Email(email),
+        60 // 1-hour expiration
       );
-      
+
       await this.passwordResetRepository.create(passwordReset);
-      
-      return passwordReset.token;
+
+      return passwordReset.token.getValue();
     } catch (error) {
       throw error;
     }
@@ -374,23 +377,23 @@ export class AuthService {
     if (!passwordReset) {
       throw new EntityNotFoundException('Password reset token', token);
     }
-    
-    // Check if token is expired
+
+    // Check if the token is expired
     if (passwordReset.isExpired()) {
       throw new OtpExpiredException();
     }
-    
+
     // Check if token is already used
     if (passwordReset.isUsed()) {
       throw new OtpInvalidException();
     }
-    
+
     // Find the user
-    const user = await this.userRepository.findById(passwordReset.userId);
+    const user = await this.userRepository.findById(passwordReset.userId.getValue());
     if (!user) {
-      throw new EntityNotFoundException('User', passwordReset.userId);
+      throw new EntityNotFoundException('User', passwordReset.userId.getValue());
     }
-    
+
     return user;
   }
 
@@ -406,21 +409,21 @@ export class AuthService {
   async resetPassword(token: string, newPassword: string): Promise<boolean> {
     // Validate the token and get the user
     const user = await this.validatePasswordResetToken(token);
-    
+
     // Get the password reset record
     const passwordReset = await this.passwordResetRepository.findByToken(token);
-    
+
     // Set the new password
     user.setPassword(newPassword);
     await this.userRepository.update(user);
-    
+
     // Mark the token as used
     passwordReset.markAsUsed();
     await this.passwordResetRepository.update(passwordReset);
-    
+
     // Revoke all refresh tokens for this user
     await this.refreshTokenRepository.deleteByUserId(user.id);
-    
+
     return true;
   }
 }

@@ -7,7 +7,7 @@ export class Email {
     if (!this.isValid(email)) {
       throw new InvalidValueObjectException('Invalid email format');
     }
-    this.value = email.toLowerCase();
+    this.value = email.toLowerCase().trim();
   }
 
   private isValid(email: string): boolean {

@@ -3,95 +3,114 @@ import { Permission } from '@core/entities/permission.entity';
 import { IPermissionRepository } from '@core/repositories/permission.repository.interface';
 import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 import { Permission as PrismaPermission } from '@prisma/client';
+import { ResourceAction, ActionType } from '@core/value-objects/resource-action.vo';
+import { PermissionName } from '@core/value-objects/permission-name.vo';
+import { BaseRepository } from './base.repository';
 
 @Injectable()
-export class PermissionRepository implements IPermissionRepository {
-  constructor(private readonly prisma: PrismaService) {}
+export class PermissionRepository extends BaseRepository<Permission> implements IPermissionRepository {
+  constructor(private readonly prisma: PrismaService) {
+    super();
+  }
 
   async findById(id: string): Promise<Permission | null> {
-    const permissionRecord = await this.prisma.permission.findUnique({
-      where: { id },
+    return this.executeWithErrorHandling('findById', async () => {
+      const permissionRecord = await this.prisma.permission.findUnique({
+        where: { id },
+      });
+
+      if (!permissionRecord) {
+        return null;
+      }
+
+      return this.mapToModel(permissionRecord);
     });
-
-    if (!permissionRecord) {
-      return null;
-    }
-
-    return this.mapToModel(permissionRecord as unknown as PrismaPermission);
   }
 
   async findByName(name: string): Promise<Permission | null> {
-    const permissionRecord = await this.prisma.permission.findUnique({
-      where: { name },
+    return this.executeWithErrorHandling('findByName', async () => {
+      const permissionRecord = await this.prisma.permission.findUnique({
+        where: { name },
+      });
+
+      if (!permissionRecord) {
+        return null;
+      }
+
+      return this.mapToModel(permissionRecord);
     });
-
-    if (!permissionRecord) {
-      return null;
-    }
-
-    return this.mapToModel(permissionRecord as unknown as PrismaPermission);
   }
 
   async findAll(): Promise<Permission[]> {
-    const permissionRecords = await this.prisma.permission.findMany();
-    return permissionRecords.map(record => this.mapToModel(record as unknown as PrismaPermission));
+    return this.executeWithErrorHandling('findAll', async () => {
+      const permissionRecords = await this.prisma.permission.findMany();
+      return permissionRecords.map(record => this.mapToModel(record));
+    });
   }
 
   async findByResource(resource: string): Promise<Permission[]> {
-    const permissionRecords = await this.prisma.permission.findMany({
-      where: { resource },
+    return this.executeWithErrorHandling('findByResource', async () => {
+      const permissionRecords = await this.prisma.permission.findMany({
+        where: { resource },
+      });
+      return permissionRecords.map(record => this.mapToModel(record));
     });
-    return permissionRecords.map(record => this.mapToModel(record as unknown as PrismaPermission));
   }
 
   async create(permission: Permission): Promise<Permission> {
-    const createdPermission = await this.prisma.permission.create({
-      data: {
-        id: permission.id,
-        name: permission.name,
-        description: permission.description,
-        resource: permission.resource,
-        action: permission.action,
-      },
-    });
+    return this.executeWithErrorHandling('create', async () => {
+      const createdPermission = await this.prisma.permission.create({
+        data: {
+          id: permission.id,
+          name: permission.name.getValue(),
+          description: permission.description,
+          resource: permission.resourceAction.getResource(),
+          action: permission.resourceAction.getAction(),
+        },
+      });
 
-    return this.mapToModel(createdPermission as unknown as PrismaPermission);
+      return this.mapToModel(createdPermission);
+    });
   }
 
   async update(permission: Permission): Promise<Permission> {
-    const updatedPermission = await this.prisma.permission.update({
-      where: { id: permission.id },
-      data: {
-        name: permission.name,
-        description: permission.description,
-        resource: permission.resource,
-        action: permission.action,
-      },
-    });
+    return this.executeWithErrorHandling('update', async () => {
+      const updatedPermission = await this.prisma.permission.update({
+        where: { id: permission.id },
+        data: {
+          name: permission.name.getValue(),
+          description: permission.description,
+          resource: permission.resourceAction.getResource(),
+          action: permission.resourceAction.getAction(),
+        },
+      });
 
-    return this.mapToModel(updatedPermission as unknown as PrismaPermission);
+      return this.mapToModel(updatedPermission);
+    });
   }
 
   async delete(id: string): Promise<boolean> {
-    try {
+    return this.executeWithErrorHandling('delete', async () => {
       await this.prisma.permission.delete({
         where: { id },
       });
       return true;
-    } catch (error) {
-      return false;
-    }
+    }, false);
   }
 
   private mapToModel(record: PrismaPermission): Permission {
-    const permission = new Permission(
-      record.name,
-      record.description,
+    // Create value objects from primitive values
+    const resourceAction = new ResourceAction(
       record.resource,
-      record.action,
+      record.action as ActionType
     );
     
-    permission.id = record.id;
+    const permission = new Permission(
+      resourceAction,
+      record.description,
+      record.id
+    );
+    
     permission.createdAt = record.createdAt;
     permission.updatedAt = record.updatedAt;
     

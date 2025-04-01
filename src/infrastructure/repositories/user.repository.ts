@@ -5,6 +5,12 @@ import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 import { Role } from '@core/entities/role.entity';
 import { Permission } from '@core/entities/permission.entity';
 import { Prisma, User as PrismaUser, UserRole as PrismaUserRole, RolePermission as PrismaRolePermission, Role as PrismaRole, Permission as PrismaPermission } from '@prisma/client';
+import { Email } from '@core/value-objects/email.vo';
+import { FirstName, LastName } from '@core/value-objects/name.vo';
+import { ResourceAction, ActionType } from '@core/value-objects/resource-action.vo';
+import { PermissionName } from '@core/value-objects/permission-name.vo';
+import { BaseRepository } from './base.repository';
+import { UserId } from '@core/value-objects/user-id.vo';
 
 // Define a type for User with its relations (roles with nested permissions)
 type UserWithRelations = PrismaUser & {
@@ -18,215 +24,232 @@ type UserWithRelations = PrismaUser & {
 };
 
 @Injectable()
-export class UserRepository implements IUserRepository {
-  constructor(private readonly prisma: PrismaService) {}
+export class UserRepository extends BaseRepository<User> implements IUserRepository {
+  constructor(private readonly prisma: PrismaService) {
+    super();
+  }
 
   async findById(id: string): Promise<User | null> {
-    const userRecord = await this.prisma.user.findUnique({
-      where: { id },
-      include: {
-        roles: {
-          include: {
-            role: {
-              include: {
-                permissions: {
-                  include: {
-                    permission: true,
+    return this.executeWithErrorHandling('findById', async () => {
+      const userRecord = await this.prisma.user.findUnique({
+        where: { id },
+        include: {
+          roles: {
+            include: {
+              role: {
+                include: {
+                  permissions: {
+                    include: {
+                      permission: true,
+                    },
                   },
                 },
               },
             },
           },
         },
-      },
+      });
+
+      if (!userRecord) {
+        return null;
+      }
+
+      return this.mapToModel(userRecord as UserWithRelations);
     });
-
-    if (!userRecord) {
-      return null;
-    }
-
-    return this.mapToModel(userRecord as UserWithRelations);
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    const userRecord = await this.prisma.user.findUnique({
-      where: { email },
-      include: {
-        roles: {
-          include: {
-            role: {
-              include: {
-                permissions: {
-                  include: {
-                    permission: true,
+    return this.executeWithErrorHandling('findByEmail', async () => {
+      const userRecord = await this.prisma.user.findUnique({
+        where: { email },
+        include: {
+          roles: {
+            include: {
+              role: {
+                include: {
+                  permissions: {
+                    include: {
+                      permission: true,
+                    },
                   },
                 },
               },
             },
           },
         },
-      },
+      });
+
+      if (!userRecord) {
+        return null;
+      }
+
+      return this.mapToModel(userRecord as UserWithRelations);
     });
-
-    if (!userRecord) {
-      return null;
-    }
-
-    return this.mapToModel(userRecord as UserWithRelations);
   }
 
   async findAll(): Promise<User[]> {
-    const userRecords = await this.prisma.user.findMany({
-      include: {
-        roles: {
-          include: {
-            role: {
-              include: {
-                permissions: {
-                  include: {
-                    permission: true,
+    return this.executeWithErrorHandling('findAll', async () => {
+      const userRecords = await this.prisma.user.findMany({
+        include: {
+          roles: {
+            include: {
+              role: {
+                include: {
+                  permissions: {
+                    include: {
+                      permission: true,
+                    },
                   },
                 },
               },
             },
           },
         },
-      },
-    });
+      });
 
-    return userRecords.map(record => this.mapToModel(record as UserWithRelations));
+      return userRecords.map(record => this.mapToModel(record as UserWithRelations));
+    });
   }
 
   async findUsersByRoleId(roleId: string): Promise<User[]> {
-    const userRecords = await this.prisma.user.findMany({
-      where: {
-        roles: {
-          some: {
-            roleId,
+    return this.executeWithErrorHandling('findUsersByRoleId', async () => {
+      const userRecords = await this.prisma.user.findMany({
+        where: {
+          roles: {
+            some: {
+              roleId,
+            },
           },
         },
-      },
-      include: {
-        roles: {
-          include: {
-            role: {
-              include: {
-                permissions: {
-                  include: {
-                    permission: true,
+        include: {
+          roles: {
+            include: {
+              role: {
+                include: {
+                  permissions: {
+                    include: {
+                      permission: true,
+                    },
                   },
                 },
               },
             },
           },
         },
-      },
-    });
+      });
 
-    return userRecords.map(record => this.mapToModel(record as UserWithRelations));
+      return userRecords.map(record => this.mapToModel(record as UserWithRelations));
+    });
   }
 
   async create(user: User): Promise<User> {
-    const createdUser = await this.prisma.user.create({
-      data: {
-        id: user.id,
-        email: user.email,
-        passwordHash: user.passwordHash,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        isActive: user.isActive,
-        otpEnabled: user.otpEnabled,
-        otpSecret: user.otpSecret,
-        lastLoginAt: user.lastLoginAt,
-        roles: {
-          create: user.roles.map(role => ({
-            roleId: role.id,
-          })),
+    return this.executeWithErrorHandling('create', async () => {
+      const createdUser = await this.prisma.user.create({
+        data: {
+          id: user.id,
+          email: user.email.getValue(),
+          passwordHash: user.passwordHash,
+          firstName: user.firstName.getValue(),
+          lastName: user.lastName.getValue(),
+          isActive: user.isActive,
+          otpEnabled: user.otpEnabled,
+          otpSecret: user.otpSecret,
+          lastLoginAt: user.lastLoginAt,
+          roles: {
+            create: user.roles.map(role => ({
+              roleId: role.id,
+            })),
+          },
         },
-      },
-      include: {
-        roles: {
-          include: {
-            role: {
-              include: {
-                permissions: {
-                  include: {
-                    permission: true,
+        include: {
+          roles: {
+            include: {
+              role: {
+                include: {
+                  permissions: {
+                    include: {
+                      permission: true,
+                    },
                   },
                 },
               },
             },
           },
         },
-      },
-    });
+      });
 
-    return this.mapToModel(createdUser as UserWithRelations);
+      return this.mapToModel(createdUser as UserWithRelations);
+    });
   }
 
   async update(user: User): Promise<User> {
-    // First, delete all role associations to recreate them
-    await this.prisma.userRole.deleteMany({
-      where: {
-        userId: user.id,
-      },
-    });
-
-    // Update the user with new role associations
-    const updatedUser = await this.prisma.user.update({
-      where: { id: user.id },
-      data: {
-        email: user.email,
-        passwordHash: user.passwordHash,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        isActive: user.isActive,
-        otpEnabled: user.otpEnabled,
-        otpSecret: user.otpSecret,
-        lastLoginAt: user.lastLoginAt,
-        roles: {
-          create: user.roles.map(role => ({
-            roleId: role.id,
-          })),
+    return this.executeWithErrorHandling('update', async () => {
+      // First, delete all role associations to recreate them
+      await this.prisma.userRole.deleteMany({
+        where: {
+          userId: user.id,
         },
-      },
-      include: {
-        roles: {
-          include: {
-            role: {
-              include: {
-                permissions: {
-                  include: {
-                    permission: true,
+      });
+
+      // Update the user with new role associations
+      const updatedUser = await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          email: user.email.getValue(),
+          passwordHash: user.passwordHash,
+          firstName: user.firstName.getValue(),
+          lastName: user.lastName.getValue(),
+          isActive: user.isActive,
+          otpEnabled: user.otpEnabled,
+          otpSecret: user.otpSecret,
+          lastLoginAt: user.lastLoginAt,
+          roles: {
+            create: user.roles.map(role => ({
+              roleId: role.id,
+            })),
+          },
+        },
+        include: {
+          roles: {
+            include: {
+              role: {
+                include: {
+                  permissions: {
+                    include: {
+                      permission: true,
+                    },
                   },
                 },
               },
             },
           },
         },
-      },
-    });
+      });
 
-    return this.mapToModel(updatedUser as UserWithRelations);
+      return this.mapToModel(updatedUser as UserWithRelations);
+    });
   }
 
   async delete(id: string): Promise<boolean> {
-    try {
+    return this.executeWithErrorHandling('delete', async () => {
       await this.prisma.user.delete({
         where: { id },
       });
       return true;
-    } catch (error) {
-      return false;
-    }
+    }, false);
   }
 
   private mapToModel(record: UserWithRelations): User {
+    // Create value objects from primitive values
+    const emailVO = new Email(record.email);
+    const firstNameVO = new FirstName(record.firstName);
+    const lastNameVO = new LastName(record.lastName);
+    
     const user = new User(
-      record.email,
+      emailVO,
       record.passwordHash,
-      record.firstName,
-      record.lastName,
+      firstNameVO,
+      lastNameVO,
     );
 
     user.id = record.id;
@@ -254,14 +277,20 @@ export class UserRepository implements IUserRepository {
       if (roleRecord.permissions) {
         role.permissions = roleRecord.permissions.map(permissionRelation => {
           const permissionRecord = permissionRelation.permission;
-          const permission = new Permission(
-            permissionRecord.name,
-            permissionRecord.description,
+          
+          // Create the ResourceAction value object
+          const resourceAction = new ResourceAction(
             permissionRecord.resource,
-            permissionRecord.action,
+            permissionRecord.action as ActionType
           );
-
-          permission.id = permissionRecord.id;
+          
+          // Create the Permission entity with the value object
+          const permission = new Permission(
+            resourceAction,
+            permissionRecord.description,
+            permissionRecord.id
+          );
+          
           permission.createdAt = permissionRecord.createdAt;
           permission.updatedAt = permissionRecord.updatedAt;
 

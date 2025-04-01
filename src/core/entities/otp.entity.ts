@@ -1,15 +1,16 @@
 import { v4 as uuidv4 } from 'uuid';
+import { UserId } from '@core/value-objects/user-id.vo';
 
 export class Otp {
   id: string;
-  userId: string;
+  userId: UserId;
   secret: string;
   expiresAt: Date;
   verifiedAt?: Date;
   createdAt: Date;
 
-  constructor(userId: string, secret: string, expirationMinutes: number) {
-    this.id = uuidv4();
+  constructor(userId: UserId, secret: string, expirationMinutes: number, id?: string) {
+    this.id = id || uuidv4();
     this.userId = userId;
     this.secret = secret;
     

@@ -8,6 +8,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { NotFoundException, Injectable, Inject } from '@nestjs/common';
 import { IUserRepository } from '@core/repositories/user.repository.interface';
 import { UserDetailResponse } from '@application/dtos/responses/user.response';
+import { UserMapper } from '@application/mappers/user.mapper';
 
 @Injectable()
 @QueryHandler(GetUserQuery)
@@ -25,20 +26,7 @@ export class GetUserQueryHandler implements IQueryHandler<GetUserQuery> {
       throw new NotFoundException(`User with ID "${userId}" not found`);
     }
 
-    return {
-      id: user.id,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      isActive: user.isActive,
-      otpEnabled: user.otpEnabled,
-      lastLoginAt: user.lastLoginAt,
-      roles: user.roles.map(role => ({
-        id: role.id,
-        name: role.name,
-      })),
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    };
+    // Use the mapper to convert to response DTO
+    return UserMapper.toDetailResponse(user);
   }
 }

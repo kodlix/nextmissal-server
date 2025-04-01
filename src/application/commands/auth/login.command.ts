@@ -12,6 +12,7 @@ import { UserService } from '@core/services/user.service';
 import { AuthService } from '@core/services/auth.service';
 import { IRoleRepository } from '@core/repositories/role.repository.interface';
 import { TokenProvider } from '@presentation/modules/auth/providers/token.provider';
+import { UserMapper } from '@application/mappers/user.mapper';
 
 @Injectable()
 @CommandHandler(LoginCommand)
@@ -44,7 +45,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
       return {
         requiresEmailVerification: true,
         userId: user.id,
-        email: user.email,
+        email: user.email.getValue(),
         message: 'Email verification required',
       };
     }
@@ -64,7 +65,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
       const roleWithPermissions = await this.roleRepository.findById(role.id);
       if (roleWithPermissions && roleWithPermissions.permissions) {
         roleWithPermissions.permissions.forEach(permission => {
-          userPermissions.add(permission.name);
+          userPermissions.add(permission.getStringName());
         });
       }
     }
@@ -79,17 +80,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
     return {
       accessToken,
       refreshToken,
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        emailVerified: true, // We know it's verified at this point
-        roles: user.roles.map(role => ({
-          id: role.id,
-          name: role.name,
-        })),
-      },
+      user: UserMapper.toAuthResponse(user, true),
     };
   }
 }

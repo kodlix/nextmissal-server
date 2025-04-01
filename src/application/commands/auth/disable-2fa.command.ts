@@ -8,6 +8,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Injectable } from '@nestjs/common';
 import { AuthService } from '@core/services/auth.service';
 import { UserBaseResponse } from '@application/dtos/responses/user.response';
+import { UserMapper } from '@application/mappers/user.mapper';
 
 @Injectable()
 @CommandHandler(Disable2FACommand)
@@ -22,11 +23,7 @@ export class Disable2FACommandHandler implements ICommandHandler<Disable2FAComma
     // Disable 2FA for the user
     const user = await this.authService.disableTwoFactorAuth(userId);
     
-    return {
-      id: user.id,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-    };
+    // Use the mapper to convert to response DTO
+    return UserMapper.toBaseResponse(user);
   }
 }

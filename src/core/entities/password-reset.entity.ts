@@ -1,23 +1,27 @@
 import { v4 as uuid } from 'uuid';
+import { Email } from '@core/value-objects/email.vo';
+import { Token } from '@core/value-objects/token.vo';
+import { UserId } from '@core/value-objects/user-id.vo';
 
 export class PasswordReset {
   id: string;
-  userId: string;
-  email: string;
-  token: string;
+  userId: UserId;
+  email: Email;
+  token: Token;
   expiresAt: Date;
   usedAt: Date | null;
   createdAt: Date;
 
   constructor(
-    userId: string,
-    email: string,
-    expirationMinutes: number = 60
+    userId: UserId,
+    email: Email,
+    expirationMinutes: number = 60,
+    id?: string
   ) {
-    this.id = uuid();
+    this.id = id || uuid();
     this.userId = userId;
     this.email = email;
-    this.token = uuid();
+    this.token = Token.generate();
     
     // Set expiration time (default: 60 minutes)
     const now = new Date();

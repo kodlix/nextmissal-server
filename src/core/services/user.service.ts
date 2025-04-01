@@ -11,6 +11,7 @@ import {
 } from '@core/exceptions/domain-exceptions';
 import { Email } from '@core/value-objects/email.vo';
 import { Password } from '@core/value-objects/password.vo';
+import { FirstName, LastName } from '@core/value-objects/name.vo';
 
 @Injectable()
 export class UserService {
@@ -42,8 +43,13 @@ export class UserService {
     // Hash the password
     const passwordHash = await this.hashPassword(password.getValue());
 
-    // Create a new user
-    const user = new User(email.getValue(), passwordHash, firstName, lastName);
+    // Create a new user with value objects for name
+    const user = new User(
+      email,
+      passwordHash,
+      new FirstName(firstName),
+      new LastName(lastName)
+    );
 
     // Assign default role
     const defaultRole = await this.roleRepository.findDefaultRole();
@@ -89,11 +95,11 @@ export class UserService {
     }
 
     if (firstName) {
-      user.firstName = firstName;
+      user.firstName = new FirstName(firstName);
     }
 
     if (lastName) {
-      user.lastName = lastName;
+      user.lastName = new LastName(lastName);
     }
     
     if (emailStr) {
@@ -106,7 +112,7 @@ export class UserService {
         throw new EntityAlreadyExistsException('User', 'email');
       }
       
-      user.email = email.getValue();
+      user.email = email;
     }
 
     user.updatedAt = new Date();

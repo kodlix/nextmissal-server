@@ -38,7 +38,7 @@ export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenC
     }
 
     // Get user
-    const user = await this.userRepository.findById(token.userId);
+    const user = await this.userRepository.findById(token.userId.getValue());
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
@@ -52,18 +52,18 @@ export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenC
       const roleWithPermissions = await this.roleRepository.findById(role.id);
       if (roleWithPermissions && roleWithPermissions.permissions) {
         roleWithPermissions.permissions.forEach(permission => {
-          userPermissions.add(permission.name);
+          userPermissions.add(permission.getStringName());
         });
       }
     }
 
     // Check if email is verified
-    const isEmailVerified = await this.authService.isEmailVerified(user.email);
+    const isEmailVerified = await this.authService.isEmailVerified(user.email.getValue());
     
     // Generate new JWT tokens
     const payload = { 
       sub: user.id, 
-      email: user.email,
+      email: user.email.getValue(),
       emailVerified: isEmailVerified,
       roles: user.roles.map(role => role.name),
       permissions: Array.from(userPermissions),

@@ -3,6 +3,7 @@ import { Inject } from '@nestjs/common';
 import { IRoleRepository } from '@core/repositories/role.repository.interface';
 import { RoleDetailResponse } from '@application/dtos/responses/role.response';
 import { EntityNotFoundException } from '@core/exceptions/domain-exceptions';
+import { RoleMapper } from '@application/mappers/role.mapper';
 
 export class GetRoleQuery implements IQuery {
   constructor(public readonly id: string) {}
@@ -23,20 +24,7 @@ export class GetRoleQueryHandler implements IQueryHandler<GetRoleQuery> {
       throw new EntityNotFoundException('Role', id);
     }
 
-    return {
-      id: role.id,
-      name: role.name,
-      description: role.description,
-      isDefault: role.isDefault,
-      permissions: role.permissions?.map(permission => ({
-        id: permission.id,
-        name: permission.name,
-        description: permission.description,
-        resource: permission.resource,
-        action: permission.action,
-      })) || [],
-      createdAt: role.createdAt,
-      updatedAt: role.updatedAt,
-    };
+    // Use the mapper to convert to response DTO
+    return RoleMapper.toDetailResponse(role);
   }
 }

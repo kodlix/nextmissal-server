@@ -1,12 +1,15 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Role } from './role.entity';
+import { Email } from '@core/value-objects/email.vo';
+import { FirstName, LastName } from '@core/value-objects/name.vo';
+import { UserId } from '@core/value-objects/user-id.vo';
 
 export class User {
   id: string;
-  email: string;
+  email: Email;
   passwordHash: string;
-  firstName: string;
-  lastName: string;
+  firstName: FirstName;
+  lastName: LastName;
   isActive: boolean;
   otpEnabled: boolean;
   otpSecret?: string;
@@ -16,12 +19,13 @@ export class User {
   updatedAt: Date;
 
   constructor(
-    email: string,
+    email: Email,
     passwordHash: string,
-    firstName: string,
-    lastName: string,
+    firstName: FirstName,
+    lastName: LastName,
+    id?: string
   ) {
-    this.id = uuidv4();
+    this.id = id || uuidv4();
     this.email = email;
     this.passwordHash = passwordHash;
     this.firstName = firstName;

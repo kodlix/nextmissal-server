@@ -9,6 +9,7 @@ export class RegisterUserCommand implements ICommand {
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Injectable } from '@nestjs/common';
 import { UserService } from '@core/services/user.service';
+import { UserMapper } from '@application/mappers/user.mapper';
 
 @Injectable()
 @CommandHandler(RegisterUserCommand)
@@ -27,11 +28,7 @@ export class RegisterUserCommandHandler implements ICommandHandler<RegisterUserC
       lastName,
     );
 
-    return {
-      id: user.id,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-    };
+    // Use the mapper to convert to response DTO
+    return UserMapper.toBaseResponse(user);
   }
 }

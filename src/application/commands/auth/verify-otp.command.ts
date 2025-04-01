@@ -13,6 +13,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UnauthorizedException, Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { UserMapper } from '@application/mappers/user.mapper';
 import { IUserRepository } from '@core/repositories/user.repository.interface';
 import { AuthService } from '@core/services/auth.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -61,16 +62,7 @@ export class VerifyOtpCommandHandler implements ICommandHandler<VerifyOtpCommand
     return {
       accessToken,
       refreshToken,
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        roles: user.roles.map(role => ({
-          id: role.id,
-          name: role.name,
-        })),
-      },
+      user: UserMapper.toAuthResponse(user, true),
     };
   }
 }

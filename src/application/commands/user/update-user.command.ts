@@ -1,6 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserService } from '@core/services/user.service';
 import { UserBaseResponse } from '@application/dtos/responses/user.response';
+import { UserMapper } from '@application/mappers/user.mapper';
 
 export class UpdateUserCommand {
   constructor(
@@ -27,11 +28,7 @@ export class UpdateUserCommandHandler implements ICommandHandler<UpdateUserComma
       email,
     );
 
-    return {
-      id: user.id,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-    };
+    // Use the mapper to convert to response DTO
+    return UserMapper.toBaseResponse(user);
   }
 }

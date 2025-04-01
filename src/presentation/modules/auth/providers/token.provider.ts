@@ -19,7 +19,7 @@ export class TokenProvider {
   buildPayload(user: User, permissions: string[], isEmailVerified: boolean) {
     return { 
       sub: user.id, 
-      email: user.email,
+      email: user.email.getValue(),
       emailVerified: isEmailVerified,
       roles: user.roles.map(role => role.name),
       permissions: permissions,

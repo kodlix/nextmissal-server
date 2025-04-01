@@ -14,6 +14,7 @@ import { AuthService } from '@core/services/auth.service';
 import { IUserRepository } from '@core/repositories/user.repository.interface';
 import { IRoleRepository } from '@core/repositories/role.repository.interface';
 import { AuthTokenResponse } from '@application/dtos/responses/user.response';
+import { UserMapper } from '@application/mappers/user.mapper';
 
 @Injectable()
 @CommandHandler(VerifyEmailCommand)
@@ -54,7 +55,7 @@ export class VerifyEmailCommandHandler implements ICommandHandler<VerifyEmailCom
       const roleWithPermissions = await this.roleRepository.findById(role.id);
       if (roleWithPermissions && roleWithPermissions.permissions) {
         roleWithPermissions.permissions.forEach(permission => {
-          userPermissions.add(permission.name);
+          userPermissions.add(permission.getStringName());
         });
       }
     }
@@ -62,7 +63,7 @@ export class VerifyEmailCommandHandler implements ICommandHandler<VerifyEmailCom
     // 4. Generate JWT tokens
     const payload = { 
       sub: user.id, 
-      email: user.email,
+      email: user.email.getValue(),
       emailVerified: true,
       roles: user.roles.map(role => role.name),
       permissions: Array.from(userPermissions),
@@ -80,17 +81,7 @@ export class VerifyEmailCommandHandler implements ICommandHandler<VerifyEmailCom
     return {
       accessToken,
       refreshToken,
-      user: {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        emailVerified: true,
-        roles: user.roles.map(role => ({
-          id: role.id,
-          name: role.name,
-        })),
-      },
+      user: UserMapper.toAuthResponse(user, true),
     };
   }
 }

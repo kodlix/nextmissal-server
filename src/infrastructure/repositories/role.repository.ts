@@ -4,6 +4,8 @@ import { Permission } from '@core/entities/permission.entity';
 import { IRoleRepository } from '@core/repositories/role.repository.interface';
 import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 import { Prisma, Role as PrismaRole, RolePermission as PrismaRolePermission, Permission as PrismaPermission } from '@prisma/client';
+import { ResourceAction, ActionType } from '@core/value-objects/resource-action.vo';
+import { BaseRepository } from './base.repository';
 
 // Define a type for Role with its related permissions
 type RoleWithPermissions = PrismaRole & {
@@ -13,8 +15,10 @@ type RoleWithPermissions = PrismaRole & {
 };
 
 @Injectable()
-export class RoleRepository implements IRoleRepository {
-  constructor(private readonly prisma: PrismaService) {}
+export class RoleRepository extends BaseRepository<Role> implements IRoleRepository {
+  constructor(private readonly prisma: PrismaService) {
+    super();
+  }
 
   async findById(id: string): Promise<Role | null> {
     const roleRecord = await this.prisma.role.findUnique({
@@ -171,14 +175,20 @@ export class RoleRepository implements IRoleRepository {
     if (record.permissions) {
       role.permissions = record.permissions.map(permissionRelation => {
         const permissionRecord = permissionRelation.permission;
-        const permission = new Permission(
-          permissionRecord.name,
-          permissionRecord.description,
+        
+        // Create ResourceAction value object
+        const resourceAction = new ResourceAction(
           permissionRecord.resource,
-          permissionRecord.action,
+          permissionRecord.action as ActionType
         );
         
-        permission.id = permissionRecord.id;
+        // Create Permission with ResourceAction
+        const permission = new Permission(
+          resourceAction,
+          permissionRecord.description,
+          permissionRecord.id
+        );
+        
         permission.createdAt = permissionRecord.createdAt;
         permission.updatedAt = permissionRecord.updatedAt;
         
