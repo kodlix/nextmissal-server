@@ -11,6 +11,7 @@ import { UnauthorizedException, Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { IUserRepository } from '@core/repositories/user.repository.interface';
+import { IRoleRepository } from '@core/repositories/role.repository.interface';
 import { AuthService } from '@core/services/auth.service';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -20,6 +21,8 @@ export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenC
   constructor(
     @Inject('UserRepository')
     private readonly userRepository: IUserRepository,
+    @Inject('RoleRepository')
+    private readonly roleRepository: IRoleRepository,
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
@@ -43,11 +46,23 @@ export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenC
     // Revoke current refresh token
     await this.authService.revokeRefreshToken(refreshToken);
 
+    // Collect all permissions from all user roles
+    const userPermissions = new Set<string>();
+    for (const role of user.roles) {
+      const roleWithPermissions = await this.roleRepository.findById(role.id);
+      if (roleWithPermissions && roleWithPermissions.permissions) {
+        roleWithPermissions.permissions.forEach(permission => {
+          userPermissions.add(permission.name);
+        });
+      }
+    }
+
     // Generate new JWT tokens
     const payload = { 
       sub: user.id, 
       email: user.email,
       roles: user.roles.map(role => role.name),
+      permissions: Array.from(userPermissions),
     };
     
     const accessToken = this.jwtService.sign(payload, {
