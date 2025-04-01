@@ -157,6 +157,101 @@ nestjs-template/
 └── .env.example - Example environment variables
 ```
 
+### ERD
+The following is the Entity-Relationship Diagram (ERD) for the application:
+
+```mermaid
+erDiagram
+    User {
+        string id PK
+        string email UK
+        string passwordHash
+        string firstName
+        string lastName
+        boolean isActive
+        boolean otpEnabled
+        string otpSecret
+        datetime lastLoginAt
+        datetime createdAt
+        datetime updatedAt
+    }
+    
+    Role {
+        string id PK
+        string name UK
+        string description
+        boolean isDefault
+        datetime createdAt
+        datetime updatedAt
+    }
+    
+    Permission {
+        string id PK
+        string name UK
+        string description
+        string resource
+        string action
+        datetime createdAt
+        datetime updatedAt
+    }
+    
+    UserRole {
+        string userId PK,FK
+        string roleId PK,FK
+        datetime createdAt
+    }
+    
+    RolePermission {
+        string roleId PK,FK
+        string permissionId PK,FK
+        datetime createdAt
+    }
+    
+    Otp {
+        string id PK
+        string userId FK
+        string secret
+        datetime expiresAt
+        datetime verifiedAt
+        datetime createdAt
+    }
+    
+    RefreshToken {
+        string id PK
+        string userId FK
+        string token UK
+        datetime expiresAt
+        datetime revokedAt
+        datetime createdAt
+    }
+    
+    EmailVerification {
+        string id PK
+        string email
+        string code
+        datetime expiresAt
+        datetime verifiedAt
+        datetime createdAt
+    }
+    
+    PasswordReset {
+        string id PK
+        string userId FK
+        string email
+        string token UK
+        datetime expiresAt
+        datetime usedAt
+        datetime createdAt
+    }
+    
+    User ||--o{ UserRole : has
+    Role ||--o{ UserRole : has
+    User ||--o{ Otp : has
+    User ||--o{ RefreshToken : has
+    User ||--o{ PasswordReset : has
+    Role ||--o{ RolePermission : has
+    Permission ||--o{ RolePermission : has
+```
 ### Clean Architecture
 
 The application follows a clean architecture approach with the following layers:
