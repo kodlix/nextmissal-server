@@ -1,3 +1,5 @@
+![build status](https://github.com/v-checha/nestjs-template/actions/workflows/main.yml/badge.svg)
+
 # NestJS Template Documentation
 
 A comprehensive guide to the NestJS template with authentication, authorization, email verification, and more.
