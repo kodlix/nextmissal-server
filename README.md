@@ -38,9 +38,10 @@ A comprehensive guide to the NestJS template with authentication, authorization,
     - [Migrations](#migrations)
     - [Seeds](#seeds)
     - [Default Credentials](#default-credentials)
-10. [Email Service](#email-service)
-11. [Docker Setup](#docker-setup)
-12. [License](#license)
+10. [Test](#test)
+11. [Email Service](#email-service)
+12. [Docker Setup](#docker-setup)
+13. [License](#license)
 
 ## Introduction
 
@@ -893,6 +894,19 @@ The application includes an email service built with Nodemailer. The email servi
 - Welcome emails
 
 In development mode, the template uses MailHog to catch and display emails. After starting the services with Docker Compose, you can access the MailHog web interface at http://localhost:8025 to view sent emails.
+
+## Test
+
+The test implementation follows best practices including:
+- Clear Arrange/Act/Assert structure
+- Mocking of dependencies
+- Testing both happy and error paths
+- Clear test naming and organization
+
+You can run the tests using the npm scripts defined in package.json:
+- `npm test` - Run unit tests
+- `npm run test:cov` - Run with coverage
+- `npm run test:e2e` - Run end-to-end tests
 
 ## Docker Setup
 
