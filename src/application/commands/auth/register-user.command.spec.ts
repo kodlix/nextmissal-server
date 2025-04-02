@@ -1,0 +1,109 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { RegisterUserCommand, RegisterUserCommandHandler } from './register-user.command';
+import { UserService } from '@core/services/user.service';
+import { UserMapper } from '@application/mappers/user.mapper';
+import { User } from '@core/entities/user.entity';
+import { Email } from '@core/value-objects/email.vo';
+import { FirstName, LastName } from '@core/value-objects/name.vo';
+
+// Mock user service
+const mockUserService = {
+  createUser: jest.fn(),
+};
+
+describe('RegisterUserCommandHandler', () => {
+  let handler: RegisterUserCommandHandler;
+  let userService: UserService;
+
+  beforeEach(async () => {
+    // Reset mocks before each test
+    jest.clearAllMocks();
+    
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        RegisterUserCommandHandler,
+        { provide: UserService, useValue: mockUserService },
+      ],
+    }).compile();
+
+    handler = module.get<RegisterUserCommandHandler>(RegisterUserCommandHandler);
+    userService = module.get<UserService>(UserService);
+    
+    // Mock UserMapper
+    jest.spyOn(UserMapper, 'toBaseResponse').mockImplementation((user) => {
+      return {
+        id: user.id,
+        email: user.email.getValue(),
+        firstName: user.firstName.getValue(),
+        lastName: user.lastName.getValue(),
+      };
+    });
+  });
+
+  it('should be defined', () => {
+    expect(handler).toBeDefined();
+  });
+
+  it('should register a new user and return user base response', async () => {
+    // Arrange
+    const command = new RegisterUserCommand({
+      email: 'new@example.com',
+      password: 'Password123!',
+      firstName: 'New',
+      lastName: 'User',
+    });
+    
+    const createdUser = new User(
+      new Email('new@example.com'),
+      'hashedPassword',
+      new FirstName('New'),
+      new LastName('User'),
+      '550e8400-e29b-41d4-a716-446655440000'
+    );
+    
+    mockUserService.createUser.mockResolvedValue(createdUser);
+
+    // Act
+    const result = await handler.execute(command);
+
+    // Assert
+    expect(result).toEqual({
+      id: createdUser.id,
+      email: createdUser.email.getValue(),
+      firstName: createdUser.firstName.getValue(),
+      lastName: createdUser.lastName.getValue(),
+    });
+    
+    expect(userService.createUser).toHaveBeenCalledWith(
+      'new@example.com',
+      'Password123!',
+      'New',
+      'User'
+    );
+    
+    expect(UserMapper.toBaseResponse).toHaveBeenCalledWith(createdUser);
+  });
+
+  it('should pass through errors from userService.createUser', async () => {
+    // Arrange
+    const command = new RegisterUserCommand({
+      email: 'existing@example.com',
+      password: 'Password123!',
+      firstName: 'Existing',
+      lastName: 'User',
+    });
+    
+    const error = new Error('Email already in use');
+    mockUserService.createUser.mockRejectedValue(error);
+
+    // Act & Assert
+    await expect(handler.execute(command)).rejects.toThrow(error);
+    
+    expect(userService.createUser).toHaveBeenCalledWith(
+      'existing@example.com',
+      'Password123!',
+      'Existing',
+      'User'
+    );
+  });
+});
