@@ -2,7 +2,7 @@
  * Mock implementations for repositories used in tests
  */
 
-import { userFixture, adminFixture } from '../fixtures/user.fixture';
+import { userFixture, adminFixture } from '../fixtures/user.fixtures';
 
 // Mock User Repository
 export const mockUserRepository = {
@@ -14,7 +14,7 @@ export const mockUserRepository = {
     }
     return Promise.resolve(null);
   }),
-  
+
   findByEmail: jest.fn().mockImplementation((email) => {
     if (email === userFixture.email) {
       return Promise.resolve(userFixture);
@@ -23,7 +23,7 @@ export const mockUserRepository = {
     }
     return Promise.resolve(null);
   }),
-  
+
   create: jest.fn().mockImplementation((userData) => {
     return Promise.resolve({
       id: '550e8400-e29b-41d4-a716-446655440099',
@@ -33,14 +33,14 @@ export const mockUserRepository = {
       isActive: true,
     });
   }),
-  
+
   update: jest.fn().mockImplementation((id, userData) => {
     return Promise.resolve({
       ...(id === userFixture.id ? userFixture : adminFixture),
       ...userData,
     });
   }),
-  
+
   findAll: jest.fn().mockResolvedValue([userFixture, adminFixture]),
 };
 
@@ -72,7 +72,7 @@ export const mockRoleRepository = {
     }
     return Promise.resolve(null);
   }),
-  
+
   findByName: jest.fn().mockImplementation((name) => {
     if (name === 'admin') {
       return Promise.resolve({
@@ -99,7 +99,7 @@ export const mockRoleRepository = {
     }
     return Promise.resolve(null);
   }),
-  
+
   findDefault: jest.fn().mockResolvedValue({
     id: '2',
     name: 'user',
@@ -109,7 +109,7 @@ export const mockRoleRepository = {
       { id: '1', name: 'user:read' },
     ],
   }),
-  
+
   findAll: jest.fn().mockResolvedValue([
     {
       id: '1',
@@ -132,7 +132,7 @@ export const mockRoleRepository = {
       ],
     },
   ]),
-  
+
   create: jest.fn().mockImplementation((roleData) => {
     return Promise.resolve({
       id: '3',
@@ -140,9 +140,9 @@ export const mockRoleRepository = {
       permissions: [],
     });
   }),
-  
+
   update: jest.fn().mockImplementation((id, roleData) => {
-    const baseRole = id === '1' 
+    const baseRole = id === '1'
       ? {
           id: '1',
           name: 'admin',
@@ -163,13 +163,13 @@ export const mockRoleRepository = {
             { id: '1', name: 'user:read' },
           ],
         };
-        
+
     return Promise.resolve({
       ...baseRole,
       ...roleData,
     });
   }),
-  
+
   delete: jest.fn().mockResolvedValue(true),
 };
 
@@ -187,7 +187,7 @@ export const mockRefreshTokenRepository = {
     }
     return Promise.resolve(null);
   }),
-  
+
   create: jest.fn().mockImplementation((tokenData) => {
     return Promise.resolve({
       id: '1',
@@ -195,9 +195,9 @@ export const mockRefreshTokenRepository = {
       createdAt: new Date(),
     });
   }),
-  
+
   deleteByUserId: jest.fn().mockResolvedValue(true),
-  
+
   deleteByToken: jest.fn().mockResolvedValue(true),
 };
 
@@ -212,10 +212,10 @@ export const mockPermissionRepository = {
       '5': { id: '5', name: 'role:write' },
       '6': { id: '6', name: 'role:delete' },
     };
-    
+
     return Promise.resolve(permissions[id] || null);
   }),
-  
+
   findByName: jest.fn().mockImplementation((name) => {
     const permissionMapping = {
       'user:read': { id: '1', name: 'user:read' },
@@ -225,10 +225,10 @@ export const mockPermissionRepository = {
       'role:write': { id: '5', name: 'role:write' },
       'role:delete': { id: '6', name: 'role:delete' },
     };
-    
+
     return Promise.resolve(permissionMapping[name] || null);
   }),
-  
+
   findAll: jest.fn().mockResolvedValue([
     { id: '1', name: 'user:read' },
     { id: '2', name: 'user:write' },
@@ -253,7 +253,7 @@ export const mockEmailVerificationRepository = {
     }
     return Promise.resolve(null);
   }),
-  
+
   create: jest.fn().mockImplementation((data) => {
     return Promise.resolve({
       id: '1',
@@ -262,7 +262,7 @@ export const mockEmailVerificationRepository = {
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
     });
   }),
-  
+
   update: jest.fn().mockImplementation((id, data) => {
     return Promise.resolve({
       id,
@@ -287,7 +287,7 @@ export const mockOtpRepository = {
     }
     return Promise.resolve(null);
   }),
-  
+
   create: jest.fn().mockImplementation((data) => {
     return Promise.resolve({
       id: '1',
@@ -295,7 +295,7 @@ export const mockOtpRepository = {
       isVerified: false,
     });
   }),
-  
+
   update: jest.fn().mockImplementation((id, data) => {
     return Promise.resolve({
       id,
@@ -304,7 +304,7 @@ export const mockOtpRepository = {
       ...data,
     });
   }),
-  
+
   delete: jest.fn().mockResolvedValue(true),
 };
 
@@ -322,7 +322,7 @@ export const mockPasswordResetRepository = {
     }
     return Promise.resolve(null);
   }),
-  
+
   create: jest.fn().mockImplementation((data) => {
     return Promise.resolve({
       id: '1',
@@ -331,7 +331,7 @@ export const mockPasswordResetRepository = {
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
     });
   }),
-  
+
   update: jest.fn().mockImplementation((id, data) => {
     return Promise.resolve({
       id,

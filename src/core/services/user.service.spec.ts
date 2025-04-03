@@ -3,10 +3,10 @@ import { UserService } from './user.service';
 import * as bcrypt from 'bcrypt';
 
 // Mocks
-import { createMockUserRepository, createMockRoleRepository } from '../../test/mocks/repositories.mock';
+import { createMockUserRepository, createMockRoleRepository } from '../../test/mocks/repositories.factory';
 
 // Fixtures
-import { userFixtures } from '../../test/fixtures/user.fixture';
+import { userFixtures } from '../../test/fixtures/user.fixtures';
 
 // Exceptions
 import {
@@ -62,6 +62,17 @@ describe('UserService', () => {
       
       userRepository.findByEmail.mockResolvedValue(null); // No existing user
       roleRepository.findDefaultRole.mockResolvedValue(userFixtures.roles.userRole());
+      userRepository.create.mockImplementationOnce(() => {
+        return Promise.resolve({
+          id: '550e8400-e29b-41d4-a716-446655440099',
+          email: { getValue: () => email },
+          firstName: { getValue: () => firstName },
+          lastName: { getValue: () => lastName },
+          passwordHash: 'hashedPassword',
+          roles: [{ id: '2', name: 'user' }],
+          isActive: true,
+        });
+      });
       
       // Act
       const result = await service.createUser(email, password, firstName, lastName);
@@ -88,6 +99,17 @@ describe('UserService', () => {
       
       userRepository.findByEmail.mockResolvedValue(null); // No existing user
       roleRepository.findDefaultRole.mockResolvedValue(null); // No default role
+      userRepository.create.mockImplementationOnce(() => {
+        return Promise.resolve({
+          id: '550e8400-e29b-41d4-a716-446655440099',
+          email: { getValue: () => email },
+          firstName: { getValue: () => firstName },
+          lastName: { getValue: () => lastName },
+          passwordHash: 'hashedPassword',
+          roles: [], // No roles
+          isActive: true,
+        });
+      });
       
       // Act
       const result = await service.createUser(email, password, firstName, lastName);
@@ -307,7 +329,10 @@ describe('UserService', () => {
       const userId = '550e8400-e29b-41d4-a716-446655440000';
       const currentPassword = 'OldPass123!';
       const newPassword = 'NewPass456!';
-      const user = userFixtures.users.validUser();
+      const user = {
+        ...userFixtures.users.validUser(),
+        passwordHash: 'hashedPassword'
+      };
       
       userRepository.findById.mockResolvedValue(user);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true); // Current password is correct
@@ -317,7 +342,7 @@ describe('UserService', () => {
 
       // Assert
       expect(userRepository.findById).toHaveBeenCalledWith(userId);
-      expect(bcrypt.compare).toHaveBeenCalledWith(currentPassword, user.passwordHash);
+      expect(bcrypt.compare).toHaveBeenCalledWith(currentPassword, 'hashedPassword');
       expect(bcrypt.hash).toHaveBeenCalledWith(newPassword, 'mockedSalt');
       expect(userRepository.update).toHaveBeenCalled();
       expect(result.passwordHash).toBe('hashedPassword');
@@ -401,6 +426,12 @@ describe('UserService', () => {
       
       userRepository.findById.mockResolvedValue(user);
       roleRepository.findById.mockResolvedValue(role);
+      userRepository.update.mockImplementationOnce((user) => {
+        return Promise.resolve({
+          ...user,
+          roles: [{ id: roleId, name: 'user' }]
+        });
+      });
       
       // Act
       const result = await service.assignRoleToUser(userId, roleId);
@@ -420,6 +451,12 @@ describe('UserService', () => {
       const inactiveUser = userFixtures.users.inactiveUser();
       
       userRepository.findById.mockResolvedValue(inactiveUser);
+      userRepository.update.mockImplementationOnce(() => {
+        return Promise.resolve({
+          ...inactiveUser,
+          isActive: true
+        });
+      });
       
       // Act
       const result = await service.activateUser(userId);
@@ -436,6 +473,12 @@ describe('UserService', () => {
       const activeUser = userFixtures.users.validUser();
       
       userRepository.findById.mockResolvedValue(activeUser);
+      userRepository.update.mockImplementationOnce(() => {
+        return Promise.resolve({
+          ...activeUser,
+          isActive: false
+        });
+      });
       
       // Act
       const result = await service.deactivateUser(userId);

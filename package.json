@@ -2,7 +2,9 @@
   "name": "nestjs-template",
   "version": "0.1.0",
   "description": "NestJS Clean Architecture Template with Auth, Users and Roles",
-  "author": "",
+  "author": "Valerii Checha",
+  "email": "chechavalera@gmail.com",
+  "url": "https://www.linkedin.com/in/v-checha/",
   "private": true,
   "license": "MIT",
   "scripts": {

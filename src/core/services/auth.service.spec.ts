@@ -10,11 +10,11 @@ import {
   createMockRefreshTokenRepository,
   createMockEmailVerificationRepository,
   createMockPasswordResetRepository
-} from '../../test/mocks/repositories.mock';
-import { createMockConfigService } from '../../test/mocks/config.mock';
+} from '../../test/mocks/repositories.factory';
+import { createMockConfigService } from '../../test/mocks/config.factory';
 
 // Fixtures
-import { authFixtures } from '../../test/fixtures/auth.fixture';
+import { authFixtures } from '../../test/fixtures/auth.fixtures';
 
 // Exceptions
 import {
