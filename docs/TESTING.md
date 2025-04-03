@@ -1,179 +1,175 @@
-# Testing Guide for NestJS Template
+# Testing Guide
 
-This guide explains how to run and write tests for the NestJS Template application.
+This document provides guidelines for writing and running tests in the NestJS Clean Architecture Template.
 
-## Table of Contents
+## Types of Tests
 
-1. [Testing Overview](#testing-overview)
-2. [Running Tests](#running-tests)
-3. [Test Types](#test-types)
-4. [Test Structure](#test-structure)
-5. [Test Helpers and Mocks](#test-helpers-and-mocks)
-6. [Writing Tests](#writing-tests)
-7. [Test Coverage](#test-coverage)
+The project supports several types of tests:
 
-## Testing Overview
-
-The application uses Jest as the testing framework and follows these testing principles:
-
-- **Unit Tests**: Test individual components in isolation (services, value objects)
-- **Integration Tests**: Test interactions between components (repositories with database)
-- **End-to-End Tests**: Test complete request flows through the API endpoints
+1. **Unit Tests**: Tests for individual components or classes
+2. **Integration Tests**: Tests for interactions between components
+3. **End-to-End (E2E) Tests**: Tests for the full application from the client perspective
 
 ## Running Tests
 
 ### Unit and Integration Tests
 
+Run the unit and integration tests with the following command:
+
 ```bash
-# Run all unit tests
 npm test
+```
 
-# Run tests in watch mode (useful during development)
+For watch mode, which automatically reruns tests when files change:
+
+```bash
 npm run test:watch
+```
 
-# Run tests with coverage report
+To check test coverage:
+
+```bash
 npm run test:cov
 ```
 
 ### End-to-End Tests
 
-```bash
-# Start the required dependencies (database, etc.)
-docker-compose up -d
+Run the e2e tests with:
 
-# Run e2e tests
+```bash
 npm run test:e2e
 ```
 
-## Test Types
+## Test Configuration
 
-### Unit Tests
+- **Unit tests**: Configured in the `jest` section of `package.json`
+- **E2E tests**: Configured in `test/jest-e2e.json`
 
-- Located with the source files (*.spec.ts)
-- Focus on individual classes and functions
-- Use mocks for all dependencies
-- Should be fast and not require external services
+## Directory Structure
 
-### Integration Tests
-
-- Typically test interactions with infrastructure (database, external services)
-- May require external services to be running
-
-### End-to-End Tests
-
-- Located in the `/test` directory (*.e2e-spec.ts)
-- Test complete request flows and API endpoints
-- Require the application to be running with dependencies
-
-## Test Structure
-
-Tests should follow the AAA pattern:
-
-1. **Arrange**: Set up the test conditions
-2. **Act**: Perform the action being tested
-3. **Assert**: Verify the expected outcomes
-
-Example:
-
-```typescript
-it('should authenticate a valid user', async () => {
-  // Arrange
-  const email = 'test@example.com';
-  const password = 'ValidPassword123!';
-  userRepository.findByEmail.mockResolvedValue(mockUser);
-  bcrypt.compare.mockResolvedValue(true);
-  
-  // Act
-  const result = await authService.authenticate(email, password);
-  
-  // Assert
-  expect(result).toBeDefined();
-  expect(result.accessToken).toBeDefined();
-  expect(userRepository.findByEmail).toHaveBeenCalledWith(email);
-});
-```
-
-## Test Helpers and Mocks
-
-The project provides several helpers and mocks to simplify testing:
-
-### Repository Mocks
-
-Located in `/src/test/mocks/repositories.mock.ts`. Use these to mock repository dependencies:
-
-```typescript
-import { createMockUserRepository } from '../../test/mocks/repositories.mock';
-
-const userRepository = createMockUserRepository();
-userRepository.findById.mockResolvedValue(mockUser);
-```
-
-### Test Fixtures
-
-Located in `/src/test/fixtures/`. These provide standard test data:
-
-```typescript
-import { authFixtures } from '../../test/fixtures/auth.fixture';
-
-const user = authFixtures.users.validUser();
-```
-
-### Config Mocks
-
-Located in `/src/test/mocks/config.mock.ts`. Use these to mock configuration:
-
-```typescript
-import { createMockConfigService } from '../../test/mocks/config.mock';
-
-const configService = createMockConfigService();
-```
+- Unit and integration tests are stored next to the files they test with a `.spec.ts` suffix.
+- E2E tests are stored in the `/test` directory with a `.e2e-spec.ts` suffix.
+- Test fixtures and mocks should be placed in `/src/test` directory:
+  - `/src/test/fixtures`: Test data for tests
+  - `/src/test/mocks`: Mock implementations of classes and services
 
 ## Writing Tests
 
-### Testing Services
+### Unit Tests
 
-1. Mock all dependencies
-2. Test all public methods
-3. Test happy paths, error paths, and edge cases
+Unit tests focus on testing individual classes or functions in isolation.
 
-Example: See `/src/core/services/auth.service.spec.ts`
+```typescript
+// Example unit test for a value object
+import { Email } from './email.vo';
 
-### Testing Controllers
+describe('Email Value Object', () => {
+  it('should create a valid email', () => {
+    const email = new Email('test@example.com');
+    expect(email).toBeDefined();
+    expect(email.getValue()).toBe('test@example.com');
+  });
 
-1. Test the integration with services via mocks
-2. Test request validation
-3. Test response mapping
-
-### Testing Repositories
-
-1. Mock the Prisma service
-2. Test mapping between domain entities and database models
-3. Test error handling
-
-Example: See `/src/infrastructure/repositories/user.repository.spec.ts`
-
-### Testing Value Objects
-
-1. Test validation rules
-2. Test value normalization
-3. Test equality methods
-
-Example: See `/src/core/value-objects/email.vo.spec.ts`
-
-## Test Coverage
-
-The project aims for high test coverage, but focuses on meaningful coverage rather than just metrics.
-
-Key areas that must have high coverage:
-- Security-critical code (authentication, authorization)
-- Business logic and domain rules
-- Value object validation
-- Repository mapping logic
-
-To view the coverage report:
-
-```bash
-npm run test:cov
+  it('should throw error for invalid email', () => {
+    expect(() => new Email('not-an-email')).toThrow();
+  });
+});
 ```
 
-The report will be available in the `/coverage` directory.
+### Mocking Dependencies
+
+Use Jest's mocking capabilities to isolate components:
+
+```typescript
+// Example of mocking a repository
+jest.mock('@infrastructure/repositories/user.repository', () => ({
+  UserRepository: jest.fn().mockImplementation(() => ({
+    findById: jest.fn().mockResolvedValue({
+      id: 'user-id',
+      email: 'test@example.com',
+      // other properties
+    }),
+    // other repository methods
+  })),
+}));
+```
+
+For more complex mocks, place them in the `/src/test/mocks` directory.
+
+### E2E Tests
+
+E2E tests should test the application through its HTTP endpoints:
+
+```typescript
+// Example e2e test
+describe('AuthController (e2e)', () => {
+  // Setup code...
+
+  it('should register a new user', () => {
+    return request(app.getHttpServer())
+      .post('/api/auth/register')
+      .send({
+        email: 'test@example.com',
+        password: 'Password123!',
+        firstName: 'Test',
+        lastName: 'User'
+      })
+      .expect(201)
+      .expect(res => {
+        expect(res.body).toHaveProperty('id');
+        expect(res.body).toHaveProperty('email', 'test@example.com');
+      });
+  });
+});
+```
+
+## Testing with the Database
+
+The e2e tests provided in the project often skip tests that need real database access. This is because e2e tests typically run against an in-memory server without a database.
+
+When you need to test with a real database:
+
+1. Use a separate test database
+2. Set up a testing module with a real database connection or a test database like SQLite
+3. Make sure to reset the database state before each test
+
+Alternatively, you can build a mock database service for testing.
+
+## Test Fixtures
+
+Store common test data in fixtures to reuse across tests:
+
+```typescript
+// Example fixture in /src/test/fixtures/user.fixture.ts
+export const userFixture = {
+  id: '550e8400-e29b-41d4-a716-446655440000',
+  email: 'test@example.com',
+  password: 'hashedPassword123',
+  firstName: 'Test',
+  lastName: 'User',
+  isActive: true,
+  roles: ['user'],
+  permissions: ['user:read'],
+};
+```
+
+Then import and use in tests:
+
+```typescript
+import { userFixture } from '@test/fixtures/user.fixture';
+
+// use userFixture in test
+```
+
+## Best Practices
+
+1. **Test in isolation**: Unit tests should test only one component at a time.
+2. **Use descriptive test names**: Name your tests clearly to describe what they are testing.
+3. **Arrange, Act, Assert**: Structure your tests with clear setup, execution, and verification phases.
+4. **Avoid test interdependence**: Each test should be able to run independently.
+5. **Test error cases**: Don't just test the happy path; test error conditions too.
+6. **Keep tests fast**: Tests should run quickly to encourage developers to run them often.
+7. **Use test coverage tools**: Identify untested code with coverage reports.
+8. **Avoid testing private methods directly**: Test the public interface and behavior.
+9. **Use appropriate granularity**: Unit tests for detailed logic, integration and e2e tests for system behavior.
+10. **Mock external dependencies**: Use test doubles for databases, APIs, file systems, etc.

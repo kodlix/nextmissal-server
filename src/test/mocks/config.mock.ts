@@ -1,27 +1,42 @@
-import { ConfigService } from '@nestjs/config';
-
 /**
- * Creates a mock for the NestJS ConfigService
+ * Mock implementations for ConfigService used in tests
  */
-export const createMockConfigService = (): { get: jest.Mock<any, any, any> } => ({
-  get: jest.fn().mockImplementation((key: string, defaultValue?: any) => {
+
+export const mockConfigService = {
+  get: jest.fn().mockImplementation((key, defaultValue) => {
     const config = {
-      // OTP config
-      OTP_SECRET: 'test-otp-secret',
-      OTP_EXPIRATION: 5,
-      OTP_STEP: 30,
-      OTP_DIGITS: 6,
-
-      // JWT config
-      JWT_SECRET: 'test-jwt-secret',
-      JWT_ACCESS_EXPIRATION: '15m',
-      JWT_REFRESH_EXPIRATION: '7d',
-
-      // App config
-      NODE_ENV: 'test',
+      // App configuration
       PORT: 3000,
+      NODE_ENV: 'test',
+      
+      // Auth configuration
+      JWT_SECRET: 'test-jwt-secret',
+      JWT_EXPIRATION: '1h',
+      REFRESH_TOKEN_EXPIRATION: '7d',
+      
+      // Database configuration
+      DATABASE_URL: 'postgresql://test:test@localhost:5432/test_db',
+      
+      // Email configuration
+      SMTP_HOST: 'smtp.example.com',
+      SMTP_PORT: 587,
+      SMTP_USER: 'test@example.com',
+      SMTP_PASSWORD: 'test-password',
+      SMTP_FROM: 'test@example.com',
+      
+      // 2FA configuration
+      OTP_ISSUER: 'NestJSTemplate',
+      
+      // Frontend configuration
+      FRONTEND_URL: 'http://localhost:3000',
+      
+      // Email verification configuration
+      EMAIL_VERIFICATION_EXPIRATION: '24h',
+      
+      // Password reset configuration
+      PASSWORD_RESET_EXPIRATION: '1h',
     };
-
-    return config[key] ?? defaultValue;
+    
+    return config[key] || defaultValue;
   }),
-});
+};

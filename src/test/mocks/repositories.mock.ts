@@ -1,152 +1,344 @@
-import { IUserRepository } from '@core/repositories/user.repository.interface';
-import { IOtpRepository } from '@core/repositories/otp.repository.interface';
-import { IRefreshTokenRepository } from '@core/repositories/refresh-token.repository.interface';
-import { IEmailVerificationRepository } from '@core/repositories/email-verification.repository.interface';
-import { IPasswordResetRepository } from '@core/repositories/password-reset.repository.interface';
-import { IPermissionRepository } from '@core/repositories/permission.repository.interface';
-import { IRoleRepository } from '@core/repositories/role.repository.interface';
-
 /**
- * Creates a mock repository with common repository methods
+ * Mock implementations for repositories used in tests
  */
-export const createMockRepository = <T>() => ({
-  create: jest.fn().mockImplementation((entity) => Promise.resolve(entity)),
-  findById: jest.fn().mockImplementation((id) => Promise.resolve(null)),
-  findAll: jest.fn().mockImplementation(() => Promise.resolve([])),
-  update: jest.fn().mockImplementation((entity) => Promise.resolve(entity)),
-  delete: jest.fn().mockImplementation((id) => Promise.resolve(true)),
-});
 
-/**
- * Creates a mock user repository
- */
-export const createMockUserRepository = (): {
-  create: jest.Mock<any, any, any>;
-  findById: jest.Mock<any, any, any>;
-  findAll: jest.Mock<any, any, any>;
-  update: jest.Mock<any, any, any>;
-  delete: jest.Mock<any, any, any>;
-  findByEmail: jest.Mock<any, any, any>;
-  findByIds: jest.Mock<any, any, any>;
-  findWithRoles: jest.Mock<any, any, any>;
-  addRole: jest.Mock<any, any, any>;
-  removeRole: jest.Mock<any, any, any>
-} => ({
-  ...createMockRepository(),
-  findByEmail: jest.fn().mockImplementation((email) => Promise.resolve(null)),
-  findByIds: jest.fn().mockImplementation((ids) => Promise.resolve([])),
-  findWithRoles: jest.fn().mockImplementation((id) => Promise.resolve(null)),
-  addRole: jest.fn().mockImplementation((userId, roleId) => Promise.resolve(true)),
-  removeRole: jest.fn().mockImplementation((userId, roleId) => Promise.resolve(true)),
-});
+import { userFixture, adminFixture } from '../fixtures/user.fixture';
 
-/**
- * Creates a mock OTP repository
- */
-export const createMockOtpRepository = (): {
-  create: jest.Mock<any, any, any>;
-  findById: jest.Mock<any, any, any>;
-  findAll: jest.Mock<any, any, any>;
-  update: jest.Mock<any, any, any>;
-  delete: jest.Mock<any, any, any>;
-  findByUserId: jest.Mock<any, any, any>;
-  deleteByUserId: jest.Mock<any, any, any>
-} => ({
-  ...createMockRepository(),
-  findByUserId: jest.fn().mockImplementation((userId) => Promise.resolve(null)),
-  deleteByUserId: jest.fn().mockImplementation((userId) => Promise.resolve(true)),
-});
+// Mock User Repository
+export const mockUserRepository = {
+  findById: jest.fn().mockImplementation((id) => {
+    if (id === userFixture.id) {
+      return Promise.resolve(userFixture);
+    } else if (id === adminFixture.id) {
+      return Promise.resolve(adminFixture);
+    }
+    return Promise.resolve(null);
+  }),
+  
+  findByEmail: jest.fn().mockImplementation((email) => {
+    if (email === userFixture.email) {
+      return Promise.resolve(userFixture);
+    } else if (email === adminFixture.email) {
+      return Promise.resolve(adminFixture);
+    }
+    return Promise.resolve(null);
+  }),
+  
+  create: jest.fn().mockImplementation((userData) => {
+    return Promise.resolve({
+      id: '550e8400-e29b-41d4-a716-446655440099',
+      ...userData,
+      roles: ['user'],
+      permissions: ['user:read'],
+      isActive: true,
+    });
+  }),
+  
+  update: jest.fn().mockImplementation((id, userData) => {
+    return Promise.resolve({
+      ...(id === userFixture.id ? userFixture : adminFixture),
+      ...userData,
+    });
+  }),
+  
+  findAll: jest.fn().mockResolvedValue([userFixture, adminFixture]),
+};
 
-/**
- * Creates a mock refresh token repository
- */
-export const createMockRefreshTokenRepository = (): {
-  create: jest.Mock<any, any, any>;
-  findById: jest.Mock<any, any, any>;
-  findAll: jest.Mock<any, any, any>;
-  update: jest.Mock<any, any, any>;
-  delete: jest.Mock<any, any, any>;
-  findByToken: jest.Mock<any, any, any>;
-  deleteByUserId: jest.Mock<any, any, any>;
-  revokeByUserId: jest.Mock<any, any, any>
-} => ({
-  ...createMockRepository(),
-  findByToken: jest.fn().mockImplementation((token) => Promise.resolve(null)),
-  deleteByUserId: jest.fn().mockImplementation((userId) => Promise.resolve(true)),
-  revokeByUserId: jest.fn().mockImplementation((userId) => Promise.resolve(true)),
-});
+// Mock Role Repository
+export const mockRoleRepository = {
+  findById: jest.fn().mockImplementation((id) => {
+    if (id === '1') {
+      return Promise.resolve({
+        id: '1',
+        name: 'admin',
+        description: 'Administrator role',
+        isDefault: false,
+        permissions: [
+          { id: '1', name: 'user:read' },
+          { id: '2', name: 'user:write' },
+          { id: '3', name: 'user:delete' },
+        ],
+      });
+    } else if (id === '2') {
+      return Promise.resolve({
+        id: '2',
+        name: 'user',
+        description: 'Regular user role',
+        isDefault: true,
+        permissions: [
+          { id: '1', name: 'user:read' },
+        ],
+      });
+    }
+    return Promise.resolve(null);
+  }),
+  
+  findByName: jest.fn().mockImplementation((name) => {
+    if (name === 'admin') {
+      return Promise.resolve({
+        id: '1',
+        name: 'admin',
+        description: 'Administrator role',
+        isDefault: false,
+        permissions: [
+          { id: '1', name: 'user:read' },
+          { id: '2', name: 'user:write' },
+          { id: '3', name: 'user:delete' },
+        ],
+      });
+    } else if (name === 'user') {
+      return Promise.resolve({
+        id: '2',
+        name: 'user',
+        description: 'Regular user role',
+        isDefault: true,
+        permissions: [
+          { id: '1', name: 'user:read' },
+        ],
+      });
+    }
+    return Promise.resolve(null);
+  }),
+  
+  findDefault: jest.fn().mockResolvedValue({
+    id: '2',
+    name: 'user',
+    description: 'Regular user role',
+    isDefault: true,
+    permissions: [
+      { id: '1', name: 'user:read' },
+    ],
+  }),
+  
+  findAll: jest.fn().mockResolvedValue([
+    {
+      id: '1',
+      name: 'admin',
+      description: 'Administrator role',
+      isDefault: false,
+      permissions: [
+        { id: '1', name: 'user:read' },
+        { id: '2', name: 'user:write' },
+        { id: '3', name: 'user:delete' },
+      ],
+    },
+    {
+      id: '2',
+      name: 'user',
+      description: 'Regular user role',
+      isDefault: true,
+      permissions: [
+        { id: '1', name: 'user:read' },
+      ],
+    },
+  ]),
+  
+  create: jest.fn().mockImplementation((roleData) => {
+    return Promise.resolve({
+      id: '3',
+      ...roleData,
+      permissions: [],
+    });
+  }),
+  
+  update: jest.fn().mockImplementation((id, roleData) => {
+    const baseRole = id === '1' 
+      ? {
+          id: '1',
+          name: 'admin',
+          description: 'Administrator role',
+          isDefault: false,
+          permissions: [
+            { id: '1', name: 'user:read' },
+            { id: '2', name: 'user:write' },
+            { id: '3', name: 'user:delete' },
+          ],
+        }
+      : {
+          id: '2',
+          name: 'user',
+          description: 'Regular user role',
+          isDefault: true,
+          permissions: [
+            { id: '1', name: 'user:read' },
+          ],
+        };
+        
+    return Promise.resolve({
+      ...baseRole,
+      ...roleData,
+    });
+  }),
+  
+  delete: jest.fn().mockResolvedValue(true),
+};
 
-/**
- * Creates a mock email verification repository
- */
-export const createMockEmailVerificationRepository = (): jest.Mocked<IEmailVerificationRepository> => ({
-  ...createMockRepository(),
-  findByEmail: jest.fn().mockImplementation((email) => Promise.resolve(null)),
-  findByEmailAndCode: jest.fn().mockImplementation((email, code) => Promise.resolve(null)),
-  deleteByEmail: jest.fn().mockImplementation((email) => Promise.resolve(true)),
-});
+// Mock Refresh Token Repository
+export const mockRefreshTokenRepository = {
+  findByToken: jest.fn().mockImplementation((token) => {
+    if (token === '550e8400-e29b-41d4-a716-446655440000') {
+      return Promise.resolve({
+        id: '1',
+        token: '550e8400-e29b-41d4-a716-446655440000',
+        userId: userFixture.id,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+        createdAt: new Date(),
+      });
+    }
+    return Promise.resolve(null);
+  }),
+  
+  create: jest.fn().mockImplementation((tokenData) => {
+    return Promise.resolve({
+      id: '1',
+      ...tokenData,
+      createdAt: new Date(),
+    });
+  }),
+  
+  deleteByUserId: jest.fn().mockResolvedValue(true),
+  
+  deleteByToken: jest.fn().mockResolvedValue(true),
+};
 
-/**
- * Creates a mock password reset repository
- */
-export const createMockPasswordResetRepository = (): {
-  create: jest.Mock<any, any, any>;
-  findById: jest.Mock<any, any, any>;
-  findAll: jest.Mock<any, any, any>;
-  update: jest.Mock<any, any, any>;
-  delete: jest.Mock<any, any, any>;
-  findByToken: jest.Mock<any, any, any>;
-  findByUserId: jest.Mock<any, any, any>;
-  deleteByUserId: jest.Mock<any, any, any>
-} => ({
-  ...createMockRepository(),
-  findByToken: jest.fn().mockImplementation((token) => Promise.resolve(null)),
-  findByUserId: jest.fn().mockImplementation((userId) => Promise.resolve(null)),
-  deleteByUserId: jest.fn().mockImplementation((userId) => Promise.resolve(true)),
-});
+// Mock Permission Repository
+export const mockPermissionRepository = {
+  findById: jest.fn().mockImplementation((id) => {
+    const permissions = {
+      '1': { id: '1', name: 'user:read' },
+      '2': { id: '2', name: 'user:write' },
+      '3': { id: '3', name: 'user:delete' },
+      '4': { id: '4', name: 'role:read' },
+      '5': { id: '5', name: 'role:write' },
+      '6': { id: '6', name: 'role:delete' },
+    };
+    
+    return Promise.resolve(permissions[id] || null);
+  }),
+  
+  findByName: jest.fn().mockImplementation((name) => {
+    const permissionMapping = {
+      'user:read': { id: '1', name: 'user:read' },
+      'user:write': { id: '2', name: 'user:write' },
+      'user:delete': { id: '3', name: 'user:delete' },
+      'role:read': { id: '4', name: 'role:read' },
+      'role:write': { id: '5', name: 'role:write' },
+      'role:delete': { id: '6', name: 'role:delete' },
+    };
+    
+    return Promise.resolve(permissionMapping[name] || null);
+  }),
+  
+  findAll: jest.fn().mockResolvedValue([
+    { id: '1', name: 'user:read' },
+    { id: '2', name: 'user:write' },
+    { id: '3', name: 'user:delete' },
+    { id: '4', name: 'role:read' },
+    { id: '5', name: 'role:write' },
+    { id: '6', name: 'role:delete' },
+  ]),
+};
 
-/**
- * Creates a mock role repository
- */
-export const createMockRoleRepository = (): {
-  create: jest.Mock<any, any, any>;
-  findById: jest.Mock<any, any, any>;
-  findAll: jest.Mock<any, any, any>;
-  update: jest.Mock<any, any, any>;
-  delete: jest.Mock<any, any, any>;
-  findByName: jest.Mock<any, any, any>;
-  findByNames: jest.Mock<any, any, any>;
-  findWithPermissions: jest.Mock<any, any, any>;
-  addPermission: jest.Mock<any, any, any>;
-  removePermission: jest.Mock<any, any, any>;
-  findDefaultRole: jest.Mock<any, any, any>
-} => ({
-  ...createMockRepository(),
-  findByName: jest.fn().mockImplementation((name) => Promise.resolve(null)),
-  findByNames: jest.fn().mockImplementation((names) => Promise.resolve([])),
-  findWithPermissions: jest.fn().mockImplementation((id) => Promise.resolve(null)),
-  addPermission: jest.fn().mockImplementation((roleId, permissionId) => Promise.resolve(true)),
-  removePermission: jest.fn().mockImplementation((roleId, permissionId) => Promise.resolve(true)),
-  findDefaultRole: jest.fn().mockImplementation(() => Promise.resolve(null)),
-});
+// Mock Email Verification Repository
+export const mockEmailVerificationRepository = {
+  findByEmail: jest.fn().mockImplementation((email) => {
+    if (email === 'test@example.com') {
+      return Promise.resolve({
+        id: '1',
+        email: 'test@example.com',
+        code: 'ABC123',
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
+        verified: false,
+      });
+    }
+    return Promise.resolve(null);
+  }),
+  
+  create: jest.fn().mockImplementation((data) => {
+    return Promise.resolve({
+      id: '1',
+      ...data,
+      verified: false,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
+    });
+  }),
+  
+  update: jest.fn().mockImplementation((id, data) => {
+    return Promise.resolve({
+      id,
+      email: 'test@example.com',
+      code: 'ABC123',
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      ...data,
+    });
+  }),
+};
 
-/**
- * Creates a mock permission repository
- */
-export const createMockPermissionRepository = (): {
-  create: jest.Mock<any, any, any>;
-  findById: jest.Mock<any, any, any>;
-  findAll: jest.Mock<any, any, any>;
-  update: jest.Mock<any, any, any>;
-  delete: jest.Mock<any, any, any>;
-  findByName: jest.Mock<any, any, any>;
-  findByResource: jest.Mock<any, any, any>;
-  findByAction: jest.Mock<any, any, any>;
-  findByResourceAndAction: jest.Mock<any, any, any>
-} => ({
-  ...createMockRepository(),
-  findByName: jest.fn().mockImplementation((name) => Promise.resolve(null)),
-  findByResource: jest.fn().mockImplementation((resource) => Promise.resolve([])),
-  findByAction: jest.fn().mockImplementation((action) => Promise.resolve([])),
-  findByResourceAndAction: jest.fn().mockImplementation((resource, action) => Promise.resolve(null)),
-});
+// Mock OTP Repository
+export const mockOtpRepository = {
+  findByUserId: jest.fn().mockImplementation((userId) => {
+    if (userId === userFixture.id) {
+      return Promise.resolve({
+        id: '1',
+        userId: userFixture.id,
+        secret: 'AAABBBCCCDDDEEEFFFGGG',
+        isVerified: true,
+      });
+    }
+    return Promise.resolve(null);
+  }),
+  
+  create: jest.fn().mockImplementation((data) => {
+    return Promise.resolve({
+      id: '1',
+      ...data,
+      isVerified: false,
+    });
+  }),
+  
+  update: jest.fn().mockImplementation((id, data) => {
+    return Promise.resolve({
+      id,
+      userId: userFixture.id,
+      secret: 'AAABBBCCCDDDEEEFFFGGG',
+      ...data,
+    });
+  }),
+  
+  delete: jest.fn().mockResolvedValue(true),
+};
+
+// Mock Password Reset Repository
+export const mockPasswordResetRepository = {
+  findByToken: jest.fn().mockImplementation((token) => {
+    if (token === 'reset-token-123') {
+      return Promise.resolve({
+        id: '1',
+        token: 'reset-token-123',
+        email: 'test@example.com',
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
+        usedAt: null,
+      });
+    }
+    return Promise.resolve(null);
+  }),
+  
+  create: jest.fn().mockImplementation((data) => {
+    return Promise.resolve({
+      id: '1',
+      ...data,
+      usedAt: null,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
+    });
+  }),
+  
+  update: jest.fn().mockImplementation((id, data) => {
+    return Promise.resolve({
+      id,
+      token: 'reset-token-123',
+      email: 'test@example.com',
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      ...data,
+    });
+  }),
+};
