@@ -313,13 +313,16 @@ describe('UserService', () => {
     });
 
     it('should allow updating to the same email', async () => {
-      // Arrange & Act
+      // Arrange
       const userId = '550e8400-e29b-41d4-a716-446655440000';
       const sameEmail = 'test@example.com';
       const user = userFixtures.users.validUser();
 
       userRepository.findById.mockResolvedValue(user);
       userRepository.findByEmail.mockResolvedValue(user); // Same user found
+
+      // Act
+      await service.updateUserDetails(userId, null, null, sameEmail);
 
       // Assert
       expect(userRepository.findById).toHaveBeenCalledWith(userId);
@@ -354,12 +357,15 @@ describe('UserService', () => {
     });
 
     it('should change password without current password verification', async () => {
-      // Arrange & Act
+      // Arrange
       const userId = '550e8400-e29b-41d4-a716-446655440000';
       const newPassword = 'NewPass456!';
       const user = userFixtures.users.validUser();
 
       userRepository.findById.mockResolvedValue(user);
+
+      // Act
+      await service.changePassword(userId, newPassword);
 
       // Assert
       expect(userRepository.findById).toHaveBeenCalledWith(userId);

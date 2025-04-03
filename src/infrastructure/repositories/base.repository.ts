@@ -2,8 +2,10 @@ import { Logger } from '@nestjs/common';
 
 /**
  * Base repository class with common error handling
+ * @template T - The entity type this repository manages
  */
-export abstract class BaseRepository {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export abstract class BaseRepository<T> {
   protected readonly logger = new Logger(this.constructor.name);
 
   /**
@@ -13,11 +15,11 @@ export abstract class BaseRepository {
    * @param returnValue - Optional fallback value to return
    * @returns The fallback value
    */
-  protected handleError<T>(
+  protected handleError<R>(
     operation: string,
     error: unknown,
-    returnValue: T | null = null,
-  ): T | null {
+    returnValue: R | null = null,
+  ): R | null {
     if (error instanceof Error) {
       this.logger.error(`Error in ${operation}: ${error.message}`, error.stack);
     } else {
@@ -32,6 +34,7 @@ export abstract class BaseRepository {
    * @param action - The async function to execute
    * @param fallbackValue - Optional fallback value to return on error
    * @returns The result of the action or the fallback value on error
+   * @template R - The return type of the operation
    */
   protected async executeWithErrorHandling<R>(
     operation: string,
