@@ -11,9 +11,7 @@ export class DomainException extends HttpException {
 // Entity not found
 export class EntityNotFoundException extends DomainException {
   constructor(entityName: string, id?: string) {
-    const message = id 
-      ? `${entityName} with ID ${id} not found` 
-      : `${entityName} not found`;
+    const message = id ? `${entityName} with ID ${id} not found` : `${entityName} not found`;
     super(message, HttpStatus.NOT_FOUND);
   }
 }
@@ -21,8 +19,8 @@ export class EntityNotFoundException extends DomainException {
 // Entity already exists
 export class EntityAlreadyExistsException extends DomainException {
   constructor(entityName: string, identifier?: string) {
-    const message = identifier 
-      ? `${entityName} with this ${identifier} already exists` 
+    const message = identifier
+      ? `${entityName} with this ${identifier} already exists`
       : `${entityName} already exists`;
     super(message, HttpStatus.CONFLICT);
   }

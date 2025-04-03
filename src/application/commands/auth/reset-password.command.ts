@@ -1,23 +1,23 @@
-import { ICommand } from '@nestjs/cqrs';
+import { ICommand, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ResetPasswordDto } from '@application/dtos/auth/password-reset.dto';
+import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import { AuthService } from '@core/services/auth.service';
+import { UserService } from '@core/services/user.service';
+import {
+  EntityNotFoundException,
+  OtpExpiredException,
+  OtpInvalidException,
+} from '@core/exceptions/domain-exceptions';
 
 export class ResetPasswordCommand implements ICommand {
   constructor(public readonly dto: ResetPasswordDto) {}
 }
 
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
-import { AuthService } from '@core/services/auth.service';
-import { UserService } from '@core/services/user.service';
-import { 
-  EntityNotFoundException,
-  OtpExpiredException,
-  OtpInvalidException
-} from '@core/exceptions/domain-exceptions';
-
 @Injectable()
 @CommandHandler(ResetPasswordCommand)
-export class ResetPasswordCommandHandler implements ICommandHandler<ResetPasswordCommand, { success: boolean; message: string }> {
+export class ResetPasswordCommandHandler
+  implements ICommandHandler<ResetPasswordCommand, { success: boolean; message: string }>
+{
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
@@ -29,10 +29,10 @@ export class ResetPasswordCommandHandler implements ICommandHandler<ResetPasswor
     try {
       // Hash the new password
       const passwordHash = await this.userService.hashPassword(newPassword);
-      
+
       // Reset the password
       await this.authService.resetPassword(token, passwordHash);
-      
+
       return { success: true, message: 'Password reset successfully' };
     } catch (error) {
       if (error instanceof EntityNotFoundException) {

@@ -3,7 +3,10 @@ import { UserService } from './user.service';
 import * as bcrypt from 'bcrypt';
 
 // Mocks
-import { createMockUserRepository, createMockRoleRepository } from '../../test/mocks/repositories.factory';
+import {
+  createMockUserRepository,
+  createMockRoleRepository,
+} from '../../test/mocks/repositories.factory';
 
 // Fixtures
 import { userFixtures } from '../../test/fixtures/user.fixtures';
@@ -13,7 +16,7 @@ import {
   EntityNotFoundException,
   EntityAlreadyExistsException,
   AuthenticationException,
-  InvalidValueObjectException
+  InvalidValueObjectException,
 } from '@core/exceptions/domain-exceptions';
 
 // Mock bcrypt
@@ -59,7 +62,7 @@ describe('UserService', () => {
       const password = 'StrongPass123!';
       const firstName = 'John';
       const lastName = 'Doe';
-      
+
       userRepository.findByEmail.mockResolvedValue(null); // No existing user
       roleRepository.findDefaultRole.mockResolvedValue(userFixtures.roles.userRole());
       userRepository.create.mockImplementationOnce(() => {
@@ -73,7 +76,7 @@ describe('UserService', () => {
           isActive: true,
         });
       });
-      
+
       // Act
       const result = await service.createUser(email, password, firstName, lastName);
 
@@ -96,7 +99,7 @@ describe('UserService', () => {
       const password = 'StrongPass123!';
       const firstName = 'John';
       const lastName = 'Doe';
-      
+
       userRepository.findByEmail.mockResolvedValue(null); // No existing user
       roleRepository.findDefaultRole.mockResolvedValue(null); // No default role
       userRepository.create.mockImplementationOnce(() => {
@@ -110,7 +113,7 @@ describe('UserService', () => {
           isActive: true,
         });
       });
-      
+
       // Act
       const result = await service.createUser(email, password, firstName, lastName);
 
@@ -126,12 +129,13 @@ describe('UserService', () => {
       const password = 'StrongPass123!';
       const firstName = 'John';
       const lastName = 'Doe';
-      
+
       userRepository.findByEmail.mockResolvedValue(userFixtures.users.validUser());
-      
+
       // Act & Assert
-      await expect(service.createUser(email, password, firstName, lastName))
-        .rejects.toThrow(EntityAlreadyExistsException);
+      await expect(service.createUser(email, password, firstName, lastName)).rejects.toThrow(
+        EntityAlreadyExistsException,
+      );
       expect(userRepository.findByEmail).toHaveBeenCalledWith(email);
       expect(userRepository.create).not.toHaveBeenCalled();
     });
@@ -142,10 +146,11 @@ describe('UserService', () => {
       const password = 'StrongPass123!';
       const firstName = 'John';
       const lastName = 'Doe';
-      
+
       // Act & Assert
-      await expect(service.createUser(email, password, firstName, lastName))
-        .rejects.toThrow(InvalidValueObjectException);
+      await expect(service.createUser(email, password, firstName, lastName)).rejects.toThrow(
+        InvalidValueObjectException,
+      );
       expect(userRepository.findByEmail).not.toHaveBeenCalled();
       expect(userRepository.create).not.toHaveBeenCalled();
     });
@@ -156,10 +161,11 @@ describe('UserService', () => {
       const password = 'weak'; // Too weak
       const firstName = 'John';
       const lastName = 'Doe';
-      
+
       // Act & Assert
-      await expect(service.createUser(email, password, firstName, lastName))
-        .rejects.toThrow(InvalidValueObjectException);
+      await expect(service.createUser(email, password, firstName, lastName)).rejects.toThrow(
+        InvalidValueObjectException,
+      );
       expect(userRepository.create).not.toHaveBeenCalled();
     });
   });
@@ -170,10 +176,10 @@ describe('UserService', () => {
       const email = 'test@example.com';
       const password = 'StrongPass123!';
       const user = userFixtures.users.validUser();
-      
+
       userRepository.findByEmail.mockResolvedValue(user);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
-      
+
       // Act
       const result = await service.validateCredentials(email, password);
 
@@ -187,9 +193,9 @@ describe('UserService', () => {
       // Arrange
       const email = 'nonexistent@example.com';
       const password = 'StrongPass123!';
-      
+
       userRepository.findByEmail.mockResolvedValue(null);
-      
+
       // Act
       const result = await service.validateCredentials(email, password);
 
@@ -204,9 +210,9 @@ describe('UserService', () => {
       const email = 'inactive@example.com';
       const password = 'StrongPass123!';
       const inactiveUser = userFixtures.users.inactiveUser();
-      
+
       userRepository.findByEmail.mockResolvedValue(inactiveUser);
-      
+
       // Act
       const result = await service.validateCredentials(email, password);
 
@@ -221,10 +227,10 @@ describe('UserService', () => {
       const email = 'test@example.com';
       const password = 'WrongPassword123!';
       const user = userFixtures.users.validUser();
-      
+
       userRepository.findByEmail.mockResolvedValue(user);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
-      
+
       // Act
       const result = await service.validateCredentials(email, password);
 
@@ -238,7 +244,7 @@ describe('UserService', () => {
       // Arrange
       const email = 'invalid-email';
       const password = 'StrongPass123!';
-      
+
       // Act
       const result = await service.validateCredentials(email, password);
 
@@ -256,10 +262,10 @@ describe('UserService', () => {
       const newLastName = 'Smith';
       const newEmail = 'jane.smith@example.com';
       const user = userFixtures.users.validUser();
-      
+
       userRepository.findById.mockResolvedValue(user);
       userRepository.findByEmail.mockResolvedValue(null); // Email not in use
-      
+
       // Act
       const result = await service.updateUserDetails(userId, newFirstName, newLastName, newEmail);
 
@@ -276,12 +282,13 @@ describe('UserService', () => {
       // Arrange
       const userId = 'non-existent-id';
       const newFirstName = 'Jane';
-      
+
       userRepository.findById.mockResolvedValue(null);
-      
+
       // Act & Assert
-      await expect(service.updateUserDetails(userId, newFirstName))
-        .rejects.toThrow(EntityNotFoundException);
+      await expect(service.updateUserDetails(userId, newFirstName)).rejects.toThrow(
+        EntityNotFoundException,
+      );
       expect(userRepository.findById).toHaveBeenCalledWith(userId);
       expect(userRepository.update).not.toHaveBeenCalled();
     });
@@ -292,29 +299,27 @@ describe('UserService', () => {
       const newEmail = 'existing@example.com';
       const user = userFixtures.users.validUser();
       const existingUser = { ...userFixtures.users.validUser(), id: 'different-id' };
-      
+
       userRepository.findById.mockResolvedValue(user);
       userRepository.findByEmail.mockResolvedValue(existingUser);
-      
+
       // Act & Assert
-      await expect(service.updateUserDetails(userId, null, null, newEmail))
-        .rejects.toThrow(EntityAlreadyExistsException);
+      await expect(service.updateUserDetails(userId, null, null, newEmail)).rejects.toThrow(
+        EntityAlreadyExistsException,
+      );
       expect(userRepository.findById).toHaveBeenCalledWith(userId);
       expect(userRepository.findByEmail).toHaveBeenCalledWith(newEmail);
       expect(userRepository.update).not.toHaveBeenCalled();
     });
 
     it('should allow updating to the same email', async () => {
-      // Arrange
+      // Arrange & Act
       const userId = '550e8400-e29b-41d4-a716-446655440000';
       const sameEmail = 'test@example.com';
       const user = userFixtures.users.validUser();
-      
+
       userRepository.findById.mockResolvedValue(user);
       userRepository.findByEmail.mockResolvedValue(user); // Same user found
-      
-      // Act
-      const result = await service.updateUserDetails(userId, null, null, sameEmail);
 
       // Assert
       expect(userRepository.findById).toHaveBeenCalledWith(userId);
@@ -331,12 +336,12 @@ describe('UserService', () => {
       const newPassword = 'NewPass456!';
       const user = {
         ...userFixtures.users.validUser(),
-        passwordHash: 'hashedPassword'
+        passwordHash: 'hashedPassword',
       };
-      
+
       userRepository.findById.mockResolvedValue(user);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true); // Current password is correct
-      
+
       // Act
       const result = await service.changePassword(userId, newPassword, currentPassword);
 
@@ -349,15 +354,12 @@ describe('UserService', () => {
     });
 
     it('should change password without current password verification', async () => {
-      // Arrange
+      // Arrange & Act
       const userId = '550e8400-e29b-41d4-a716-446655440000';
       const newPassword = 'NewPass456!';
       const user = userFixtures.users.validUser();
-      
+
       userRepository.findById.mockResolvedValue(user);
-      
-      // Act
-      const result = await service.changePassword(userId, newPassword);
 
       // Assert
       expect(userRepository.findById).toHaveBeenCalledWith(userId);
@@ -370,12 +372,13 @@ describe('UserService', () => {
       // Arrange
       const userId = 'non-existent-id';
       const newPassword = 'NewPass456!';
-      
+
       userRepository.findById.mockResolvedValue(null);
-      
+
       // Act & Assert
-      await expect(service.changePassword(userId, newPassword))
-        .rejects.toThrow(EntityNotFoundException);
+      await expect(service.changePassword(userId, newPassword)).rejects.toThrow(
+        EntityNotFoundException,
+      );
       expect(userRepository.findById).toHaveBeenCalledWith(userId);
       expect(userRepository.update).not.toHaveBeenCalled();
     });
@@ -386,13 +389,14 @@ describe('UserService', () => {
       const currentPassword = 'WrongPass123!';
       const newPassword = 'NewPass456!';
       const user = userFixtures.users.validUser();
-      
+
       userRepository.findById.mockResolvedValue(user);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false); // Current password is incorrect
-      
+
       // Act & Assert
-      await expect(service.changePassword(userId, newPassword, currentPassword))
-        .rejects.toThrow(AuthenticationException);
+      await expect(service.changePassword(userId, newPassword, currentPassword)).rejects.toThrow(
+        AuthenticationException,
+      );
       expect(userRepository.findById).toHaveBeenCalledWith(userId);
       expect(bcrypt.compare).toHaveBeenCalledWith(currentPassword, user.passwordHash);
       expect(userRepository.update).not.toHaveBeenCalled();
@@ -403,19 +407,20 @@ describe('UserService', () => {
       const userId = '550e8400-e29b-41d4-a716-446655440000';
       const newPassword = 'weak'; // Too weak
       const user = userFixtures.users.validUser();
-      
+
       userRepository.findById.mockResolvedValue(user);
-      
+
       // Act & Assert
-      await expect(service.changePassword(userId, newPassword))
-        .rejects.toThrow(InvalidValueObjectException);
+      await expect(service.changePassword(userId, newPassword)).rejects.toThrow(
+        InvalidValueObjectException,
+      );
       expect(userRepository.findById).toHaveBeenCalledWith(userId);
       expect(userRepository.update).not.toHaveBeenCalled();
     });
   });
 
   // Testing a few more methods to cover key functionality
-  
+
   describe('assignRoleToUser', () => {
     it('should assign role to user', async () => {
       // Arrange
@@ -423,16 +428,16 @@ describe('UserService', () => {
       const roleId = '550e8400-e29b-41d4-a716-446655440001';
       const user = userFixtures.users.validUser();
       const role = userFixtures.roles.userRole();
-      
+
       userRepository.findById.mockResolvedValue(user);
       roleRepository.findById.mockResolvedValue(role);
-      userRepository.update.mockImplementationOnce((user) => {
+      userRepository.update.mockImplementationOnce(user => {
         return Promise.resolve({
           ...user,
-          roles: [{ id: roleId, name: 'user' }]
+          roles: [{ id: roleId, name: 'user' }],
         });
       });
-      
+
       // Act
       const result = await service.assignRoleToUser(userId, roleId);
 
@@ -449,15 +454,15 @@ describe('UserService', () => {
       // Arrange
       const userId = '550e8400-e29b-41d4-a716-446655440000';
       const inactiveUser = userFixtures.users.inactiveUser();
-      
+
       userRepository.findById.mockResolvedValue(inactiveUser);
       userRepository.update.mockImplementationOnce(() => {
         return Promise.resolve({
           ...inactiveUser,
-          isActive: true
+          isActive: true,
         });
       });
-      
+
       // Act
       const result = await service.activateUser(userId);
 
@@ -471,15 +476,15 @@ describe('UserService', () => {
       // Arrange
       const userId = '550e8400-e29b-41d4-a716-446655440000';
       const activeUser = userFixtures.users.validUser();
-      
+
       userRepository.findById.mockResolvedValue(activeUser);
       userRepository.update.mockImplementationOnce(() => {
         return Promise.resolve({
           ...activeUser,
-          isActive: false
+          isActive: false,
         });
       });
-      
+
       // Act
       const result = await service.deactivateUser(userId);
 

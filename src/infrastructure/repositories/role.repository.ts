@@ -3,15 +3,19 @@ import { Role } from '@core/entities/role.entity';
 import { Permission } from '@core/entities/permission.entity';
 import { IRoleRepository } from '@core/repositories/role.repository.interface';
 import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
-import { Prisma, Role as PrismaRole, RolePermission as PrismaRolePermission, Permission as PrismaPermission } from '@prisma/client';
+import {
+  Role as PrismaRole,
+  RolePermission as PrismaRolePermission,
+  Permission as PrismaPermission,
+} from '@prisma/client';
 import { ResourceAction, ActionType } from '@core/value-objects/resource-action.vo';
 import { BaseRepository } from './base.repository';
 
 // Define a type for Role with its related permissions
 type RoleWithPermissions = PrismaRole & {
   permissions?: (PrismaRolePermission & {
-    permission: PrismaPermission
-  })[]
+    permission: PrismaPermission;
+  })[];
 };
 
 @Injectable()
@@ -99,9 +103,10 @@ export class RoleRepository extends BaseRepository<Role> implements IRoleReposit
         description: role.description,
         isDefault: role.isDefault,
         permissions: {
-          create: role.permissions?.map(permission => ({
-            permissionId: permission.id,
-          })) || [],
+          create:
+            role.permissions?.map(permission => ({
+              permissionId: permission.id,
+            })) || [],
         },
       },
       include: {
@@ -132,9 +137,10 @@ export class RoleRepository extends BaseRepository<Role> implements IRoleReposit
         description: role.description,
         isDefault: role.isDefault,
         permissions: {
-          create: role.permissions?.map(permission => ({
-            permissionId: permission.id,
-          })) || [],
+          create:
+            role.permissions?.map(permission => ({
+              permissionId: permission.id,
+            })) || [],
         },
       },
       include: {
@@ -155,47 +161,43 @@ export class RoleRepository extends BaseRepository<Role> implements IRoleReposit
         where: { id },
       });
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   }
 
   private mapToModel(record: RoleWithPermissions): Role {
-    const role = new Role(
-      record.name,
-      record.description,
-      record.isDefault,
-    );
-    
+    const role = new Role(record.name, record.description, record.isDefault);
+
     role.id = record.id;
     role.createdAt = record.createdAt;
     role.updatedAt = record.updatedAt;
-    
+
     // Map permissions
     if (record.permissions) {
       role.permissions = record.permissions.map(permissionRelation => {
         const permissionRecord = permissionRelation.permission;
-        
+
         // Create ResourceAction value object
         const resourceAction = new ResourceAction(
           permissionRecord.resource,
-          permissionRecord.action as ActionType
+          permissionRecord.action as ActionType,
         );
-        
+
         // Create Permission with ResourceAction
         const permission = new Permission(
           resourceAction,
           permissionRecord.description,
-          permissionRecord.id
+          permissionRecord.id,
         );
-        
+
         permission.createdAt = permissionRecord.createdAt;
         permission.updatedAt = permissionRecord.updatedAt;
-        
+
         return permission;
       });
     }
-    
+
     return role;
   }
 }

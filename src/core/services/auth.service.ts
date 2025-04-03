@@ -16,7 +16,7 @@ import {
   EntityNotFoundException,
   OtpExpiredException,
   OtpInvalidException,
-  AuthenticationException
+  AuthenticationException,
 } from '@core/exceptions/domain-exceptions';
 import { Email } from '@core/value-objects/email.vo';
 import { UserId } from '@core/value-objects/user-id.vo';
@@ -52,7 +52,7 @@ export class AuthService {
     return {
       refreshExpiration: parseInt(
         this.configService.get<string>('JWT_REFRESH_EXPIRATION', '7d').replace('d', ''),
-        10
+        10,
       ),
     };
   }
@@ -70,11 +70,7 @@ export class AuthService {
     }).base32;
 
     // Create a new OTP entity
-    const otp = new Otp(
-      new UserId(userId),
-      secret,
-      this.otpConfig.expiration,
-    );
+    const otp = new Otp(new UserId(userId), secret, this.otpConfig.expiration);
 
     // Save the OTP
     await this.otpRepository.create(otp);
@@ -120,7 +116,7 @@ export class AuthService {
     }
   }
 
-  async setupTwoFactorAuth(userId: string): Promise<{ secret: string, qrCodeUrl: string }> {
+  async setupTwoFactorAuth(userId: string): Promise<{ secret: string; qrCodeUrl: string }> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new EntityNotFoundException('User', userId);
@@ -266,7 +262,7 @@ export class AuthService {
       const emailVerification = new EmailVerification(
         new Email(email),
         new VerificationCode(code),
-        this.otpConfig.expiration
+        this.otpConfig.expiration,
       );
 
       await this.emailVerificationRepository.create(emailVerification);
@@ -324,6 +320,9 @@ export class AuthService {
 
       return verification ? verification.isVerified() : false;
     } catch (error) {
+      if (error instanceof EntityNotFoundException) {
+        return false; // Email not found, consider it unverified
+      }
       return false;
     }
   }
@@ -352,7 +351,7 @@ export class AuthService {
       const passwordReset = new PasswordReset(
         new UserId(user.id),
         new Email(email),
-        60 // 1-hour expiration
+        60, // 1-hour expiration
       );
 
       await this.passwordResetRepository.create(passwordReset);

@@ -24,10 +24,7 @@ import { DeleteRoleCommandHandler } from '@application/commands/role/delete-role
 import { AssignPermissionCommandHandler } from '@application/commands/role/assign-permission.command';
 import { RemovePermissionCommandHandler } from '@application/commands/role/remove-permission.command';
 
-const queryHandlers = [
-  GetRolesQueryHandler,
-  GetRoleQueryHandler,
-];
+const queryHandlers = [GetRolesQueryHandler, GetRoleQueryHandler];
 
 const commandHandlers = [
   CreateRoleCommandHandler,
@@ -38,16 +35,13 @@ const commandHandlers = [
 ];
 
 @Module({
-  imports: [
-    CqrsModule,
-    PrismaModule,
-  ],
+  imports: [CqrsModule, PrismaModule],
   controllers: [RoleController],
   providers: [
     // Services
     RoleService,
     PermissionService,
-    
+
     // Repository tokens
     {
       provide: 'RoleRepository',
@@ -57,10 +51,10 @@ const commandHandlers = [
       provide: 'PermissionRepository',
       useClass: PermissionRepository,
     },
-    
+
     // Query handlers
     ...queryHandlers,
-    
+
     // Command handlers
     ...commandHandlers,
   ],

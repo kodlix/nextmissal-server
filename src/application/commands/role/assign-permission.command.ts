@@ -13,7 +13,9 @@ export class AssignPermissionCommand {
 }
 
 @CommandHandler(AssignPermissionCommand)
-export class AssignPermissionCommandHandler implements ICommandHandler<AssignPermissionCommand, RoleDetailResponse> {
+export class AssignPermissionCommandHandler
+  implements ICommandHandler<AssignPermissionCommand, RoleDetailResponse>
+{
   constructor(
     private readonly roleService: RoleService,
     @Inject('RoleRepository')
@@ -22,10 +24,10 @@ export class AssignPermissionCommandHandler implements ICommandHandler<AssignPer
 
   async execute(command: AssignPermissionCommand): Promise<RoleDetailResponse> {
     const { roleId, permissionId } = command;
-    
+
     // Assign the permission to the role
     const role = await this.roleService.assignPermissionToRole(roleId, permissionId);
-    
+
     // Fetch the updated role with permissions
     const updatedRole = await this.roleRepository.findById(role.id);
 

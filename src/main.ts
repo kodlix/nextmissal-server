@@ -8,25 +8,25 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
-  
+
   // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, 
+      whitelist: true,
       transform: true,
       forbidNonWhitelisted: true,
     }),
   );
-  
+
   // Global exception filter
   app.useGlobalFilters(new AllExceptionsFilter());
-  
+
   // Enable CORS
   app.enableCors();
-  
+
   // API prefix
   app.setGlobalPrefix('api');
-  
+
   // Swagger setup
   const config = new DocumentBuilder()
     .setTitle('NestJS Clean Architecture API')
@@ -48,14 +48,16 @@ async function bootstrap() {
       'JWT-auth', // This is a key to be used in @ApiBearerAuth() decorator
     )
     .build();
-  
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
-  
+
   // Start server
   const port = configService.get<number>('PORT', 3000);
   await app.listen(port);
+  // eslint-disable-next-line no-console
   console.log(`Application is running on: ${await app.getUrl()}`);
+  // eslint-disable-next-line no-console
   console.log(`Swagger documentation is available at: ${await app.getUrl()}/docs`);
 }
 

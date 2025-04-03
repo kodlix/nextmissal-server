@@ -4,11 +4,13 @@ import { IPermissionRepository } from '@core/repositories/permission.repository.
 import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 import { Permission as PrismaPermission } from '@prisma/client';
 import { ResourceAction, ActionType } from '@core/value-objects/resource-action.vo';
-import { PermissionName } from '@core/value-objects/permission-name.vo';
 import { BaseRepository } from './base.repository';
 
 @Injectable()
-export class PermissionRepository extends BaseRepository<Permission> implements IPermissionRepository {
+export class PermissionRepository
+  extends BaseRepository<Permission>
+  implements IPermissionRepository
+{
   constructor(private readonly prisma: PrismaService) {
     super();
   }
@@ -90,30 +92,27 @@ export class PermissionRepository extends BaseRepository<Permission> implements 
   }
 
   async delete(id: string): Promise<boolean> {
-    return this.executeWithErrorHandling('delete', async () => {
-      await this.prisma.permission.delete({
-        where: { id },
-      });
-      return true;
-    }, false);
+    return this.executeWithErrorHandling(
+      'delete',
+      async () => {
+        await this.prisma.permission.delete({
+          where: { id },
+        });
+        return true;
+      },
+      false,
+    );
   }
 
   private mapToModel(record: PrismaPermission): Permission {
     // Create value objects from primitive values
-    const resourceAction = new ResourceAction(
-      record.resource,
-      record.action as ActionType
-    );
-    
-    const permission = new Permission(
-      resourceAction,
-      record.description,
-      record.id
-    );
-    
+    const resourceAction = new ResourceAction(record.resource, record.action as ActionType);
+
+    const permission = new Permission(resourceAction, record.description, record.id);
+
     permission.createdAt = record.createdAt;
     permission.updatedAt = record.updatedAt;
-    
+
     return permission;
   }
 }

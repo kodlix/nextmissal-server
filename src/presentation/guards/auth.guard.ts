@@ -1,9 +1,9 @@
-import { 
-  Injectable, 
-  CanActivate, 
-  ExecutionContext, 
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
   ForbiddenException,
-  UnauthorizedException
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '@shared/decorators/roles.decorator';
@@ -31,7 +31,7 @@ export class AuthGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    
+
     if (!user) {
       throw new UnauthorizedException('User not authenticated');
     }
@@ -40,22 +40,24 @@ export class AuthGuard implements CanActivate {
     if (requiredRoles && requiredRoles.length > 0) {
       const userRoles = user.roles || [];
       const hasRequiredRole = requiredRoles.some(role => userRoles.includes(role));
-      
+
       if (!hasRequiredRole) {
-        throw new ForbiddenException(`User does not have required role: ${requiredRoles.join(', ')}`);
+        throw new ForbiddenException(
+          `User does not have required role: ${requiredRoles.join(', ')}`,
+        );
       }
     }
 
     // Check permissions if required
     if (requiredPermissions && requiredPermissions.length > 0) {
       const userPermissions = user.permissions || [];
-      const hasRequiredPermission = requiredPermissions.some(permission => 
-        userPermissions.includes(permission)
+      const hasRequiredPermission = requiredPermissions.some(permission =>
+        userPermissions.includes(permission),
       );
-      
+
       if (!hasRequiredPermission) {
         throw new ForbiddenException(
-          `User does not have required permission: ${requiredPermissions.join(', ')}`
+          `User does not have required permission: ${requiredPermissions.join(', ')}`,
         );
       }
     }

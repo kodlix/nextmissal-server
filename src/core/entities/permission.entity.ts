@@ -10,15 +10,11 @@ export class Permission {
   createdAt: Date;
   updatedAt: Date;
 
-  constructor(
-    resourceAction: ResourceAction,
-    description: string,
-    id?: string
-  ) {
+  constructor(resourceAction: ResourceAction, description: string, id?: string) {
     this.id = id || uuidv4();
     this.name = PermissionName.create(
-      resourceAction.getResource(), 
-      resourceAction.getAction().toString()
+      resourceAction.getResource(),
+      resourceAction.getAction().toString(),
     );
     this.description = description;
     this.resourceAction = resourceAction;
@@ -37,7 +33,7 @@ export class Permission {
   getPermissionName(): string {
     return this.name.getValue();
   }
-  
+
   /**
    * Get the permission name string value for use in tokens and other string contexts
    */

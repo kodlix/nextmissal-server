@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
-interface HttpExceptionResponse {
+interface IHttpExceptionResponse {
   message: string | string[];
   error?: string;
   statusCode?: number;
@@ -32,21 +32,18 @@ export class AllExceptionsFilter implements ExceptionFilter {
       const exceptionResponse = exception.getResponse();
 
       if (typeof exceptionResponse === 'object') {
-        const typedResponse = exceptionResponse as HttpExceptionResponse;
+        const typedResponse = exceptionResponse as IHttpExceptionResponse;
         message = typedResponse.message || exception.message;
         error = typedResponse.error || 'Error';
       } else {
-        message = exceptionResponse as string || exception.message;
+        message = (exceptionResponse as string) || exception.message;
       }
     } else if (exception instanceof Error) {
       message = exception.message;
     }
 
     // Log the error
-    this.logger.error(
-      `${request.method} ${request.url} - ${status} - ${message}`,
-      exception.stack,
-    );
+    this.logger.error(`${request.method} ${request.url} - ${status} - ${message}`, exception.stack);
 
     response.status(status).json({
       statusCode: status,

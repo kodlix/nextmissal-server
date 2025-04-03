@@ -10,20 +10,15 @@ export class EmailVerification {
   verifiedAt: Date | null;
   createdAt: Date;
 
-  constructor(
-    email: Email,
-    code: VerificationCode,
-    expirationMinutes: number = 5,
-    id?: string
-  ) {
+  constructor(email: Email, code: VerificationCode, expirationMinutes: number = 5, id?: string) {
     this.id = id || uuid();
     this.email = email;
     this.code = code;
-    
+
     // Set expiration time (default: 5 minutes)
     const now = new Date();
     this.expiresAt = new Date(now.getTime() + expirationMinutes * 60000);
-    
+
     this.verifiedAt = null;
     this.createdAt = now;
   }

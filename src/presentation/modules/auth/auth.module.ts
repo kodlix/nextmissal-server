@@ -97,7 +97,7 @@ const commandHandlers = [
       provide: 'PasswordResetRepository',
       useClass: PasswordResetRepository,
     },
-    
+
     // Providers
     EmailProvider,
     TokenProvider,

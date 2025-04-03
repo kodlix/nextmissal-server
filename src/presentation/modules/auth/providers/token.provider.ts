@@ -17,8 +17,8 @@ export class TokenProvider {
    * Generate a JWT payload with user information
    */
   buildPayload(user: User, permissions: string[], isEmailVerified: boolean) {
-    return { 
-      sub: user.id, 
+    return {
+      sub: user.id,
       email: user.email.getValue(),
       emailVerified: isEmailVerified,
       roles: user.roles.map(role => role.name),
@@ -29,7 +29,7 @@ export class TokenProvider {
   /**
    * Generate an access token
    */
-  generateAccessToken(payload: any): string {
+  generateAccessToken(payload: Record<string, unknown>): string {
     return this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_SECRET'),
       expiresIn: this.configService.get('JWT_ACCESS_EXPIRATION'),
@@ -52,7 +52,7 @@ export class TokenProvider {
     const payload = this.buildPayload(user, permissions, isEmailVerified);
     const accessToken = this.generateAccessToken(payload);
     const refreshToken = await this.generateRefreshToken(user.id);
-    
+
     return {
       accessToken,
       refreshToken,

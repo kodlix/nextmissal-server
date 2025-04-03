@@ -15,7 +15,9 @@ export class CreateRoleCommand {
 }
 
 @CommandHandler(CreateRoleCommand)
-export class CreateRoleCommandHandler implements ICommandHandler<CreateRoleCommand, RoleDetailResponse> {
+export class CreateRoleCommandHandler
+  implements ICommandHandler<CreateRoleCommand, RoleDetailResponse>
+{
   constructor(
     private readonly roleService: RoleService,
     @Inject('RoleRepository')
@@ -24,13 +26,9 @@ export class CreateRoleCommandHandler implements ICommandHandler<CreateRoleComma
 
   async execute(command: CreateRoleCommand): Promise<RoleDetailResponse> {
     const { name, description, isDefault, permissionIds } = command;
-    
+
     // Create the role first
-    const role = await this.roleService.createRole(
-      name,
-      description,
-      isDefault,
-    );
+    const role = await this.roleService.createRole(name, description, isDefault);
 
     // If permission IDs are provided, assign them to the role
     if (permissionIds && permissionIds.length > 0) {

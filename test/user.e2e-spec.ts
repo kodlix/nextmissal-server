@@ -37,7 +37,7 @@ describe('UserController (e2e)', () => {
       sub: '550e8400-e29b-41d4-a716-446655440001', // Admin user ID
       email: 'admin@example.com',
       roles: ['admin'],
-      permissions: ['user:read', 'user:write', 'user:delete']
+      permissions: ['user:read', 'user:write', 'user:delete'],
     });
 
     // Create a regular user token
@@ -45,7 +45,7 @@ describe('UserController (e2e)', () => {
       sub: '550e8400-e29b-41d4-a716-446655440002', // Regular user ID
       email: 'user@example.com',
       roles: ['user'],
-      permissions: ['user:read']
+      permissions: ['user:read'],
     });
 
     await app.init();
@@ -63,7 +63,7 @@ describe('UserController (e2e)', () => {
         .get('/api/users')
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .expect(200)
-        .expect((res: { body: any; }) => {
+        .expect((res: { body: unknown[] }) => {
           expect(Array.isArray(res.body)).toBe(true);
         });
     });
@@ -76,9 +76,7 @@ describe('UserController (e2e)', () => {
     });
 
     it('should deny access when not authenticated', () => {
-      return request(app.getHttpServer())
-        .get('/api/users')
-        .expect(401); // Unauthorized
+      return request(app.getHttpServer()).get('/api/users').expect(401); // Unauthorized
     });
   });
 
@@ -104,7 +102,7 @@ describe('UserController (e2e)', () => {
         .send({
           firstName: 'Updated',
           lastName: 'User',
-          email: 'updated@example.com'
+          email: 'updated@example.com',
         })
         .expect(401);
     });
@@ -116,7 +114,7 @@ describe('UserController (e2e)', () => {
         .send({
           firstName: '',
           lastName: '',
-          email: 'not-an-email'
+          email: 'not-an-email',
         })
         .expect(401); // Without database, the token cannot be verified
     });
@@ -129,7 +127,7 @@ describe('UserController (e2e)', () => {
         .send({
           firstName: 'Updated',
           lastName: 'Profile',
-          email: 'updated-profile@example.com'
+          email: 'updated-profile@example.com',
         })
         .expect(401);
     });
@@ -141,7 +139,7 @@ describe('UserController (e2e)', () => {
         .send({
           firstName: '',
           lastName: '',
-          email: 'not-an-email'
+          email: 'not-an-email',
         })
         .expect(401); // Without database, the token cannot be verified
     });
@@ -153,7 +151,7 @@ describe('UserController (e2e)', () => {
         .post('/api/users/550e8400-e29b-41d4-a716-446655440000/change-password')
         .send({
           currentPassword: 'OldPassword123!',
-          newPassword: 'NewPassword123!'
+          newPassword: 'NewPassword123!',
         })
         .expect(401);
     });
@@ -164,7 +162,7 @@ describe('UserController (e2e)', () => {
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .send({
           currentPassword: 'short',
-          newPassword: 'weak'
+          newPassword: 'weak',
         })
         .expect(401); // Without database, the token cannot be verified
     });
@@ -176,7 +174,7 @@ describe('UserController (e2e)', () => {
         .post('/api/users/profile/change-password')
         .send({
           currentPassword: 'OldPassword123!',
-          newPassword: 'NewPassword123!'
+          newPassword: 'NewPassword123!',
         })
         .expect(401);
     });
@@ -187,7 +185,7 @@ describe('UserController (e2e)', () => {
         .set('Authorization', `Bearer ${userAccessToken}`)
         .send({
           currentPassword: 'short',
-          newPassword: 'weak'
+          newPassword: 'weak',
         })
         .expect(401); // Without database, the token cannot be verified
     });

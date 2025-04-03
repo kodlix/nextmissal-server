@@ -1,13 +1,12 @@
 import * as bcrypt from 'bcrypt';
 import { Injectable, Inject } from '@nestjs/common';
 import { User } from '../entities/user.entity';
-import { Role } from '../entities/role.entity';
 import { IUserRepository } from '../repositories/user.repository.interface';
 import { IRoleRepository } from '../repositories/role.repository.interface';
-import { 
-  EntityNotFoundException, 
+import {
+  EntityNotFoundException,
   EntityAlreadyExistsException,
-  AuthenticationException
+  AuthenticationException,
 } from '@core/exceptions/domain-exceptions';
 import { Email } from '@core/value-objects/email.vo';
 import { Password } from '@core/value-objects/password.vo';
@@ -30,10 +29,10 @@ export class UserService {
   ): Promise<User> {
     // Validate email using value object
     const email = new Email(emailStr);
-    
+
     // Validate password using value object
     const password = new Password(passwordStr);
-    
+
     // Check if user already exists
     const existingUser = await this.userRepository.findByEmail(email.getValue());
     if (existingUser) {
@@ -44,12 +43,7 @@ export class UserService {
     const passwordHash = await this.hashPassword(password.getValue());
 
     // Create a new user with value objects for name
-    const user = new User(
-      email,
-      passwordHash,
-      new FirstName(firstName),
-      new LastName(lastName)
-    );
+    const user = new User(email, passwordHash, new FirstName(firstName), new LastName(lastName));
 
     // Assign default role
     const defaultRole = await this.roleRepository.findDefaultRole();
@@ -65,19 +59,23 @@ export class UserService {
     try {
       // Validate email format
       const email = new Email(emailStr);
-      
+
       const user = await this.userRepository.findByEmail(email.getValue());
       if (!user || !user.isActive) {
         return null;
       }
-  
+
       const isPasswordValid = await this.comparePasswords(passwordStr, user.passwordHash);
       if (!isPasswordValid) {
         return null;
       }
-  
+
       return user;
     } catch (error) {
+      if (error instanceof EntityNotFoundException) {
+        // Handle user not found error
+        return null;
+      }
       // If email is invalid, return null instead of throwing
       return null;
     }
@@ -101,17 +99,17 @@ export class UserService {
     if (lastName) {
       user.lastName = new LastName(lastName);
     }
-    
+
     if (emailStr) {
       // Validate email using value object
       const email = new Email(emailStr);
-      
+
       // Check if email is already in use by another user
       const existingUser = await this.userRepository.findByEmail(email.getValue());
       if (existingUser && existingUser.id !== userId) {
         throw new EntityAlreadyExistsException('User', 'email');
       }
-      
+
       user.email = email;
     }
 
@@ -129,9 +127,9 @@ export class UserService {
   }
 
   async changePassword(
-    userId: string, 
-    newPasswordStr: string, 
-    currentPassword?: string
+    userId: string,
+    newPasswordStr: string,
+    currentPassword?: string,
   ): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
@@ -141,10 +139,10 @@ export class UserService {
     // If current password is provided, verify it
     if (currentPassword) {
       const isCurrentPasswordValid = await this.comparePasswords(
-        currentPassword, 
-        user.passwordHash
+        currentPassword,
+        user.passwordHash,
       );
-      
+
       if (!isCurrentPasswordValid) {
         throw new AuthenticationException('Current password is incorrect');
       }
@@ -152,7 +150,7 @@ export class UserService {
 
     // Validate new password using value object
     const newPassword = new Password(newPasswordStr);
-    
+
     user.passwordHash = await this.hashPassword(newPassword.getValue());
     user.updatedAt = new Date();
     return this.userRepository.update(user);
@@ -182,23 +180,23 @@ export class UserService {
     user.removeRole(roleId);
     return this.userRepository.update(user);
   }
-  
+
   async activateUser(userId: string): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new EntityNotFoundException('User', userId);
     }
-    
+
     user.activate();
     return this.userRepository.update(user);
   }
-  
+
   async deactivateUser(userId: string): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new EntityNotFoundException('User', userId);
     }
-    
+
     user.deactivate();
     return this.userRepository.update(user);
   }
@@ -208,10 +206,7 @@ export class UserService {
     return bcrypt.hash(password, salt);
   }
 
-  private async comparePasswords(
-    plainPassword: string,
-    hashedPassword: string,
-  ): Promise<boolean> {
+  private async comparePasswords(plainPassword: string, hashedPassword: string): Promise<boolean> {
     return bcrypt.compare(plainPassword, hashedPassword);
   }
 }

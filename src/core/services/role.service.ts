@@ -1,12 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Role } from '../entities/role.entity';
-import { Permission } from '../entities/permission.entity';
 import { IRoleRepository } from '../repositories/role.repository.interface';
 import { IPermissionRepository } from '../repositories/permission.repository.interface';
-import { 
-  EntityNotFoundException, 
+import {
+  EntityNotFoundException,
   EntityAlreadyExistsException,
-  ForbiddenActionException 
+  ForbiddenActionException,
 } from '@core/exceptions/domain-exceptions';
 
 @Injectable()
@@ -18,11 +17,7 @@ export class RoleService {
     private readonly permissionRepository: IPermissionRepository,
   ) {}
 
-  async createRole(
-    name: string,
-    description: string,
-    isDefault: boolean = false,
-  ): Promise<Role> {
+  async createRole(name: string, description: string, isDefault: boolean = false): Promise<Role> {
     // Check if a role already exists
     const existingRole = await this.roleRepository.findByName(name);
     if (existingRole) {

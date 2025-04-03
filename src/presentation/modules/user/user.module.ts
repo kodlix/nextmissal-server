@@ -24,10 +24,7 @@ import { AssignRoleCommandHandler } from '@application/commands/user/assign-role
 import { RemoveRoleCommandHandler } from '@application/commands/user/remove-role.command';
 import { VerifyPasswordCommandHandler } from '@application/commands/user/verify-password.command';
 
-const queryHandlers = [
-  GetUserQueryHandler,
-  GetUsersQueryHandler,
-];
+const queryHandlers = [GetUserQueryHandler, GetUsersQueryHandler];
 
 const commandHandlers = [
   UpdateUserCommandHandler,
@@ -39,10 +36,7 @@ const commandHandlers = [
 ];
 
 @Module({
-  imports: [
-    CqrsModule,
-    PrismaModule,
-  ],
+  imports: [CqrsModule, PrismaModule],
   controllers: [UserController],
   providers: [
     // Services
@@ -50,7 +44,7 @@ const commandHandlers = [
       provide: UserService,
       useClass: UserService,
     },
-    
+
     // Repository tokens
     {
       provide: 'UserRepository',
@@ -60,10 +54,10 @@ const commandHandlers = [
       provide: 'RoleRepository',
       useClass: RoleRepository,
     },
-    
+
     // Query handlers
     ...queryHandlers,
-    
+
     // Command handlers
     ...commandHandlers,
   ],

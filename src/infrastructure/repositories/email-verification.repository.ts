@@ -8,7 +8,10 @@ import { VerificationCode } from '@core/value-objects/verification-code.vo';
 import { EmailVerification as PrismaEmailVerification } from '@prisma/client';
 
 @Injectable()
-export class EmailVerificationRepository extends BaseRepository<EmailVerification> implements IEmailVerificationRepository {
+export class EmailVerificationRepository
+  extends BaseRepository<EmailVerification>
+  implements IEmailVerificationRepository
+{
   constructor(private readonly prisma: PrismaService) {
     super();
   }
@@ -16,7 +19,7 @@ export class EmailVerificationRepository extends BaseRepository<EmailVerificatio
   async findById(id: string): Promise<EmailVerification | null> {
     return this.executeWithErrorHandling('findById', async () => {
       const record = await this.prisma.emailVerification.findUnique({
-        where: { id }
+        where: { id },
       });
 
       return record ? this.mapToModel(record) : null;
@@ -27,7 +30,7 @@ export class EmailVerificationRepository extends BaseRepository<EmailVerificatio
     return this.executeWithErrorHandling('findByEmail', async () => {
       const record = await this.prisma.emailVerification.findFirst({
         where: { email },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
       });
 
       return record ? this.mapToModel(record) : null;
@@ -37,11 +40,11 @@ export class EmailVerificationRepository extends BaseRepository<EmailVerificatio
   async findByEmailAndCode(email: string, code: string): Promise<EmailVerification | null> {
     return this.executeWithErrorHandling('findByEmailAndCode', async () => {
       const record = await this.prisma.emailVerification.findFirst({
-        where: { 
+        where: {
           email,
-          code 
+          code,
         },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
       });
 
       return record ? this.mapToModel(record) : null;
@@ -57,8 +60,8 @@ export class EmailVerificationRepository extends BaseRepository<EmailVerificatio
           code: emailVerification.code.getValue(),
           expiresAt: emailVerification.expiresAt,
           verifiedAt: emailVerification.verifiedAt,
-          createdAt: emailVerification.createdAt
-        }
+          createdAt: emailVerification.createdAt,
+        },
       });
 
       return emailVerification;
@@ -73,8 +76,8 @@ export class EmailVerificationRepository extends BaseRepository<EmailVerificatio
           email: emailVerification.email.getValue(),
           code: emailVerification.code.getValue(),
           expiresAt: emailVerification.expiresAt,
-          verifiedAt: emailVerification.verifiedAt
-        }
+          verifiedAt: emailVerification.verifiedAt,
+        },
       });
 
       return emailVerification;
@@ -82,39 +85,47 @@ export class EmailVerificationRepository extends BaseRepository<EmailVerificatio
   }
 
   async delete(id: string): Promise<boolean> {
-    return this.executeWithErrorHandling('delete', async () => {
-      await this.prisma.emailVerification.delete({
-        where: { id }
-      });
-      return true;
-    }, false);
+    return this.executeWithErrorHandling(
+      'delete',
+      async () => {
+        await this.prisma.emailVerification.delete({
+          where: { id },
+        });
+        return true;
+      },
+      false,
+    );
   }
 
   async deleteByEmail(email: string): Promise<boolean> {
-    return this.executeWithErrorHandling('deleteByEmail', async () => {
-      await this.prisma.emailVerification.deleteMany({
-        where: { email }
-      });
-      return true;
-    }, false);
+    return this.executeWithErrorHandling(
+      'deleteByEmail',
+      async () => {
+        await this.prisma.emailVerification.deleteMany({
+          where: { email },
+        });
+        return true;
+      },
+      false,
+    );
   }
 
   private mapToModel(record: PrismaEmailVerification): EmailVerification {
     // Create value objects from primitive values
     const emailVO = new Email(record.email);
     const codeVO = new VerificationCode(record.code);
-    
+
     const verification = new EmailVerification(
       emailVO,
       codeVO,
-      0 // We don't need to specify expiration here as we're loading from DB
+      0, // We don't need to specify expiration here as we're loading from DB
     );
-    
+
     verification.id = record.id;
     verification.expiresAt = record.expiresAt;
     verification.verifiedAt = record.verifiedAt;
     verification.createdAt = record.createdAt;
-    
+
     return verification;
   }
 }

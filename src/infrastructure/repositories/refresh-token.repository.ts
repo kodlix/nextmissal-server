@@ -9,10 +9,13 @@ import { UserId } from '@core/value-objects/user-id.vo';
 import { Token } from '@core/value-objects/token.vo';
 
 @Injectable()
-export class RefreshTokenRepository extends BaseRepository<RefreshToken> implements IRefreshTokenRepository {
+export class RefreshTokenRepository
+  extends BaseRepository<RefreshToken>
+  implements IRefreshTokenRepository
+{
   constructor(
     private readonly prisma: PrismaService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
   ) {
     super();
   }
@@ -88,42 +91,53 @@ export class RefreshTokenRepository extends BaseRepository<RefreshToken> impleme
   }
 
   async deleteByUserId(userId: string): Promise<boolean> {
-    return this.executeWithErrorHandling('deleteByUserId', async () => {
-      await this.prisma.refreshToken.deleteMany({
-        where: { userId },
-      });
-      return true;
-    }, false);
+    return this.executeWithErrorHandling(
+      'deleteByUserId',
+      async () => {
+        await this.prisma.refreshToken.deleteMany({
+          where: { userId },
+        });
+        return true;
+      },
+      false,
+    );
   }
 
   async deleteExpired(): Promise<number> {
-    return this.executeWithErrorHandling('deleteExpired', async () => {
-      const result = await this.prisma.refreshToken.deleteMany({
-        where: {
-          expiresAt: {
-            lt: new Date(),
+    return this.executeWithErrorHandling(
+      'deleteExpired',
+      async () => {
+        const result = await this.prisma.refreshToken.deleteMany({
+          where: {
+            expiresAt: {
+              lt: new Date(),
+            },
           },
-        },
-      });
+        });
 
-      return result.count;
-    }, 0);
+        return result.count;
+      },
+      0,
+    );
   }
 
   private mapToModel(record: PrismaRefreshToken): RefreshToken {
-    const refreshExpiration = parseInt(this.configService.get('JWT_REFRESH_EXPIRATION', '7').replace('d', ''), 10);
-    
+    const refreshExpiration = parseInt(
+      this.configService.get('JWT_REFRESH_EXPIRATION', '7').replace('d', ''),
+      10,
+    );
+
     // Create value objects from primitive values
     const userIdVO = new UserId(record.userId);
     const tokenVO = new Token(record.token);
-    
+
     const refreshToken = new RefreshToken(userIdVO, tokenVO, refreshExpiration);
-    
+
     refreshToken.id = record.id;
     refreshToken.expiresAt = record.expiresAt;
     refreshToken.revokedAt = record.revokedAt || undefined;
     refreshToken.createdAt = record.createdAt;
-    
+
     return refreshToken;
   }
 }

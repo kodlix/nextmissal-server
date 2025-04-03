@@ -13,13 +13,13 @@ export class GetRoleQuery implements IQuery {
 export class GetRoleQueryHandler implements IQueryHandler<GetRoleQuery> {
   constructor(
     @Inject('RoleRepository')
-    private readonly roleRepository: IRoleRepository
+    private readonly roleRepository: IRoleRepository,
   ) {}
 
   async execute(query: GetRoleQuery): Promise<RoleDetailResponse> {
     const { id } = query;
     const role = await this.roleRepository.findById(id);
-    
+
     if (!role) {
       throw new EntityNotFoundException('Role', id);
     }

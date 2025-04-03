@@ -18,19 +18,16 @@ describe('RegisterUserCommandHandler', () => {
   beforeEach(async () => {
     // Reset mocks before each test
     jest.clearAllMocks();
-    
+
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        RegisterUserCommandHandler,
-        { provide: UserService, useValue: mockUserService },
-      ],
+      providers: [RegisterUserCommandHandler, { provide: UserService, useValue: mockUserService }],
     }).compile();
 
     handler = module.get<RegisterUserCommandHandler>(RegisterUserCommandHandler);
     userService = module.get<UserService>(UserService);
-    
+
     // Mock UserMapper
-    jest.spyOn(UserMapper, 'toBaseResponse').mockImplementation((user) => {
+    jest.spyOn(UserMapper, 'toBaseResponse').mockImplementation(user => {
       return {
         id: user.id,
         email: user.email.getValue(),
@@ -52,15 +49,15 @@ describe('RegisterUserCommandHandler', () => {
       firstName: 'New',
       lastName: 'User',
     });
-    
+
     const createdUser = new User(
       new Email('new@example.com'),
       'hashedPassword',
       new FirstName('New'),
       new LastName('User'),
-      '550e8400-e29b-41d4-a716-446655440000'
+      '550e8400-e29b-41d4-a716-446655440000',
     );
-    
+
     mockUserService.createUser.mockResolvedValue(createdUser);
 
     // Act
@@ -73,14 +70,14 @@ describe('RegisterUserCommandHandler', () => {
       firstName: createdUser.firstName.getValue(),
       lastName: createdUser.lastName.getValue(),
     });
-    
+
     expect(userService.createUser).toHaveBeenCalledWith(
       'new@example.com',
       'Password123!',
       'New',
-      'User'
+      'User',
     );
-    
+
     expect(UserMapper.toBaseResponse).toHaveBeenCalledWith(createdUser);
   });
 
@@ -92,18 +89,18 @@ describe('RegisterUserCommandHandler', () => {
       firstName: 'Existing',
       lastName: 'User',
     });
-    
+
     const error = new Error('Email already in use');
     mockUserService.createUser.mockRejectedValue(error);
 
     // Act & Assert
     await expect(handler.execute(command)).rejects.toThrow(error);
-    
+
     expect(userService.createUser).toHaveBeenCalledWith(
       'existing@example.com',
       'Password123!',
       'Existing',
-      'User'
+      'User',
     );
   });
 });

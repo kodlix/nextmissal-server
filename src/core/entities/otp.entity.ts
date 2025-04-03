@@ -13,7 +13,7 @@ export class Otp {
     this.id = id || uuidv4();
     this.userId = userId;
     this.secret = secret;
-    
+
     // Set expiration time
     const now = new Date();
     this.expiresAt = new Date(now.getTime() + expirationMinutes * 60000);

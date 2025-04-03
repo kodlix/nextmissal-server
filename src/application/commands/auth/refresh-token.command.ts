@@ -1,12 +1,6 @@
-import { ICommand } from '@nestjs/cqrs';
+import { ICommand, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RefreshTokenDto } from '@application/dtos/auth/refresh-token.dto';
-import { AuthRefreshTokenResponse } from '@application/dtos/responses/user.response';
-
-export class RefreshTokenCommand implements ICommand {
-  constructor(public readonly refreshTokenDto: RefreshTokenDto) {}
-}
-
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { IAuthRefreshTokenResponse } from '@application/dtos/responses/user.response';
 import { UnauthorizedException, Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -14,6 +8,10 @@ import { IUserRepository } from '@core/repositories/user.repository.interface';
 import { IRoleRepository } from '@core/repositories/role.repository.interface';
 import { AuthService } from '@core/services/auth.service';
 import { v4 as uuidv4 } from 'uuid';
+
+export class RefreshTokenCommand implements ICommand {
+  constructor(public readonly refreshTokenDto: RefreshTokenDto) {}
+}
 
 @Injectable()
 @CommandHandler(RefreshTokenCommand)
@@ -28,9 +26,9 @@ export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenC
     private readonly configService: ConfigService,
   ) {}
 
-  async execute(command: RefreshTokenCommand): Promise<AuthRefreshTokenResponse> {
+  async execute(command: RefreshTokenCommand): Promise<IAuthRefreshTokenResponse> {
     const { refreshToken } = command.refreshTokenDto;
-    
+
     // Validate refresh token
     const token = await this.authService.validateRefreshToken(refreshToken);
     if (!token) {
@@ -59,21 +57,21 @@ export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenC
 
     // Check if email is verified
     const isEmailVerified = await this.authService.isEmailVerified(user.email.getValue());
-    
+
     // Generate new JWT tokens
-    const payload = { 
-      sub: user.id, 
+    const payload = {
+      sub: user.id,
       email: user.email.getValue(),
       emailVerified: isEmailVerified,
       roles: user.roles.map(role => role.name),
       permissions: Array.from(userPermissions),
     };
-    
+
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_SECRET'),
       expiresIn: this.configService.get('JWT_ACCESS_EXPIRATION'),
     });
-    
+
     const newRefreshToken = uuidv4();
     await this.authService.createRefreshToken(user.id, newRefreshToken);
 

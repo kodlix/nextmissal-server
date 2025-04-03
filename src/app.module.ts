@@ -28,13 +28,13 @@ import configuration from '@infrastructure/config/configuration';
       envFilePath: '.env',
       load: [configuration],
     }),
-    
+
     // Database
     PrismaModule,
-    
+
     // CQRS
     CqrsModule,
-    
+
     // Feature Modules
     AuthModule,
     UserModule,
@@ -51,7 +51,7 @@ import configuration from '@infrastructure/config/configuration';
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
     },
-    
+
     // Global filters
     {
       provide: APP_FILTER,
@@ -61,7 +61,7 @@ import configuration from '@infrastructure/config/configuration';
       provide: APP_FILTER,
       useClass: AllExceptionsFilter,
     },
-    
+
     // Global guards
     {
       provide: APP_GUARD,

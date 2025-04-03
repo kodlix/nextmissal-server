@@ -1,18 +1,16 @@
-import { ICommand } from '@nestjs/cqrs';
+import { ICommand, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { LoginDto } from '@application/dtos/auth/login.dto';
 import { AuthResponse } from '@application/dtos/responses/user.response';
-
-export class LoginCommand implements ICommand {
-  constructor(public readonly loginDto: LoginDto) {}
-}
-
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UnauthorizedException, Injectable, Inject } from '@nestjs/common';
 import { UserService } from '@core/services/user.service';
 import { AuthService } from '@core/services/auth.service';
 import { IRoleRepository } from '@core/repositories/role.repository.interface';
 import { TokenProvider } from '@presentation/modules/auth/providers/token.provider';
 import { UserMapper } from '@application/mappers/user.mapper';
+
+export class LoginCommand implements ICommand {
+  constructor(public readonly loginDto: LoginDto) {}
+}
 
 @Injectable()
 @CommandHandler(LoginCommand)
@@ -27,7 +25,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
 
   async execute(command: LoginCommand): Promise<AuthResponse> {
     const { email, password } = command.loginDto;
-    
+
     // Validate credentials
     const user = await this.userService.validateCredentials(email, password);
     if (!user) {
@@ -39,7 +37,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
 
     // Check if email is verified
     const isEmailVerified = await this.authService.isEmailVerified(email);
-    
+
     // If email verification is required and not verified, prompt user to verify first
     if (!isEmailVerified) {
       return {
@@ -72,9 +70,9 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
 
     // Generate JWT tokens
     const { accessToken, refreshToken } = await this.tokenProvider.generateTokens(
-      user, 
+      user,
       Array.from(userPermissions),
-      true // Email is verified at this point
+      true, // Email is verified at this point
     );
 
     return {
