@@ -12,21 +12,16 @@ export class PasswordReset {
   usedAt: Date | null;
   createdAt: Date;
 
-  constructor(
-    userId: UserId,
-    email: Email,
-    expirationMinutes: number = 60,
-    id?: string
-  ) {
+  constructor(userId: UserId, email: Email, expirationMinutes: number = 60, id?: string) {
     this.id = id || uuid();
     this.userId = userId;
     this.email = email;
     this.token = Token.generate();
-    
+
     // Set expiration time (default: 60 minutes)
     const now = new Date();
     this.expiresAt = new Date(now.getTime() + expirationMinutes * 60000);
-    
+
     this.usedAt = null;
     this.createdAt = now;
   }

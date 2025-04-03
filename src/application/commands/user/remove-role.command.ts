@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserService } from '@core/services/user.service';
-import { UserDetailResponse } from '@application/dtos/responses/user.response';
+import { IUserDetailResponse } from '@application/dtos/responses/user.response';
 import { UserMapper } from '@application/mappers/user.mapper';
 
 export class RemoveRoleCommand {
@@ -11,14 +11,14 @@ export class RemoveRoleCommand {
 }
 
 @CommandHandler(RemoveRoleCommand)
-export class RemoveRoleCommandHandler implements ICommandHandler<RemoveRoleCommand, UserDetailResponse> {
-  constructor(
-    private readonly userService: UserService,
-  ) {}
+export class RemoveRoleCommandHandler
+  implements ICommandHandler<RemoveRoleCommand, IUserDetailResponse>
+{
+  constructor(private readonly userService: UserService) {}
 
-  async execute(command: RemoveRoleCommand): Promise<UserDetailResponse> {
+  async execute(command: RemoveRoleCommand): Promise<IUserDetailResponse> {
     const { userId, roleId } = command;
-    
+
     const user = await this.userService.removeRoleFromUser(userId, roleId);
 
     // Use the mapper to convert to response DTO

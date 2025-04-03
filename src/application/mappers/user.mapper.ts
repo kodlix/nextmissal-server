@@ -1,40 +1,40 @@
 import { User } from '@core/entities/user.entity';
 import { Role } from '@core/entities/role.entity';
-import { 
-  UserBaseResponse,
-  UserDetailResponse,
-  UserRoleResponse,
-  UserWithAuthResponse
+import {
+  IUserBaseResponse,
+  IUserDetailResponse,
+  IUserRoleResponse,
+  IUserWithAuthResponse,
 } from '@application/dtos/responses/user.response';
 
 export class UserMapper {
   /**
-   * Maps a Role entity to a UserRoleResponse DTO
+   * Maps a Role entity to a IUserRoleResponse DTO
    */
-  static toRoleResponse(role: Role): UserRoleResponse {
+  static toRoleResponse(role: Role): IUserRoleResponse {
     return {
       id: role.id,
-      name: role.name
+      name: role.name,
     };
   }
 
   /**
-   * Maps a User entity to a UserBaseResponse DTO
+   * Maps a User entity to a IUserBaseResponse DTO
    */
-  static toBaseResponse(user: User, emailVerified: boolean = false): UserBaseResponse {
+  static toBaseResponse(user: User, emailVerified: boolean = false): IUserBaseResponse {
     return {
       id: user.id,
       email: user.email.getValue(),
       firstName: user.firstName.getValue(),
       lastName: user.lastName.getValue(),
-      emailVerified
+      emailVerified,
     };
   }
 
   /**
-   * Maps a User entity to a UserDetailResponse DTO
+   * Maps a User entity to a IUserDetailResponse DTO
    */
-  static toDetailResponse(user: User, emailVerified: boolean = false): UserDetailResponse {
+  static toDetailResponse(user: User, emailVerified: boolean = false): IUserDetailResponse {
     return {
       ...this.toBaseResponse(user, emailVerified),
       isActive: user.isActive,
@@ -42,17 +42,17 @@ export class UserMapper {
       lastLoginAt: user.lastLoginAt,
       roles: user.roles?.map(role => this.toRoleResponse(role)) || [],
       createdAt: user.createdAt,
-      updatedAt: user.updatedAt
+      updatedAt: user.updatedAt,
     };
   }
 
   /**
-   * Maps a User entity to a UserWithAuthResponse DTO
+   * Maps a User entity to a IUserWithAuthResponse DTO
    */
-  static toAuthResponse(user: User, emailVerified: boolean = false): UserWithAuthResponse {
+  static toAuthResponse(user: User, emailVerified: boolean = false): IUserWithAuthResponse {
     return {
       ...this.toBaseResponse(user, emailVerified),
-      roles: user.roles?.map(role => this.toRoleResponse(role)) || []
+      roles: user.roles?.map(role => this.toRoleResponse(role)) || [],
     };
   }
 }

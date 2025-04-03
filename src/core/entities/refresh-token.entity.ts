@@ -14,7 +14,7 @@ export class RefreshToken {
     this.id = id || uuidv4();
     this.userId = userId;
     this.token = token;
-    
+
     // Set expiration time
     const now = new Date();
     this.expiresAt = new Date(now.getTime() + expirationDays * 24 * 60 * 60 * 1000);

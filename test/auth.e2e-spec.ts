@@ -15,7 +15,7 @@ describe('AuthController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    
+
     // Global validation pipe - same as in main.ts
     app.useGlobalPipes(
       new ValidationPipe({
@@ -24,21 +24,21 @@ describe('AuthController (e2e)', () => {
         forbidNonWhitelisted: true,
       }),
     );
-    
+
     // API prefix - needs to match main.ts setting
     app.setGlobalPrefix('api');
-    
+
     // Get services
     jwtService = moduleFixture.get<JwtService>(JwtService);
-    
+
     // Create a test JWT token for authentication tests
     accessToken = jwtService.sign({
       sub: '550e8400-e29b-41d4-a716-446655440000', // Test user ID
       email: 'test@example.com',
       roles: ['admin'],
-      permissions: ['user:read']
+      permissions: ['user:read'],
     });
-    
+
     await app.init();
   });
 
@@ -54,7 +54,7 @@ describe('AuthController (e2e)', () => {
         .get('/api/auth/me')
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200)
-        .expect((res) => {
+        .expect(res => {
           expect(res.body).toHaveProperty('id');
           expect(res.body).toHaveProperty('email');
           expect(res.body).toHaveProperty('roles');
@@ -69,9 +69,7 @@ describe('AuthController (e2e)', () => {
     });
 
     it('should fail without token', () => {
-      return request(app.getHttpServer())
-        .get('/api/auth/me')
-        .expect(401);
+      return request(app.getHttpServer()).get('/api/auth/me').expect(401);
     });
   });
 
@@ -83,7 +81,7 @@ describe('AuthController (e2e)', () => {
           email: 'not-an-email',
           password: 'short',
           firstName: '',
-          lastName: ''
+          lastName: '',
         })
         .expect(400);
     });
@@ -95,10 +93,10 @@ describe('AuthController (e2e)', () => {
           email: 'test-user@example.com',
           password: 'StrongPassword123!',
           firstName: 'Test',
-          lastName: 'User'
+          lastName: 'User',
         })
         .expect(201)
-        .expect((res) => {
+        .expect(res => {
           expect(res.body).toHaveProperty('id');
           expect(res.body).toHaveProperty('email', 'test-user@example.com');
         });
@@ -111,7 +109,7 @@ describe('AuthController (e2e)', () => {
         .post('/api/auth/login')
         .send({
           email: 'not-an-email',
-          password: ''
+          password: '',
         })
         .expect(400);
     });
@@ -121,10 +119,10 @@ describe('AuthController (e2e)', () => {
         .post('/api/auth/login')
         .send({
           email: 'test@example.com',
-          password: 'Password123!'
+          password: 'Password123!',
         })
         .expect(200)
-        .expect((res) => {
+        .expect(res => {
           expect(res.body).toHaveProperty('accessToken');
           expect(res.body).toHaveProperty('refreshToken');
           expect(res.body).toHaveProperty('user');
@@ -137,7 +135,7 @@ describe('AuthController (e2e)', () => {
       return request(app.getHttpServer())
         .post('/api/auth/refresh-token')
         .send({
-          refreshToken: ''
+          refreshToken: '',
         })
         .expect(400);
     });
@@ -146,7 +144,7 @@ describe('AuthController (e2e)', () => {
       return request(app.getHttpServer())
         .post('/api/auth/refresh-token')
         .send({
-          refreshToken: 'invalid-refresh-token'
+          refreshToken: 'invalid-refresh-token',
         })
         .expect(401);
     });
@@ -154,9 +152,7 @@ describe('AuthController (e2e)', () => {
 
   describe('POST /auth/logout', () => {
     it('should require authentication', () => {
-      return request(app.getHttpServer())
-        .post('/api/auth/logout')
-        .expect(401);
+      return request(app.getHttpServer()).post('/api/auth/logout').expect(401);
     });
   });
 
@@ -165,7 +161,7 @@ describe('AuthController (e2e)', () => {
       return request(app.getHttpServer())
         .post('/api/auth/email/send-verification')
         .send({
-          email: 'not-an-email'
+          email: 'not-an-email',
         })
         .expect(400);
     });
@@ -175,7 +171,7 @@ describe('AuthController (e2e)', () => {
         .post('/api/auth/email/verify')
         .send({
           email: 'test@example.com',
-          code: ''
+          code: '',
         })
         .expect(400);
     });

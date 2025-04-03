@@ -10,7 +10,7 @@ export class GetRolesQuery implements IQuery {}
 export class GetRolesQueryHandler implements IQueryHandler<GetRolesQuery> {
   constructor(
     @Inject('RoleRepository')
-    private readonly roleRepository: IRoleRepository
+    private readonly roleRepository: IRoleRepository,
   ) {}
 
   async execute(): Promise<RoleDetailResponse[]> {

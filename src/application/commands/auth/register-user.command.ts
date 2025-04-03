@@ -1,32 +1,23 @@
-import { ICommand } from '@nestjs/cqrs';
+import { ICommand, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { RegisterDto } from '@application/dtos/auth/register.dto';
-import { UserBaseResponse } from '@application/dtos/responses/user.response';
+import { IUserBaseResponse } from '@application/dtos/responses/user.response';
+import { Injectable } from '@nestjs/common';
+import { UserService } from '@core/services/user.service';
+import { UserMapper } from '@application/mappers/user.mapper';
 
 export class RegisterUserCommand implements ICommand {
   constructor(public readonly registerDto: RegisterDto) {}
 }
 
-import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { Injectable } from '@nestjs/common';
-import { UserService } from '@core/services/user.service';
-import { UserMapper } from '@application/mappers/user.mapper';
-
 @Injectable()
 @CommandHandler(RegisterUserCommand)
 export class RegisterUserCommandHandler implements ICommandHandler<RegisterUserCommand> {
-  constructor(
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
-  async execute(command: RegisterUserCommand): Promise<UserBaseResponse> {
+  async execute(command: RegisterUserCommand): Promise<IUserBaseResponse> {
     const { email, password, firstName, lastName } = command.registerDto;
-    
-    const user = await this.userService.createUser(
-      email,
-      password,
-      firstName,
-      lastName,
-    );
+
+    const user = await this.userService.createUser(email, password, firstName, lastName);
 
     // Use the mapper to convert to response DTO
     return UserMapper.toBaseResponse(user);

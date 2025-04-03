@@ -15,7 +15,9 @@ export class UpdateRoleCommand {
 }
 
 @CommandHandler(UpdateRoleCommand)
-export class UpdateRoleCommandHandler implements ICommandHandler<UpdateRoleCommand, RoleDetailResponse> {
+export class UpdateRoleCommandHandler
+  implements ICommandHandler<UpdateRoleCommand, RoleDetailResponse>
+{
   constructor(
     private readonly roleService: RoleService,
     @Inject('RoleRepository')
@@ -24,14 +26,9 @@ export class UpdateRoleCommandHandler implements ICommandHandler<UpdateRoleComma
 
   async execute(command: UpdateRoleCommand): Promise<RoleDetailResponse> {
     const { id, name, description, isDefault } = command;
-    
+
     // Update the role
-    const role = await this.roleService.updateRole(
-      id,
-      name,
-      description,
-      isDefault,
-    );
+    const role = await this.roleService.updateRole(id, name, description, isDefault);
 
     // Fetch the updated role with permissions
     const updatedRole = await this.roleRepository.findById(role.id);

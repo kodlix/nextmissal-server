@@ -9,7 +9,10 @@ import { UserId } from '@core/value-objects/user-id.vo';
 import { PasswordReset as PrismaPasswordReset } from '@prisma/client';
 
 @Injectable()
-export class PasswordResetRepository extends BaseRepository<PasswordReset> implements IPasswordResetRepository {
+export class PasswordResetRepository
+  extends BaseRepository<PasswordReset>
+  implements IPasswordResetRepository
+{
   constructor(private readonly prisma: PrismaService) {
     super();
   }
@@ -17,7 +20,7 @@ export class PasswordResetRepository extends BaseRepository<PasswordReset> imple
   async findById(id: string): Promise<PasswordReset | null> {
     return this.executeWithErrorHandling('findById', async () => {
       const record = await this.prisma.passwordReset.findUnique({
-        where: { id }
+        where: { id },
       });
 
       return record ? this.mapToModel(record) : null;
@@ -28,7 +31,7 @@ export class PasswordResetRepository extends BaseRepository<PasswordReset> imple
     return this.executeWithErrorHandling('findByUserId', async () => {
       const record = await this.prisma.passwordReset.findFirst({
         where: { userId },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
       });
 
       return record ? this.mapToModel(record) : null;
@@ -38,7 +41,7 @@ export class PasswordResetRepository extends BaseRepository<PasswordReset> imple
   async findByToken(token: string): Promise<PasswordReset | null> {
     return this.executeWithErrorHandling('findByToken', async () => {
       const record = await this.prisma.passwordReset.findUnique({
-        where: { token }
+        where: { token },
       });
 
       return record ? this.mapToModel(record) : null;
@@ -49,7 +52,7 @@ export class PasswordResetRepository extends BaseRepository<PasswordReset> imple
     return this.executeWithErrorHandling('findByEmail', async () => {
       const record = await this.prisma.passwordReset.findFirst({
         where: { email },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
       });
 
       return record ? this.mapToModel(record) : null;
@@ -66,8 +69,8 @@ export class PasswordResetRepository extends BaseRepository<PasswordReset> imple
           token: passwordReset.token.getValue(),
           expiresAt: passwordReset.expiresAt,
           usedAt: passwordReset.usedAt,
-          createdAt: passwordReset.createdAt
-        }
+          createdAt: passwordReset.createdAt,
+        },
       });
 
       return passwordReset;
@@ -83,8 +86,8 @@ export class PasswordResetRepository extends BaseRepository<PasswordReset> imple
           email: passwordReset.email.getValue(),
           token: passwordReset.token.getValue(),
           expiresAt: passwordReset.expiresAt,
-          usedAt: passwordReset.usedAt
-        }
+          usedAt: passwordReset.usedAt,
+        },
       });
 
       return passwordReset;
@@ -92,30 +95,42 @@ export class PasswordResetRepository extends BaseRepository<PasswordReset> imple
   }
 
   async delete(id: string): Promise<boolean> {
-    return this.executeWithErrorHandling('delete', async () => {
-      await this.prisma.passwordReset.delete({
-        where: { id }
-      });
-      return true;
-    }, false);
+    return this.executeWithErrorHandling(
+      'delete',
+      async () => {
+        await this.prisma.passwordReset.delete({
+          where: { id },
+        });
+        return true;
+      },
+      false,
+    );
   }
 
   async deleteByUserId(userId: string): Promise<boolean> {
-    return this.executeWithErrorHandling('deleteByUserId', async () => {
-      await this.prisma.passwordReset.deleteMany({
-        where: { userId }
-      });
-      return true;
-    }, false);
+    return this.executeWithErrorHandling(
+      'deleteByUserId',
+      async () => {
+        await this.prisma.passwordReset.deleteMany({
+          where: { userId },
+        });
+        return true;
+      },
+      false,
+    );
   }
 
   async deleteByEmail(email: string): Promise<boolean> {
-    return this.executeWithErrorHandling('deleteByEmail', async () => {
-      await this.prisma.passwordReset.deleteMany({
-        where: { email }
-      });
-      return true;
-    }, false);
+    return this.executeWithErrorHandling(
+      'deleteByEmail',
+      async () => {
+        await this.prisma.passwordReset.deleteMany({
+          where: { email },
+        });
+        return true;
+      },
+      false,
+    );
   }
 
   private mapToModel(record: PrismaPasswordReset): PasswordReset {
@@ -123,19 +138,19 @@ export class PasswordResetRepository extends BaseRepository<PasswordReset> imple
     const userIdVO = new UserId(record.userId);
     const emailVO = new Email(record.email);
     const tokenVO = new Token(record.token);
-    
+
     const passwordReset = new PasswordReset(
       userIdVO,
       emailVO,
-      0 // We don't need to specify expiration here as we're loading from DB
+      0, // We don't need to specify expiration here as we're loading from DB
     );
-    
+
     passwordReset.id = record.id;
     passwordReset.token = tokenVO; // Override the auto-generated token with the one from DB
     passwordReset.expiresAt = record.expiresAt;
     passwordReset.usedAt = record.usedAt;
     passwordReset.createdAt = record.createdAt;
-    
+
     return passwordReset;
   }
 }

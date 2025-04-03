@@ -4,23 +4,27 @@ import { IUserRepository } from '@core/repositories/user.repository.interface';
 import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 import { Role } from '@core/entities/role.entity';
 import { Permission } from '@core/entities/permission.entity';
-import { Prisma, User as PrismaUser, UserRole as PrismaUserRole, RolePermission as PrismaRolePermission, Role as PrismaRole, Permission as PrismaPermission } from '@prisma/client';
+import {
+  User as PrismaUser,
+  UserRole as PrismaUserRole,
+  RolePermission as PrismaRolePermission,
+  Role as PrismaRole,
+  Permission as PrismaPermission,
+} from '@prisma/client';
 import { Email } from '@core/value-objects/email.vo';
 import { FirstName, LastName } from '@core/value-objects/name.vo';
 import { ResourceAction, ActionType } from '@core/value-objects/resource-action.vo';
-import { PermissionName } from '@core/value-objects/permission-name.vo';
 import { BaseRepository } from './base.repository';
-import { UserId } from '@core/value-objects/user-id.vo';
 
 // Define a type for User with its relations (roles with nested permissions)
 type UserWithRelations = PrismaUser & {
   roles: (PrismaUserRole & {
     role: PrismaRole & {
       permissions: (PrismaRolePermission & {
-        permission: PrismaPermission
-      })[]
-    }
-  })[]
+        permission: PrismaPermission;
+      })[];
+    };
+  })[];
 };
 
 @Injectable()
@@ -231,12 +235,16 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
   }
 
   async delete(id: string): Promise<boolean> {
-    return this.executeWithErrorHandling('delete', async () => {
-      await this.prisma.user.delete({
-        where: { id },
-      });
-      return true;
-    }, false);
+    return this.executeWithErrorHandling(
+      'delete',
+      async () => {
+        await this.prisma.user.delete({
+          where: { id },
+        });
+        return true;
+      },
+      false,
+    );
   }
 
   private mapToModel(record: UserWithRelations): User {
@@ -244,13 +252,8 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
     const emailVO = new Email(record.email);
     const firstNameVO = new FirstName(record.firstName);
     const lastNameVO = new LastName(record.lastName);
-    
-    const user = new User(
-      emailVO,
-      record.passwordHash,
-      firstNameVO,
-      lastNameVO,
-    );
+
+    const user = new User(emailVO, record.passwordHash, firstNameVO, lastNameVO);
 
     user.id = record.id;
     user.isActive = record.isActive;
@@ -263,11 +266,7 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
     // Map roles
     user.roles = record.roles.map(roleRelation => {
       const roleRecord = roleRelation.role;
-      const role = new Role(
-        roleRecord.name,
-        roleRecord.description,
-        roleRecord.isDefault,
-      );
+      const role = new Role(roleRecord.name, roleRecord.description, roleRecord.isDefault);
 
       role.id = roleRecord.id;
       role.createdAt = roleRecord.createdAt;
@@ -277,20 +276,20 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
       if (roleRecord.permissions) {
         role.permissions = roleRecord.permissions.map(permissionRelation => {
           const permissionRecord = permissionRelation.permission;
-          
+
           // Create the ResourceAction value object
           const resourceAction = new ResourceAction(
             permissionRecord.resource,
-            permissionRecord.action as ActionType
+            permissionRecord.action as ActionType,
           );
-          
+
           // Create the Permission entity with the value object
           const permission = new Permission(
             resourceAction,
             permissionRecord.description,
-            permissionRecord.id
+            permissionRecord.id,
           );
-          
+
           permission.createdAt = permissionRecord.createdAt;
           permission.updatedAt = permissionRecord.updatedAt;
 

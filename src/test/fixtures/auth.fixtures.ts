@@ -13,9 +13,7 @@ export const authFixtures = {
       isActive: true,
       lastLoginAt: new Date(),
       twoFactorEnabled: false,
-      roles: [
-        { id: '2', name: 'user', description: 'Regular user', permissions: [] }
-      ],
+      roles: [{ id: '2', name: 'user', description: 'Regular user', permissions: [] }],
       getPermissions: () => ['user:read'],
       getRoleNames: () => ['user'],
       hasPermission: () => true,
@@ -31,9 +29,7 @@ export const authFixtures = {
       isActive: true,
       lastLoginAt: new Date(),
       twoFactorEnabled: false,
-      roles: [
-        { id: '1', name: 'admin', description: 'Administrator', permissions: [] }
-      ],
+      roles: [{ id: '1', name: 'admin', description: 'Administrator', permissions: [] }],
       getPermissions: () => ['user:read', 'user:write', 'user:delete', 'role:read', 'role:write'],
       getRoleNames: () => ['admin'],
       hasPermission: () => true,
@@ -65,9 +61,7 @@ export const authFixtures = {
       isActive: true,
       lastLoginAt: new Date(),
       twoFactorEnabled: true,
-      roles: [
-        { id: '2', name: 'user', description: 'Regular user', permissions: [] }
-      ],
+      roles: [{ id: '2', name: 'user', description: 'Regular user', permissions: [] }],
       getPermissions: () => ['user:read'],
       getRoleNames: () => ['user'],
       hasPermission: () => true,
@@ -193,7 +187,8 @@ export const authFixtures = {
   },
 
   tokens: {
-    accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NTBlODQwMC1lMjliLTQxZDQtYTcxNi00NDY2NTU0NDAwMDAiLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJyb2xlcyI6WyJ1c2VyIl0sInBlcm1pc3Npb25zIjpbInVzZXI6cmVhZCJdLCJpYXQiOjE2OTgwMDAwMDAsImV4cCI6MTY5ODAwMzYwMH0.mJN5dCwhA9GjQvdS8vnKKlvsCmkFjKK91LEDx1wUuO4',
+    accessToken:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NTBlODQwMC1lMjliLTQxZDQtYTcxNi00NDY2NTU0NDAwMDAiLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJyb2xlcyI6WyJ1c2VyIl0sInBlcm1pc3Npb25zIjpbInVzZXI6cmVhZCJdLCJpYXQiOjE2OTgwMDAwMDAsImV4cCI6MTY5ODAwMzYwMH0.mJN5dCwhA9GjQvdS8vnKKlvsCmkFjKK91LEDx1wUuO4',
     refreshToken: '550e8400-e29b-41d4-a716-446655440000',
   },
 };

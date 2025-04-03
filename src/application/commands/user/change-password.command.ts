@@ -1,5 +1,4 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { UnauthorizedException } from '@nestjs/common';
 import { UserService } from '@core/services/user.service';
 
 export class ChangePasswordCommand {
@@ -12,17 +11,11 @@ export class ChangePasswordCommand {
 
 @CommandHandler(ChangePasswordCommand)
 export class ChangePasswordCommandHandler implements ICommandHandler<ChangePasswordCommand, void> {
-  constructor(
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   async execute(command: ChangePasswordCommand): Promise<void> {
     const { userId, newPassword, currentPassword } = command;
-    
-    await this.userService.changePassword(
-      userId,
-      newPassword,
-      currentPassword,
-    );
+
+    await this.userService.changePassword(userId, newPassword, currentPassword);
   }
 }

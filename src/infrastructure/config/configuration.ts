@@ -2,7 +2,7 @@ export default () => ({
   // Application
   env: process.env.NODE_ENV || 'development',
   port: parseInt(process.env.PORT, 10) || 3000,
-  
+
   // Database
   database: {
     host: process.env.DB_HOST,
@@ -11,14 +11,14 @@ export default () => ({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
   },
-  
+
   // JWT
   jwt: {
     secret: process.env.JWT_SECRET,
     accessExpiration: process.env.JWT_ACCESS_EXPIRATION || '15m',
     refreshExpiration: process.env.JWT_REFRESH_EXPIRATION || '7d',
   },
-  
+
   // OTP
   otp: {
     secret: process.env.OTP_SECRET,

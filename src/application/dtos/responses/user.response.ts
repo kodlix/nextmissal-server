@@ -1,11 +1,11 @@
 // User response interfaces
 
-export interface UserRoleResponse {
+export interface IUserRoleResponse {
   id: string;
   name: string;
 }
 
-export interface UserBaseResponse {
+export interface IUserBaseResponse {
   id: string;
   email: string;
   firstName: string;
@@ -13,44 +13,44 @@ export interface UserBaseResponse {
   emailVerified?: boolean;
 }
 
-export interface UserDetailResponse extends UserBaseResponse {
+export interface IUserDetailResponse extends IUserBaseResponse {
   isActive: boolean;
   otpEnabled: boolean;
   lastLoginAt?: Date;
-  roles: UserRoleResponse[];
+  roles: IUserRoleResponse[];
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface UserWithAuthResponse extends UserBaseResponse {
-  roles: UserRoleResponse[];
+export interface IUserWithAuthResponse extends IUserBaseResponse {
+  roles: IUserRoleResponse[];
 }
 
-export interface AuthTokenResponse {
+export interface IAuthTokenResponse {
   accessToken: string;
   refreshToken: string;
-  user: UserWithAuthResponse;
+  user: IUserWithAuthResponse;
 }
 
-export interface OtpRequiredResponse {
+export interface IOtpRequiredResponse {
   requiresOtp: true;
   userId: string;
   message: string;
 }
 
-export interface EmailVerificationRequiredResponse {
+export interface IEmailVerificationRequiredResponse {
   requiresEmailVerification: true;
   userId: string;
   email: string;
   message: string;
 }
 
-export interface AuthRefreshTokenResponse {
+export interface IAuthRefreshTokenResponse {
   accessToken: string;
   refreshToken: string;
 }
 
-export interface JwtPayload {
+export interface IJwtPayload {
   sub: string;
   email: string;
   emailVerified?: boolean;
@@ -60,4 +60,7 @@ export interface JwtPayload {
   exp?: number;
 }
 
-export type AuthResponse = AuthTokenResponse | OtpRequiredResponse | EmailVerificationRequiredResponse;
+export type AuthResponse =
+  | IAuthTokenResponse
+  | IOtpRequiredResponse
+  | IEmailVerificationRequiredResponse;

@@ -1,9 +1,9 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Permission } from '../entities/permission.entity';
 import { IPermissionRepository } from '../repositories/permission.repository.interface';
-import { 
-  EntityNotFoundException, 
-  EntityAlreadyExistsException 
+import {
+  EntityNotFoundException,
+  EntityAlreadyExistsException,
 } from '@core/exceptions/domain-exceptions';
 import { ResourceAction, ActionType } from '@core/value-objects/resource-action.vo';
 import { PermissionName } from '@core/value-objects/permission-name.vo';
@@ -29,7 +29,7 @@ export class PermissionService {
 
     // Create ResourceAction value object
     const resourceAction = new ResourceAction(resource, action as ActionType);
-    
+
     // Create a new permission with the ResourceAction value object
     const permission = new Permission(resourceAction, description);
     return this.permissionRepository.create(permission);
@@ -55,7 +55,7 @@ export class PermissionService {
       // We'll need to update resourceAction if name changes
       permission.name = PermissionName.create(
         permission.resourceAction.getResource(),
-        permission.resourceAction.getAction().toString()
+        permission.resourceAction.getAction().toString(),
       );
     }
 
@@ -66,16 +66,13 @@ export class PermissionService {
     // If either resource or action changes, create a new ResourceAction
     if (resource || action) {
       const newResource = resource || permission.resourceAction.getResource();
-      const newAction = action as ActionType || permission.resourceAction.getAction();
-      
+      const newAction = (action as ActionType) || permission.resourceAction.getAction();
+
       const newResourceAction = new ResourceAction(newResource, newAction);
       permission.resourceAction = newResourceAction;
-      
+
       // Update the name to reflect the new resource and action
-      permission.name = PermissionName.create(
-        newResource,
-        newAction.toString()
-      );
+      permission.name = PermissionName.create(newResource, newAction.toString());
     }
 
     permission.updatedAt = new Date();

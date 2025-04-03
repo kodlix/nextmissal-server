@@ -37,7 +37,7 @@ describe('RoleController (e2e)', () => {
       sub: '550e8400-e29b-41d4-a716-446655440001', // Admin user ID
       email: 'admin@example.com',
       roles: ['admin'],
-      permissions: ['role:read', 'role:write', 'role:delete']
+      permissions: ['role:read', 'role:write', 'role:delete'],
     });
 
     // Create a regular user token with limited permissions
@@ -45,7 +45,7 @@ describe('RoleController (e2e)', () => {
       sub: '550e8400-e29b-41d4-a716-446655440002', // Regular user ID
       email: 'user@example.com',
       roles: ['user'],
-      permissions: ['role:read']
+      permissions: ['role:read'],
     });
 
     await app.init();
@@ -62,15 +62,13 @@ describe('RoleController (e2e)', () => {
         .get('/api/roles')
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .expect(200)
-        .expect((res: { body: any; }) => {
+        .expect((res: { body: unknown[] }) => {
           expect(Array.isArray(res.body)).toBe(true);
         });
     });
 
     it('should deny access when not authenticated', () => {
-      return request(app.getHttpServer())
-        .get('/api/roles')
-        .expect(401); // Unauthorized
+      return request(app.getHttpServer()).get('/api/roles').expect(401); // Unauthorized
     });
   });
 
@@ -86,7 +84,7 @@ describe('RoleController (e2e)', () => {
         .get('/api/roles/550e8400-e29b-41d4-a716-446655440000')
         .set('Authorization', `Bearer ${adminAccessToken}`)
         .expect(200)
-        .expect((res: { body: any; }) => {
+        .expect((res: { body: Record<string, unknown> }) => {
           expect(res.body).toHaveProperty('id');
           expect(res.body).toHaveProperty('name');
         });
@@ -101,7 +99,7 @@ describe('RoleController (e2e)', () => {
           name: 'New Role',
           description: 'A test role',
           isDefault: false,
-          permissionIds: []
+          permissionIds: [],
         })
         .expect(401);
     });
@@ -114,7 +112,7 @@ describe('RoleController (e2e)', () => {
           name: 'New Role',
           description: 'A test role',
           isDefault: false,
-          permissionIds: []
+          permissionIds: [],
         })
         .expect(401); // No database connection, so token validation fails
     });
@@ -127,7 +125,7 @@ describe('RoleController (e2e)', () => {
           name: '', // Empty name should be invalid
           description: '',
           isDefault: 'not-a-boolean', // Invalid boolean
-          permissionIds: 'not-an-array' // Invalid array
+          permissionIds: 'not-an-array', // Invalid array
         })
         .expect(401); // Without database the token cannot be verified
     });
@@ -140,7 +138,7 @@ describe('RoleController (e2e)', () => {
         .send({
           name: 'Updated Role',
           description: 'An updated role',
-          isDefault: false
+          isDefault: false,
         })
         .expect(401);
     });
@@ -152,7 +150,7 @@ describe('RoleController (e2e)', () => {
         .send({
           name: '', // Empty name should be invalid
           description: '',
-          isDefault: 'not-a-boolean' // Invalid boolean
+          isDefault: 'not-a-boolean', // Invalid boolean
         })
         .expect(401); // Without database the token cannot be verified
     });
@@ -169,13 +167,17 @@ describe('RoleController (e2e)', () => {
   describe('Role permissions endpoints', () => {
     it('should deny access when not authenticated for assigning permissions', () => {
       return request(app.getHttpServer())
-        .post('/api/roles/550e8400-e29b-41d4-a716-446655440000/permissions/550e8400-e29b-41d4-a716-446655440001')
+        .post(
+          '/api/roles/550e8400-e29b-41d4-a716-446655440000/permissions/550e8400-e29b-41d4-a716-446655440001',
+        )
         .expect(401);
     });
 
     it('should deny access when not authenticated for removing permissions', () => {
       return request(app.getHttpServer())
-        .delete('/api/roles/550e8400-e29b-41d4-a716-446655440000/permissions/550e8400-e29b-41d4-a716-446655440001')
+        .delete(
+          '/api/roles/550e8400-e29b-41d4-a716-446655440000/permissions/550e8400-e29b-41d4-a716-446655440001',
+        )
         .expect(401);
     });
   });

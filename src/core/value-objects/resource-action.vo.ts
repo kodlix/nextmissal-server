@@ -4,7 +4,7 @@ export enum ActionType {
   READ = 'read',
   WRITE = 'write',
   DELETE = 'delete',
-  MANAGE = 'manage'
+  MANAGE = 'manage',
 }
 
 export class ResourceAction {
@@ -15,10 +15,9 @@ export class ResourceAction {
     if (!this.isValidResource(resource)) {
       throw new InvalidValueObjectException('Invalid resource name');
     }
-    
-    const actionValue = typeof action === 'string' ? 
-      this.parseActionType(action) : action;
-    
+
+    const actionValue = typeof action === 'string' ? this.parseActionType(action) : action;
+
     this.resource = resource.toLowerCase();
     this.action = actionValue;
   }
@@ -48,7 +47,8 @@ export class ResourceAction {
   }
 
   equals(resourceAction: ResourceAction): boolean {
-    return this.resource === resourceAction.getResource() && 
-           this.action === resourceAction.getAction();
+    return (
+      this.resource === resourceAction.getResource() && this.action === resourceAction.getAction()
+    );
   }
 }

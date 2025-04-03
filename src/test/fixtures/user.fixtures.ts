@@ -7,21 +7,19 @@ export const userFixtures = {
     validUser: () => ({
       id: '550e8400-e29b-41d4-a716-446655440000',
       email: {
-        getValue: () => 'test@example.com'
+        getValue: () => 'test@example.com',
       },
       firstName: {
-        getValue: () => 'Test'
+        getValue: () => 'Test',
       },
       lastName: {
-        getValue: () => 'User'
+        getValue: () => 'User',
       },
       passwordHash: '$2b$10$abcdefghijklmnopqrstuvwxyz',
       isActive: true,
       lastLoginAt: new Date(),
       twoFactorEnabled: false,
-      roles: [
-        { id: '2', name: 'user', description: 'Regular user', permissions: [] }
-      ],
+      roles: [{ id: '2', name: 'user', description: 'Regular user', permissions: [] }],
       getPermissions: () => ['user:read'],
       getRoleNames: () => ['user'],
       hasPermission: () => true,
@@ -29,26 +27,24 @@ export const userFixtures = {
       updateLastLogin: jest.fn(),
       addRole: jest.fn(),
       activate: jest.fn(),
-      deactivate: jest.fn()
+      deactivate: jest.fn(),
     }),
     adminUser: () => ({
       id: '550e8400-e29b-41d4-a716-446655440001',
       email: {
-        getValue: () => 'admin@example.com'
+        getValue: () => 'admin@example.com',
       },
       firstName: {
-        getValue: () => 'Admin'
+        getValue: () => 'Admin',
       },
       lastName: {
-        getValue: () => 'User'
+        getValue: () => 'User',
       },
       passwordHash: '$2b$10$abcdefghijklmnopqrstuvwxyz',
       isActive: true,
       lastLoginAt: new Date(),
       twoFactorEnabled: false,
-      roles: [
-        { id: '1', name: 'admin', description: 'Administrator', permissions: [] }
-      ],
+      roles: [{ id: '1', name: 'admin', description: 'Administrator', permissions: [] }],
       getPermissions: () => ['user:read', 'user:write', 'user:delete', 'role:read', 'role:write'],
       getRoleNames: () => ['admin'],
       hasPermission: () => true,
@@ -56,18 +52,18 @@ export const userFixtures = {
       updateLastLogin: jest.fn(),
       addRole: jest.fn(),
       activate: jest.fn(),
-      deactivate: jest.fn()
+      deactivate: jest.fn(),
     }),
     inactiveUser: () => ({
       id: '550e8400-e29b-41d4-a716-446655440002',
       email: {
-        getValue: () => 'inactive@example.com'
+        getValue: () => 'inactive@example.com',
       },
       firstName: {
-        getValue: () => 'Inactive'
+        getValue: () => 'Inactive',
       },
       lastName: {
-        getValue: () => 'User'
+        getValue: () => 'User',
       },
       passwordHash: '$2b$10$abcdefghijklmnopqrstuvwxyz',
       isActive: false,
@@ -81,10 +77,10 @@ export const userFixtures = {
       updateLastLogin: jest.fn(),
       addRole: jest.fn(),
       activate: jest.fn(),
-      deactivate: jest.fn()
+      deactivate: jest.fn(),
     }),
   },
-  
+
   roles: {
     adminRole: () => ({
       id: '1',
@@ -104,12 +100,10 @@ export const userFixtures = {
       name: 'user',
       description: 'Regular user role',
       isDefault: true,
-      permissions: [
-        { id: '1', name: 'user:read' }
-      ],
+      permissions: [{ id: '1', name: 'user:read' }],
     }),
   },
-  
+
   permissions: {
     userRead: { id: '1', name: 'user:read' },
     userWrite: { id: '2', name: 'user:write' },
@@ -117,7 +111,7 @@ export const userFixtures = {
     roleRead: { id: '4', name: 'role:read' },
     roleWrite: { id: '5', name: 'role:write' },
     roleDelete: { id: '6', name: 'role:delete' },
-  }
+  },
 };
 
 // Legacy exports for backward compatibility

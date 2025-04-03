@@ -19,14 +19,16 @@ describe('Token Value Object', () => {
   });
 
   it('should throw for invalid token format', () => {
-      // Arrange & Act & Assert
-      expect(() => new Token('invalid-token')).toThrow(InvalidValueObjectException);
-      expect(() => new Token('550e8400-e29b-41d4-a716-446655440005-invalid')).toThrow(InvalidValueObjectException);
-      expect(() => new Token('')).toThrow(InvalidValueObjectException);
-      expect(() => new Token('  ')).toThrow(InvalidValueObjectException);
+    // Arrange & Act & Assert
+    expect(() => new Token('invalid-token')).toThrow(InvalidValueObjectException);
+    expect(() => new Token('550e8400-e29b-41d4-a716-446655440005-invalid')).toThrow(
+      InvalidValueObjectException,
+    );
+    expect(() => new Token('')).toThrow(InvalidValueObjectException);
+    expect(() => new Token('  ')).toThrow(InvalidValueObjectException);
   });
 
-  it ('should get the value properly', () => {
+  it('should get the value properly', () => {
     // Arrange
     const token = new Token('550e8400-e29b-41d4-a716-446655440005');
 
@@ -45,14 +47,14 @@ describe('Token Value Object', () => {
     expect(() => token.equals(token)).not.toThrow();
   });
 
-    it('should generate a new token', () => {
-        // Arrange & Act
-        const token = Token.generate();
+  it('should generate a new token', () => {
+    // Arrange & Act
+    const token = Token.generate();
 
-        // Assert
-        expect(token).toBeDefined();
-        expect(token.getValue()).toMatch(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-        );
-    });
+    // Assert
+    expect(token).toBeDefined();
+    expect(token.getValue()).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+    );
+  });
 });

@@ -11,7 +11,7 @@ import { UserId } from '@core/value-objects/user-id.vo';
 export class OtpRepository extends BaseRepository<Otp> implements IOtpRepository {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
   ) {
     super();
   }
@@ -78,27 +78,31 @@ export class OtpRepository extends BaseRepository<Otp> implements IOtpRepository
   }
 
   async delete(id: string): Promise<boolean> {
-    return this.executeWithErrorHandling('delete', async () => {
-      await this.prisma.otp.delete({
-        where: { id },
-      });
-      return true;
-    }, false);
+    return this.executeWithErrorHandling(
+      'delete',
+      async () => {
+        await this.prisma.otp.delete({
+          where: { id },
+        });
+        return true;
+      },
+      false,
+    );
   }
 
   private mapToModel(record: PrismaOtp): Otp {
     const expirationMinutes = this.configService.get<number>('OTP_EXPIRATION', 5);
-    
+
     // Create value object from primitive value
     const userIdVO = new UserId(record.userId);
-    
+
     const otp = new Otp(userIdVO, record.secret, expirationMinutes);
-    
+
     otp.id = record.id;
     otp.expiresAt = record.expiresAt;
     otp.verifiedAt = record.verifiedAt || undefined;
     otp.createdAt = record.createdAt;
-    
+
     return otp;
   }
 }

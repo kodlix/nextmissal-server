@@ -22,7 +22,7 @@ export class EmailProvider implements OnModuleInit {
       // If in development mode, create a test account
       if (this.configService.get('NODE_ENV') !== 'production') {
         const testAccount = await nodemailer.createTestAccount();
-        
+
         this.transporter = nodemailer.createTransport({
           host: 'smtp.ethereal.email',
           port: 587,
@@ -44,7 +44,7 @@ export class EmailProvider implements OnModuleInit {
           },
         });
       }
-      
+
       this.transporterInitialized = true;
     } catch (error) {
       console.error('Failed to initialize email transport:', error);
@@ -68,10 +68,10 @@ export class EmailProvider implements OnModuleInit {
    * @param code The verification code to send
    * @returns Promise with the result of the operation
    */
-  async sendVerificationCode(email: string, code: string): Promise<any> {
+  async sendVerificationCode(email: string, code: string): Promise<nodemailer.SentMessageInfo> {
     const transporter = await this.getTransporter();
     const appName = this.configService.get('APP_NAME', 'Our Application');
-    
+
     const mailOptions = {
       from: `"${appName}" <${this.configService.get('SMTP_FROM', 'noreply@example.com')}>`,
       to: email,
@@ -81,7 +81,8 @@ export class EmailProvider implements OnModuleInit {
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #333;">Your Verification Code</h2>
           <p>Use the following code to verify your action:</p>
-          <div style="background-color: #f4f4f4; padding: 15px; font-size: 24px; text-align: center; letter-spacing: 5px; font-weight: bold; margin: 20px 0;">
+          <div style="background-color: #f4f4f4; padding: 15px; font-size: 24px;
+               text-align: center; letter-spacing: 5px; font-weight: bold; margin: 20px 0;">
             ${code}
           </div>
           <p>This code will expire in 5 minutes.</p>
@@ -93,12 +94,13 @@ export class EmailProvider implements OnModuleInit {
     };
 
     const result = await transporter.sendMail(mailOptions);
-    
+
     // For test accounts, log the preview URL
     if (this.configService.get('NODE_ENV') !== 'production') {
+      // eslint-disable-next-line no-console
       console.log('Preview URL: %s', nodemailer.getTestMessageUrl(result));
     }
-    
+
     return result;
   }
 
@@ -108,12 +110,15 @@ export class EmailProvider implements OnModuleInit {
    * @param resetToken The password reset token
    * @returns Promise with the result of the operation
    */
-  async sendPasswordResetEmail(email: string, resetToken: string): Promise<any> {
+  async sendPasswordResetEmail(
+    email: string,
+    resetToken: string,
+  ): Promise<nodemailer.SentMessageInfo> {
     const transporter = await this.getTransporter();
     const appName = this.configService.get('APP_NAME', 'Our Application');
     const frontendUrl = this.configService.get('FRONTEND_URL', 'https://example.com');
     const resetLink = `${frontendUrl}/reset-password?token=${resetToken}`;
-    
+
     const mailOptions = {
       from: `"${appName}" <${this.configService.get('SMTP_FROM', 'noreply@example.com')}>`,
       to: email,
@@ -124,12 +129,14 @@ export class EmailProvider implements OnModuleInit {
           <h2 style="color: #333;">Reset Your Password</h2>
           <p>We received a request to reset your password. Click the button below to create a new password:</p>
           <div style="text-align: center; margin: 30px 0;">
-            <a href="${resetLink}" style="background-color: #4CAF50; color: white; padding: 12px 25px; text-decoration: none; border-radius: 4px; font-weight: bold;">
+            <a href="${resetLink}" 
+                style="background-color: #4CAF50; color: white; padding: 12px 25px; 
+                text-decoration: none; border-radius: 4px; font-weight: bold;">
               Reset Password
             </a>
           </div>
           <p>This link will expire in 1 hour.</p>
-          <p>If you didn't request a password reset, please ignore this email or contact support if you have concerns.</p>
+          <p>If you didn't request a password reset, please ignore this email or contact support.</p>
           <hr style="border: 1px solid #eee; margin: 30px 0;" />
           <p style="color: #777; font-size: 12px;">This is an automated message, please do not reply.</p>
         </div>
@@ -137,12 +144,13 @@ export class EmailProvider implements OnModuleInit {
     };
 
     const result = await transporter.sendMail(mailOptions);
-    
+
     // For test accounts, log the preview URL
     if (this.configService.get('NODE_ENV') !== 'production') {
+      // eslint-disable-next-line no-console
       console.log('Preview URL: %s', nodemailer.getTestMessageUrl(result));
     }
-    
+
     return result;
   }
 
@@ -152,11 +160,11 @@ export class EmailProvider implements OnModuleInit {
    * @param firstName The user's first name
    * @returns Promise with the result of the operation
    */
-  async sendWelcomeEmail(email: string, firstName: string): Promise<any> {
+  async sendWelcomeEmail(email: string, firstName: string): Promise<nodemailer.SentMessageInfo> {
     const transporter = await this.getTransporter();
     const appName = this.configService.get('APP_NAME', 'Our Application');
     const loginLink = this.configService.get('FRONTEND_URL', 'https://example.com');
-    
+
     const mailOptions = {
       from: `"${appName}" <${this.configService.get('SMTP_FROM', 'noreply@example.com')}>`,
       to: email,
@@ -173,7 +181,9 @@ export class EmailProvider implements OnModuleInit {
             <li>Connect with other users</li>
           </ul>
           <div style="text-align: center; margin: 30px 0;">
-            <a href="${loginLink}" style="background-color: #4CAF50; color: white; padding: 12px 25px; text-decoration: none; border-radius: 4px; font-weight: bold;">
+            <a href="${loginLink}" 
+                style="background-color: #4CAF50; color: white; padding: 12px 25px; 
+                text-decoration: none; border-radius: 4px; font-weight: bold;">
               Get Started
             </a>
           </div>
@@ -185,12 +195,13 @@ export class EmailProvider implements OnModuleInit {
     };
 
     const result = await transporter.sendMail(mailOptions);
-    
+
     // For test accounts, log the preview URL
     if (this.configService.get('NODE_ENV') !== 'production') {
+      // eslint-disable-next-line no-console
       console.log('Preview URL: %s', nodemailer.getTestMessageUrl(result));
     }
-    
+
     return result;
   }
 }

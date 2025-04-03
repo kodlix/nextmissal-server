@@ -429,8 +429,8 @@ Mappers are implemented in the application layer to convert between domain entit
 ```typescript
 // User mapper example
 export class UserMapper {
-  // Maps a User entity to a UserDetailResponse DTO
-  static toDetailResponse(user: User): UserDetailResponse {
+  // Maps a User entity to a IUserDetailResponse DTO
+  static toDetailResponse(user: User): IUserDetailResponse {
     return {
       id: user.id,
       email: user.email.getValue(), // Extract primitive from value object

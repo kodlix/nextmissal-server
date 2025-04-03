@@ -13,7 +13,9 @@ export class RemovePermissionCommand {
 }
 
 @CommandHandler(RemovePermissionCommand)
-export class RemovePermissionCommandHandler implements ICommandHandler<RemovePermissionCommand, RoleDetailResponse> {
+export class RemovePermissionCommandHandler
+  implements ICommandHandler<RemovePermissionCommand, RoleDetailResponse>
+{
   constructor(
     private readonly roleService: RoleService,
     @Inject('RoleRepository')
@@ -22,10 +24,10 @@ export class RemovePermissionCommandHandler implements ICommandHandler<RemovePer
 
   async execute(command: RemovePermissionCommand): Promise<RoleDetailResponse> {
     const { roleId, permissionId } = command;
-    
+
     // Remove the permission from the role
     const role = await this.roleService.removePermissionFromRole(roleId, permissionId);
-    
+
     // Fetch the updated role with permissions
     const updatedRole = await this.roleRepository.findById(role.id);
 

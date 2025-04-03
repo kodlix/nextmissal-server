@@ -2,7 +2,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { Role } from './role.entity';
 import { Email } from '@core/value-objects/email.vo';
 import { FirstName, LastName } from '@core/value-objects/name.vo';
-import { UserId } from '@core/value-objects/user-id.vo';
 
 export class User {
   id: string;
@@ -23,7 +22,7 @@ export class User {
     passwordHash: string,
     firstName: FirstName,
     lastName: LastName,
-    id?: string
+    id?: string,
   ) {
     this.id = id || uuidv4();
     this.email = email;

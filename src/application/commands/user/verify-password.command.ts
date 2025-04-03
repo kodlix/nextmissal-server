@@ -9,14 +9,14 @@ export class VerifyPasswordCommand {
 }
 
 @CommandHandler(VerifyPasswordCommand)
-export class VerifyPasswordCommandHandler implements ICommandHandler<VerifyPasswordCommand, boolean> {
-  constructor(
-    private readonly userService: UserService,
-  ) {}
+export class VerifyPasswordCommandHandler
+  implements ICommandHandler<VerifyPasswordCommand, boolean>
+{
+  constructor(private readonly userService: UserService) {}
 
   async execute(command: VerifyPasswordCommand): Promise<boolean> {
     const { userId, password } = command;
-    
+
     return this.userService.verifyCurrentPassword(userId, password);
   }
 }

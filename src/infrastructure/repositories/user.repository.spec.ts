@@ -4,7 +4,7 @@ import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
 import { User } from '@core/entities/user.entity';
 import { Email } from '@core/value-objects/email.vo';
 import { FirstName, LastName } from '@core/value-objects/name.vo';
-import { User as PrismaUser } from '@prisma/client';
+// We're using a mock record instead of the actual Prisma types
 
 // Mock PrismaService
 const mockPrismaService = {
@@ -18,7 +18,7 @@ const mockPrismaService = {
   userRole: {
     deleteMany: jest.fn(),
   },
-  $transaction: jest.fn((callback) => callback(mockPrismaService)),
+  $transaction: jest.fn(callback => callback(mockPrismaService)),
 };
 
 describe('UserRepository', () => {
@@ -27,15 +27,12 @@ describe('UserRepository', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        UserRepository,
-        { provide: PrismaService, useValue: mockPrismaService },
-      ],
+      providers: [UserRepository, { provide: PrismaService, useValue: mockPrismaService }],
     }).compile();
 
     repository = module.get<UserRepository>(UserRepository);
     prismaService = module.get<PrismaService>(PrismaService);
-    
+
     // Clear all mocks before each test
     jest.clearAllMocks();
   });
@@ -49,7 +46,7 @@ describe('UserRepository', () => {
       // Arrange
       const userId = '550e8400-e29b-41d4-a716-446655440000';
       const mockUser = createMockUserRecord(userId);
-      
+
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
 
       // Act
@@ -58,7 +55,7 @@ describe('UserRepository', () => {
       // Assert
       expect(prismaService.user.findUnique).toHaveBeenCalledWith({
         where: { id: userId },
-        include: expect.any(Object)
+        include: expect.any(Object),
       });
       expect(result).toBeInstanceOf(User);
       expect(result.id).toBe(userId);
@@ -78,7 +75,7 @@ describe('UserRepository', () => {
       // Assert
       expect(prismaService.user.findUnique).toHaveBeenCalledWith({
         where: { id: userId },
-        include: expect.any(Object)
+        include: expect.any(Object),
       });
       expect(result).toBeNull();
     });
@@ -89,7 +86,7 @@ describe('UserRepository', () => {
       // Arrange
       const email = 'test@example.com';
       const mockUser = createMockUserRecord('user-id', email);
-      
+
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
 
       // Act
@@ -98,7 +95,7 @@ describe('UserRepository', () => {
       // Assert
       expect(prismaService.user.findUnique).toHaveBeenCalledWith({
         where: { email },
-        include: expect.any(Object)
+        include: expect.any(Object),
       });
       expect(result).toBeInstanceOf(User);
       expect(result.email.getValue()).toBe(email);
@@ -112,9 +109,9 @@ describe('UserRepository', () => {
         new Email('test@example.com'),
         'hashedPassword',
         new FirstName('John'),
-        new LastName('Doe')
+        new LastName('Doe'),
       );
-      
+
       const mockCreatedUser = createMockUserRecord(newUser.id, newUser.email.getValue());
       mockPrismaService.user.create.mockResolvedValue(mockCreatedUser);
 
@@ -130,7 +127,7 @@ describe('UserRepository', () => {
           firstName: newUser.firstName.getValue(),
           lastName: newUser.lastName.getValue(),
         }),
-        include: expect.any(Object)
+        include: expect.any(Object),
       });
       expect(result).toBeInstanceOf(User);
       expect(result.id).toBe(newUser.id);
@@ -145,9 +142,9 @@ describe('UserRepository', () => {
         'hashedPassword',
         new FirstName('John'),
         new LastName('Doe'),
-        '550e8400-e29b-41d4-a716-446655440000'
+        '550e8400-e29b-41d4-a716-446655440000',
       );
-      
+
       const mockUpdatedUser = createMockUserRecord(existingUser.id, existingUser.email.getValue());
       mockPrismaService.userRole.deleteMany.mockResolvedValue({ count: 0 });
       mockPrismaService.user.update.mockResolvedValue(mockUpdatedUser);
@@ -157,7 +154,7 @@ describe('UserRepository', () => {
 
       // Assert
       expect(prismaService.userRole.deleteMany).toHaveBeenCalledWith({
-        where: { userId: existingUser.id }
+        where: { userId: existingUser.id },
       });
       expect(prismaService.user.update).toHaveBeenCalledWith({
         where: { id: existingUser.id },
@@ -166,7 +163,7 @@ describe('UserRepository', () => {
           firstName: existingUser.firstName.getValue(),
           lastName: existingUser.lastName.getValue(),
         }),
-        include: expect.any(Object)
+        include: expect.any(Object),
       });
       expect(result).toBeInstanceOf(User);
       expect(result.id).toBe(existingUser.id);
@@ -184,7 +181,7 @@ describe('UserRepository', () => {
 
       // Assert
       expect(prismaService.user.delete).toHaveBeenCalledWith({
-        where: { id: userId }
+        where: { id: userId },
       });
       expect(result).toBe(true);
     });
@@ -192,7 +189,7 @@ describe('UserRepository', () => {
 });
 
 // Helper function to create mock Prisma User records
-function createMockUserRecord(id: string, email = 'test@example.com'): any {
+function createMockUserRecord(id: string, email = 'test@example.com') {
   return {
     id,
     email,
