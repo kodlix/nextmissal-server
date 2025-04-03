@@ -42,4 +42,4 @@ EXPOSE 3000
 ENV NODE_ENV=production
 
 # Run migrations and start the app
-CMD ["/bin/sh", "-c", "npx prisma migrate deploy && node dist/main.js"]
+CMD ["/bin/sh", "-c", "npx prisma migrate deploy && npm run db:seed && node dist/src/main.js"]
