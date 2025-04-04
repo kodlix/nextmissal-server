@@ -11,7 +11,9 @@ export default [
       'coverage/**',
       'prisma/**',
       '*.js',
-      '.eslintrc.js'
+      '.eslintrc.js',
+      'jest.config.js',
+      '.idea'
     ],
   },
   {

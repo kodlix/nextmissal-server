@@ -4,6 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AllExceptionsFilter } from '@presentation/filters/all-exceptions.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as basicAuth from 'express-basic-auth';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -48,6 +49,17 @@ async function bootstrap() {
       'JWT-auth', // This is a key to be used in @ApiBearerAuth() decorator
     )
     .build();
+
+  // Basic Auth for Swagger
+  app.use(
+    '/docs',
+    basicAuth({
+      challenge: true,
+      users: {
+        [process.env.SWAGGER_USER]: process.env.SWAGGER_PASSWORD,
+      },
+    }),
+  );
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
