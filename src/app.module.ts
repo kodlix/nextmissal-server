@@ -4,11 +4,12 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 
 // Modules
-import { PrismaModule } from './infrastructure/database/prisma/prisma.module';
-import { AuthModule } from './presentation/modules/auth/auth.module';
-import { UserModule } from './presentation/modules/user/user.module';
-import { RoleModule } from './presentation/modules/role/role.module';
-import { AdminModule } from './presentation/modules/admin/admin.module';
+import { PrismaModule } from '@infrastructure/database/prisma/prisma.module';
+import { ThrottlerModule } from '@infrastructure/throttler/throttler.module';
+import { AuthModule } from '@presentation/modules/auth/auth.module';
+import { UserModule } from '@presentation/modules/user/user.module';
+import { RoleModule } from '@presentation/modules/role/role.module';
+import { AdminModule } from '@presentation/modules/admin/admin.module';
 
 // Global providers
 import { LoggingInterceptor } from '@presentation/interceptors/logging.interceptor';
@@ -31,6 +32,9 @@ import configuration from '@infrastructure/config/configuration';
 
     // Database
     PrismaModule,
+
+    // Rate Limiting
+    ThrottlerModule,
 
     // CQRS
     CqrsModule,

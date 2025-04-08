@@ -26,4 +26,13 @@ export default () => ({
     step: parseInt(process.env.OTP_STEP, 10) || 30,
     digits: parseInt(process.env.OTP_DIGITS, 10) || 6,
   },
+
+  // Throttler
+  throttler: {
+    ttl: parseInt(process.env.THROTTLER_TTL, 10) || 60,
+    limit: parseInt(process.env.THROTTLER_LIMIT, 10) || 10,
+    ignoreUserAgents: process.env.THROTTLER_IGNORE_USER_AGENTS
+      ? process.env.THROTTLER_IGNORE_USER_AGENTS.split(',')
+      : [],
+  },
 });

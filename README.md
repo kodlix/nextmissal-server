@@ -42,8 +42,9 @@ A comprehensive guide to the NestJS template with authentication, authorization,
     - [Default Credentials](#default-credentials)
 10. [Tests](#tests)
 11. [Email Service](#email-service)
-12. [Docker Setup](#docker-setup)
-13. [License](#license)
+12. [Rate Limiting with Throttler](./docs/THROTTLER.md)
+13. [Docker Setup](#docker-setup)
+14. [License](#license)
 
 ## Introduction
 

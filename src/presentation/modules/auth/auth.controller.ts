@@ -31,8 +31,10 @@ import { ResetPasswordCommand } from '@application/commands/auth/reset-password.
 // Guards & Decorators
 import { Public } from '@shared/decorators/public.decorator';
 import { CurrentUser } from '@shared/decorators/current-user.decorator';
+import { SkipThrottle, Throttle } from '@shared/decorators/throttle.decorator';
 
 @ApiTags('auth')
+@Throttle(60, 3) // 5 requests per minute
 @Controller('auth')
 export class AuthController {
   constructor(private readonly commandBus: CommandBus) {}
@@ -108,6 +110,7 @@ export class AuthController {
   }
 
   @Get('me')
+  @SkipThrottle()
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Get current user information' })

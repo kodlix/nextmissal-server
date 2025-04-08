@@ -66,3 +66,16 @@ export class InvalidValueObjectException extends DomainException {
     super(message, HttpStatus.BAD_REQUEST);
   }
 }
+
+// Throttling exceptions
+export class ThrottlingException extends DomainException {
+  constructor(message: string) {
+    super(message, HttpStatus.TOO_MANY_REQUESTS);
+  }
+}
+
+export class InvalidThrottleIdentifierException extends DomainException {
+  constructor() {
+    super('Throttle identifier cannot be empty', HttpStatus.BAD_REQUEST);
+  }
+}
