@@ -12,6 +12,7 @@ import { FirstName, LastName } from '@core/value-objects/name.vo';
 import { Role } from '@core/entities/role.entity';
 import { Permission } from '@core/entities/permission.entity';
 import { ResourceAction, ActionType } from '@core/value-objects/resource-action.vo';
+import { I18nService } from 'nestjs-i18n';
 
 // Mock dependencies
 const mockUserService = {
@@ -29,6 +30,18 @@ const mockTokenProvider = {
 
 const mockRoleRepository = {
   findById: jest.fn(),
+};
+
+const mockI18nService = {
+  t: jest.fn().mockImplementation(key => {
+    const translations = {
+      'common.auth.login.failed': 'Invalid credentials',
+      'common.auth.verification.email_sent': 'Email verification required',
+      'common.auth.2fa.enabled': 'OTP verification required',
+      'common.auth.login.success': 'Login successful',
+    };
+    return translations[key] || key;
+  }),
 };
 
 // Create utility functions for test data
@@ -83,6 +96,7 @@ describe('LoginCommandHandler', () => {
         { provide: AuthService, useValue: mockAuthService },
         { provide: TokenProvider, useValue: mockTokenProvider },
         { provide: 'RoleRepository', useValue: mockRoleRepository },
+        { provide: I18nService, useValue: mockI18nService },
       ],
     }).compile();
 
@@ -219,6 +233,7 @@ describe('LoginCommandHandler', () => {
     expect(result).toEqual({
       accessToken: 'test-access-token',
       refreshToken: 'test-refresh-token',
+      message: 'Login successful',
       user: expect.objectContaining({
         id: user.id,
         email: user.email.getValue(),

@@ -32,13 +32,13 @@ export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenC
     // Validate refresh token
     const token = await this.authService.validateRefreshToken(refreshToken);
     if (!token) {
-      throw new UnauthorizedException('Invalid refresh token');
+      throw new UnauthorizedException();
     }
 
     // Get user
     const user = await this.userRepository.findById(token.userId.getValue());
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new UnauthorizedException();
     }
 
     // Revoke current refresh token

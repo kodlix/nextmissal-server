@@ -5,10 +5,21 @@ import { UserMapper } from '@application/mappers/user.mapper';
 import { User } from '@core/entities/user.entity';
 import { Email } from '@core/value-objects/email.vo';
 import { FirstName, LastName } from '@core/value-objects/name.vo';
+import { I18nService } from 'nestjs-i18n';
 
 // Mock user service
 const mockUserService = {
   createUser: jest.fn(),
+};
+
+// Mock i18n service
+const mockI18nService = {
+  t: jest.fn().mockImplementation(key => {
+    const translations = {
+      'common.auth.register.success': 'Registration successful',
+    };
+    return translations[key] || key;
+  }),
 };
 
 describe('RegisterUserCommandHandler', () => {
@@ -20,7 +31,11 @@ describe('RegisterUserCommandHandler', () => {
     jest.clearAllMocks();
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [RegisterUserCommandHandler, { provide: UserService, useValue: mockUserService }],
+      providers: [
+        RegisterUserCommandHandler,
+        { provide: UserService, useValue: mockUserService },
+        { provide: I18nService, useValue: mockI18nService },
+      ],
     }).compile();
 
     handler = module.get<RegisterUserCommandHandler>(RegisterUserCommandHandler);
