@@ -36,15 +36,19 @@ A comprehensive guide to the NestJS template with authentication, authorization,
     - [Permission-based Access Control](#permission-based-access-control)
     - [Resource Permissions](#resource-permissions)
     - [Usage Examples](#authorization-usage-examples)
-9. [Database](#database)
+9. [Internationalization (i18n)](#internationalization)
+    - [Supported Languages](#supported-languages)
+    - [Translation Files](#translation-files)
+    - [Language Detection](#language-detection)
+10. [Database](#database)
     - [Migrations](#migrations)
     - [Seeds](#seeds)
     - [Default Credentials](#default-credentials)
-10. [Tests](#tests)
-11. [Email Service](#email-service)
-12. [Rate Limiting with Throttler](./docs/THROTTLER.md)
-13. [Docker Setup](#docker-setup)
-14. [License](#license)
+11. [Tests](#tests)
+12. [Email Service](#email-service)
+13. [Rate Limiting with Throttler](./docs/THROTTLER.md)
+14. [Docker Setup](#docker-setup)
+15. [License](#license)
 
 ## Introduction
 
@@ -70,6 +74,13 @@ This NestJS template provides a robust foundation for building secure, well-stru
     - Password reset emails
     - Templated emails
     - Development and production-ready setup
+
+- 🌐 **Internationalization**:
+    - Multi-language support
+    - English and Arabic languages included
+    - Translation files in JSON format
+    - Language detection from headers, query params, or cookies
+    - Dedicated I18nService for easy usage
 
 - 🏗️ **Architecture**:
     - Clean Architecture principles

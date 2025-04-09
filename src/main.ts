@@ -28,6 +28,10 @@ async function bootstrap() {
   // API prefix
   app.setGlobalPrefix('api');
 
+  // Get i18n service to use in Swagger
+  const i18nService = app.get(ConfigService).get('i18n');
+  const supportedLanguages = i18nService?.supportedLocales || ['en', 'ar'];
+
   // Swagger setup
   const config = new DocumentBuilder()
     .setTitle('NestJS Clean Architecture API')
@@ -37,6 +41,18 @@ async function bootstrap() {
     .addTag('users', 'User management endpoints')
     .addTag('roles', 'Role management endpoints')
     .addTag('admin', 'Admin endpoints')
+    .addGlobalParameters({
+      name: 'Accept-Language',
+      in: 'header',
+      required: false,
+      schema: {
+        type: 'string',
+        default: 'en',
+        enum: supportedLanguages,
+        example: 'en',
+        description: 'Language preference for the response',
+      },
+    })
     .addBearerAuth(
       {
         type: 'http',
@@ -62,6 +78,7 @@ async function bootstrap() {
   );
 
   const document = SwaggerModule.createDocument(app, config);
+
   SwaggerModule.setup('docs', app, document);
 
   // Start server

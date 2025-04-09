@@ -35,4 +35,13 @@ export default () => ({
       ? process.env.THROTTLER_IGNORE_USER_AGENTS.split(',')
       : [],
   },
+
+  // i18n
+  i18n: {
+    defaultLocale: process.env.DEFAULT_LOCALE || 'en',
+    fallbackLocale: process.env.FALLBACK_LOCALE || 'en',
+    supportedLocales: process.env.SUPPORTED_LOCALES
+      ? process.env.SUPPORTED_LOCALES.split(',')
+      : ['en', 'ar'],
+  },
 });

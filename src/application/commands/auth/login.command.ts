@@ -7,6 +7,7 @@ import { AuthService } from '@core/services/auth.service';
 import { IRoleRepository } from '@core/repositories/role.repository.interface';
 import { TokenProvider } from '@presentation/modules/auth/providers/token.provider';
 import { UserMapper } from '@application/mappers/user.mapper';
+import { I18nService } from 'nestjs-i18n';
 
 export class LoginCommand implements ICommand {
   constructor(public readonly loginDto: LoginDto) {}
@@ -19,6 +20,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
     private readonly userService: UserService,
     private readonly authService: AuthService,
     private readonly tokenProvider: TokenProvider,
+    private readonly i18n: I18nService,
     @Inject('RoleRepository')
     private readonly roleRepository: IRoleRepository,
   ) {}
@@ -29,7 +31,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
     // Validate credentials
     const user = await this.userService.validateCredentials(email, password);
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException(this.i18n.t('common.auth.login.failed'));
     }
 
     // Update last login
@@ -44,7 +46,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
         requiresEmailVerification: true,
         userId: user.id,
         email: user.email.getValue(),
-        message: 'Email verification required',
+        message: this.i18n.t('common.auth.verification.email_sent'),
       };
     }
 
@@ -53,7 +55,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
       return {
         requiresOtp: true,
         userId: user.id,
-        message: 'OTP verification required',
+        message: this.i18n.t('common.auth.2fa.enabled'),
       };
     }
 
@@ -79,6 +81,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
       accessToken,
       refreshToken,
       user: UserMapper.toAuthResponse(user, true),
+      message: this.i18n.t('common.auth.login.success'),
     };
   }
 }

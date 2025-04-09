@@ -21,6 +21,7 @@ import { TokenProvider } from './providers/token.provider';
 import { UserService } from '@core/services/user.service';
 import { AuthService } from '@core/services/auth.service';
 import { PrismaModule } from '@infrastructure/database/prisma/prisma.module';
+import { I18nModule } from '@infrastructure/i18n/i18n.module';
 
 // Command Handlers
 import { RegisterUserCommandHandler } from '@application/commands/auth/register-user.command';
@@ -54,6 +55,7 @@ const commandHandlers = [
   imports: [
     CqrsModule,
     PrismaModule,
+    I18nModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],

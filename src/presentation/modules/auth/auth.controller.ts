@@ -34,7 +34,7 @@ import { CurrentUser } from '@shared/decorators/current-user.decorator';
 import { SkipThrottle, Throttle } from '@shared/decorators/throttle.decorator';
 
 @ApiTags('auth')
-@Throttle(60, 3) // 5 requests per minute
+@Throttle(60, 5) // 5 requests per minute
 @Controller('auth')
 export class AuthController {
   constructor(private readonly commandBus: CommandBus) {}

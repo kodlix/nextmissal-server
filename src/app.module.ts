@@ -6,6 +6,7 @@ import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 // Modules
 import { PrismaModule } from '@infrastructure/database/prisma/prisma.module';
 import { ThrottlerModule } from '@infrastructure/throttler/throttler.module';
+import { I18nModule } from '@infrastructure/i18n/i18n.module';
 import { AuthModule } from '@presentation/modules/auth/auth.module';
 import { UserModule } from '@presentation/modules/user/user.module';
 import { RoleModule } from '@presentation/modules/role/role.module';
@@ -35,6 +36,9 @@ import configuration from '@infrastructure/config/configuration';
 
     // Rate Limiting
     ThrottlerModule,
+
+    // Internationalization
+    I18nModule,
 
     // CQRS
     CqrsModule,

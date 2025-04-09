@@ -42,7 +42,6 @@ export default [
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/no-unused-vars': ['error', { 'argsIgnorePattern': '^_' }],
       '@typescript-eslint/naming-convention': [
         'error',
         {
@@ -54,6 +53,11 @@ export default [
           }
         }
       ],
+      '@typescript-eslint/no-unused-vars': ['error', {
+        'argsIgnorePattern': '^_',
+        'varsIgnorePattern': '^_',
+        "caughtErrorsIgnorePattern": "^_",
+      }],
       'max-len': ['error', { 'code': 120, ignoreStrings: true }],
       'no-console': ['warn', { 'allow': ['warn', 'error'] }],
       'no-duplicate-imports': 'error',
