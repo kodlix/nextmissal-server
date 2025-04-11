@@ -40,15 +40,18 @@ A comprehensive guide to the NestJS template with authentication, authorization,
     - [Supported Languages](#supported-languages)
     - [Translation Files](#translation-files)
     - [Language Detection](#language-detection)
-10. [Database](#database)
+10. [Storage System](./docs/STORAGE.md)
+    - [File Upload and Management](#storage-system)
+    - [Multiple Storage Providers](#storage-system)
+11. [Database](#database)
     - [Migrations](#migrations)
     - [Seeds](#seeds)
     - [Default Credentials](#default-credentials)
-11. [Tests](#tests)
-12. [Email Service](#email-service)
-13. [Rate Limiting with Throttler](./docs/THROTTLER.md)
-14. [Docker Setup](#docker-setup)
-15. [License](#license)
+12. [Tests](#tests)
+13. [Email Service](#email-service)
+14. [Rate Limiting with Throttler](./docs/THROTTLER.md)
+15. [Docker Setup](#docker-setup)
+16. [License](#license)
 
 ## Introduction
 
@@ -82,6 +85,13 @@ This NestJS template provides a robust foundation for building secure, well-stru
     - Language detection from headers, query params, or cookies
     - Dedicated I18nService for easy usage
 
+- 📁 **Storage**:
+    - File upload and management
+    - Support for multiple storage providers (MinIO, AWS S3)
+    - File access control (public/private)
+    - Secure signed URLs for private files
+    - Integration with the permissions system
+
 - 🏗️ **Architecture**:
     - Clean Architecture principles
     - Command Query Responsibility Segregation (CQRS)
@@ -97,6 +107,7 @@ This NestJS template provides a robust foundation for building secure, well-stru
     - PostgreSQL database
     - Prisma ORM
     - Redis for caching
+    - MinIO/S3 for file storage
     - Docker for local development
     - Nodemailer for emails
 
@@ -162,7 +173,7 @@ nestjs-template/
 ├── src/
 │   ├── application/ - Application layer (Commands, DTOs)
 │   ├── core/ - Domain layer (Entities, Value Objects, Services)
-│   ├── infrastructure/ - Infrastructure layer (Repositories, Database)
+│   ├── infrastructure/ - Infrastructure layer (Repositories, Database, Storage)
 │   ├── presentation/ - Presentation layer (Controllers, Guards)
 │   └── shared/ - Shared utilities and decorators
 ├── prisma/ - Prisma schema and migrations
@@ -259,11 +270,26 @@ erDiagram
         datetime createdAt
     }
     
+    File {
+        string id PK
+        string filename
+        string originalName
+        string path
+        string mimeType
+        int size
+        string bucket
+        string userId FK
+        boolean isPublic
+        datetime createdAt
+        datetime updatedAt
+    }
+    
     User ||--o{ UserRole : has
     Role ||--o{ UserRole : has
     User ||--o{ Otp : has
     User ||--o{ RefreshToken : has
     User ||--o{ PasswordReset : has
+    User ||--o{ File : owns
     Role ||--o{ RolePermission : has
     Permission ||--o{ RolePermission : has
 ```
@@ -929,12 +955,15 @@ The application includes a `docker-compose.yml` file that sets up:
 - PostgreSQL database
 - Redis cache
 - MailHog for email testing
+- MinIO for file storage
 
 To start the Docker services:
 
 ```bash
 docker-compose up -d
 ```
+
+MinIO console is available at http://localhost:9001 (login with minioadmin/minioadmin).
 
 You can also run the application in Docker by uncommenting the API service in the `docker-compose.yml` file.
 

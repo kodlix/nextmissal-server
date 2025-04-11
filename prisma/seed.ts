@@ -53,6 +53,30 @@ const permissions = [
     resource: 'role',
     action: 'delete',
   },
+  {
+    name: 'storage:write',
+    description: 'Can upload files',
+    resource: 'file',
+    action: 'write',
+  },
+  {
+    name: 'storage:read',
+    description: 'Can read file information',
+    resource: 'file',
+    action: 'read',
+  },
+  {
+    name: 'storage:delete',
+    description: 'Can delete files',
+    resource: 'file',
+    action: 'delete',
+  },
+  {
+    name: 'storage:manage',
+    description: 'Can update file information',
+    resource: 'file',
+    action: 'manage',
+  },
 ];
 
 // Map of role names to permissions they should have
@@ -64,8 +88,12 @@ const rolePermissionsMap = {
     'role:read',
     'role:write',
     'role:delete',
+    'storage:write',
+    'storage:read',
+    'storage:delete',
+    'storage:manage',
   ],
-  user: ['user:read'],
+  user: ['user:read', 'storage:manage', 'storage:write', 'storage:read'],
 };
 
 // Default admin user
@@ -148,7 +176,7 @@ async function main() {
   // Create admin user
   console.log('Creating admin user...');
   const hashedPassword = await hashPassword(adminUser.password);
-  
+
   const user = await prisma.user.upsert({
     where: { email: adminUser.email },
     update: {},
@@ -186,7 +214,7 @@ async function main() {
 }
 
 main()
-  .catch((e) => {
+  .catch(e => {
     console.error(e);
     process.exit(1);
   })
