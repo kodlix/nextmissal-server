@@ -52,7 +52,6 @@ export class S3StorageProvider implements IStorageProvider {
     await this.s3Client.send(new PutObjectCommand(params));
 
     const fileEntity = new File(
-      uuidv4(),
       filename,
       file.originalname,
       filePath,
@@ -61,8 +60,6 @@ export class S3StorageProvider implements IStorageProvider {
       bucket,
       userId || null,
       isPublic,
-      new Date(),
-      new Date(),
     );
 
     return this.fileRepository.save(fileEntity);

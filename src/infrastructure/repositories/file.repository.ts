@@ -90,7 +90,6 @@ export class FileRepository extends BaseRepository<File> implements IFileReposit
 
   private mapToEntity(fileData: IFileData): File {
     return new File(
-      fileData.id,
       fileData.filename,
       fileData.originalName,
       fileData.path,
@@ -99,8 +98,7 @@ export class FileRepository extends BaseRepository<File> implements IFileReposit
       fileData.bucket,
       fileData.userId,
       fileData.isPublic,
-      fileData.createdAt,
-      fileData.updatedAt,
+      fileData.id,
     );
   }
 }

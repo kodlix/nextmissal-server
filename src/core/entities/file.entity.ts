@@ -1,73 +1,101 @@
-import { AggregateRoot } from '@nestjs/cqrs';
+import { v4 as uuidv4 } from 'uuid';
 
-export class File extends AggregateRoot {
+export class File {
+  id: string;
+  filename: string;
+  originalName: string;
+  path: string;
+  mimeType: string;
+  size: number;
+  bucket: string;
+  userId: string | null;
+  isPublic: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+
   constructor(
-    private readonly _id: string,
-    private readonly _filename: string,
-    private readonly _originalName: string,
-    private readonly _path: string,
-    private readonly _mimeType: string,
-    private readonly _size: number,
-    private readonly _bucket: string,
-    private readonly _userId: string | null,
-    private _isPublic: boolean,
-    private readonly _createdAt: Date,
-    private _updatedAt: Date,
+    filename: string,
+    originalName: string,
+    path: string,
+    mimeType: string,
+    size: number,
+    bucket: string,
+    userId: string | null = null,
+    isPublic: boolean = false,
+    id?: string,
   ) {
-    super();
-  }
-
-  get id(): string {
-    return this._id;
-  }
-
-  get filename(): string {
-    return this._filename;
-  }
-
-  get originalName(): string {
-    return this._originalName;
-  }
-
-  get path(): string {
-    return this._path;
-  }
-
-  get mimeType(): string {
-    return this._mimeType;
-  }
-
-  get size(): number {
-    return this._size;
-  }
-
-  get bucket(): string {
-    return this._bucket;
-  }
-
-  get userId(): string | null {
-    return this._userId;
-  }
-
-  get isPublic(): boolean {
-    return this._isPublic;
-  }
-
-  get createdAt(): Date {
-    return this._createdAt;
-  }
-
-  get updatedAt(): Date {
-    return this._updatedAt;
+    this.id = id || uuidv4();
+    this.filename = filename;
+    this.originalName = originalName;
+    this.path = path;
+    this.mimeType = mimeType;
+    this.size = size;
+    this.bucket = bucket;
+    this.userId = userId;
+    this.isPublic = isPublic;
+    this.createdAt = new Date();
+    this.updatedAt = new Date();
   }
 
   makePublic(): void {
-    this._isPublic = true;
-    this._updatedAt = new Date();
+    if (!this.isPublic) {
+      this.isPublic = true;
+      this.updatedAt = new Date();
+    }
   }
 
   makePrivate(): void {
-    this._isPublic = false;
-    this._updatedAt = new Date();
+    if (this.isPublic) {
+      this.isPublic = false;
+      this.updatedAt = new Date();
+    }
+  }
+
+  updateUser(userId: string | null): void {
+    this.userId = userId;
+    this.updatedAt = new Date();
+  }
+
+  rename(newOriginalName: string): void {
+    this.originalName = newOriginalName;
+    this.updatedAt = new Date();
+  }
+
+  move(newPath: string, newBucket?: string): void {
+    this.path = newPath;
+    if (newBucket) {
+      this.bucket = newBucket;
+    }
+    this.updatedAt = new Date();
+  }
+
+  static fromData(data: {
+    id: string;
+    filename: string;
+    originalName: string;
+    path: string;
+    mimeType: string;
+    size: number;
+    bucket: string;
+    userId: string | null;
+    isPublic: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+  }): File {
+    const file = new File(
+      data.filename,
+      data.originalName,
+      data.path,
+      data.mimeType,
+      data.size,
+      data.bucket,
+      data.userId,
+      data.isPublic,
+      data.id,
+    );
+    file.createdAt = new Date(data.createdAt);
+    file.updatedAt = new Date(data.updatedAt);
+
+    return file;
   }
 }
