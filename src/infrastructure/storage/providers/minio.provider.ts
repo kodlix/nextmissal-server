@@ -71,7 +71,6 @@ export class MinioStorageProvider implements IStorageProvider {
     await this.minioClient.putObject(bucket, filePath, file.buffer);
 
     const fileEntity = new File(
-      uuidv4(),
       filename,
       file.originalname,
       filePath,
@@ -80,8 +79,6 @@ export class MinioStorageProvider implements IStorageProvider {
       bucket,
       userId || null,
       isPublic,
-      new Date(),
-      new Date(),
     );
 
     return this.fileRepository.save(fileEntity);
