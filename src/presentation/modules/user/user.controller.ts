@@ -38,6 +38,7 @@ import { ActivateUserCommand } from '@application/commands/user/activate-user.co
 import { AssignRoleCommand } from '@application/commands/user/assign-role.command';
 import { RemoveRoleCommand } from '@application/commands/user/remove-role.command';
 import { VerifyPasswordCommand } from '@application/commands/user/verify-password.command';
+import { IJwtPayload } from '@application/dtos/responses/user.response';
 
 @ApiTags('users')
 @Controller('users')
@@ -108,7 +109,10 @@ export class UserController {
   @ApiOperation({ summary: 'Update current user profile' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Profile updated successfully' })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data' })
-  async updateCurrentUserProfile(@CurrentUser() user, @Body() updateUserDto: UpdateUserDto) {
+  async updateCurrentUserProfile(
+    @CurrentUser() user: IJwtPayload,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
     return this.commandBus.execute(
       new UpdateUserCommand(
         user.sub,
@@ -160,7 +164,7 @@ export class UserController {
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data' })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Current password is incorrect' })
   async changeCurrentUserPassword(
-    @CurrentUser() user,
+    @CurrentUser() user: IJwtPayload,
     @Body() changePasswordDto: ChangePasswordDto,
   ) {
     await this.commandBus.execute(
@@ -179,7 +183,10 @@ export class UserController {
   @ApiOperation({ summary: 'Verify current user password' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Password verification result' })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data' })
-  async verifyCurrentUserPassword(@CurrentUser() user, @Body('password') password: string) {
+  async verifyCurrentUserPassword(
+    @CurrentUser() user: IJwtPayload,
+    @Body('password') password: string,
+  ) {
     const isValid = await this.commandBus.execute(new VerifyPasswordCommand(user.sub, password));
 
     return { valid: isValid };

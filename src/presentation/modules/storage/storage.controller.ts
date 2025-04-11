@@ -32,6 +32,7 @@ import { GetUserFilesQuery } from '@application/queries/storage/get-user-files.q
 
 import { UpdateFileAccessDto } from '@application/dtos/storage/update-file-access.dto';
 import { FileResponseDto } from '@application/dtos/responses/file.response';
+import { IJwtPayload } from '@application/dtos/responses/user.response';
 
 @ApiTags('storage')
 @Controller('storage')
@@ -69,7 +70,7 @@ export class StorageController {
       }),
     )
     file: Express.Multer.File,
-    @CurrentUser() user,
+    @CurrentUser() user: IJwtPayload,
   ): Promise<FileResponseDto> {
     const storageFile = {
       buffer: file.buffer,
@@ -85,14 +86,17 @@ export class StorageController {
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Get file by ID' })
   @ApiParam({ name: 'id', description: 'File ID' })
-  async getFile(@Param('id') id: string, @CurrentUser() user): Promise<FileResponseDto> {
+  async getFile(
+    @Param('id') id: string,
+    @CurrentUser() user: IJwtPayload,
+  ): Promise<FileResponseDto> {
     return this.queryBus.execute(new GetFileQuery(id, user.sub));
   }
 
   @Get('user/files')
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Get all files for the current user' })
-  async getUserFiles(@CurrentUser() user): Promise<FileResponseDto[]> {
+  async getUserFiles(@CurrentUser() user: IJwtPayload): Promise<FileResponseDto[]> {
     return this.queryBus.execute(new GetUserFilesQuery(user.sub));
   }
 
@@ -100,7 +104,7 @@ export class StorageController {
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Delete a file' })
   @ApiParam({ name: 'id', description: 'File ID' })
-  async deleteFile(@Param('id') id: string, @CurrentUser() user): Promise<void> {
+  async deleteFile(@Param('id') id: string, @CurrentUser() user: IJwtPayload): Promise<void> {
     return this.commandBus.execute(new DeleteFileCommand(id, user.sub));
   }
 
@@ -109,13 +113,13 @@ export class StorageController {
   @ApiOperation({ summary: 'Update file access (public/private)' })
   async updateFileAccess(
     @Body() updateFileAccessDto: UpdateFileAccessDto,
-    @CurrentUser() user,
+    @CurrentUser() user: IJwtPayload,
   ): Promise<FileResponseDto> {
     return this.commandBus.execute(
       new UpdateFileAccessCommand(
         updateFileAccessDto.fileId,
         updateFileAccessDto.isPublic,
-        user.id,
+        user.sub,
       ),
     );
   }
