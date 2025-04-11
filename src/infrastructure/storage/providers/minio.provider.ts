@@ -89,6 +89,7 @@ export class MinioStorageProvider implements IStorageProvider {
 
   async getSignedUrl(file: File): Promise<string> {
     const expiry = 24 * 60 * 60; // 24 hours in seconds
+
     return this.minioClient.presignedGetObject(file.bucket, file.path, expiry);
   }
 

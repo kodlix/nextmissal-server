@@ -11,6 +11,7 @@ export class DeleteRoleCommandHandler implements ICommandHandler<DeleteRoleComma
 
   async execute(command: DeleteRoleCommand): Promise<boolean> {
     const { id } = command;
+
     return this.roleService.deleteRole(id);
   }
 }

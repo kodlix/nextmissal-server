@@ -21,6 +21,7 @@ export const CanDelete = (resource: string) => RequirePermissions(`${resource}:d
  */
 export const ResourcePermissions = (resource: string, actions: string[]) => {
   const permissions = actions.map(action => `${resource}:${action}`);
+
   return RequirePermissions(...permissions);
 };
 

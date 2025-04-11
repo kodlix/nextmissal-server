@@ -34,6 +34,7 @@ export class RoleService {
     }
 
     const role = new Role(name, description, isDefault);
+
     return this.roleRepository.create(role);
   }
 
@@ -73,6 +74,7 @@ export class RoleService {
     }
 
     role.updatedAt = new Date();
+
     return this.roleRepository.update(role);
   }
 
@@ -88,6 +90,7 @@ export class RoleService {
     }
 
     role.addPermission(permission);
+
     return this.roleRepository.update(role);
   }
 
@@ -98,6 +101,7 @@ export class RoleService {
     }
 
     role.removePermission(permissionId);
+
     return this.roleRepository.update(role);
   }
 

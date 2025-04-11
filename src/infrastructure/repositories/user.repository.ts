@@ -241,6 +241,7 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
         await this.prisma.user.delete({
           where: { id },
         });
+
         return true;
       },
       false,

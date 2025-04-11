@@ -20,6 +20,7 @@ describe('ThrottlerService', () => {
             get: jest.fn().mockImplementation((key: string) => {
               if (key === 'throttler.ttl') return 60;
               if (key === 'throttler.limit') return 10;
+
               return undefined;
             }),
           },

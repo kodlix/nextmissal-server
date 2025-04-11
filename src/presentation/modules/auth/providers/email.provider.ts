@@ -59,6 +59,7 @@ export class EmailProvider implements OnModuleInit {
     if (!this.transporterInitialized) {
       await this.initializeTransporter();
     }
+
     return this.transporter;
   }
 

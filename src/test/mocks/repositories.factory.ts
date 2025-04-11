@@ -108,6 +108,7 @@ export const createMockEmailVerificationRepository = () => ({
         verified: false,
       });
     }
+
     return Promise.resolve(null);
   }),
   create: jest.fn().mockImplementation(mockEmailVerificationRepository.create),

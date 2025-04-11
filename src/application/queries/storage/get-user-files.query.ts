@@ -19,6 +19,7 @@ export class GetUserFilesQueryHandler
   async execute(query: GetUserFilesQuery): Promise<FileResponseDto[]> {
     const { userId } = query;
     const files = await this.storageService.getFilesByUserId(userId);
+
     return this.fileMapper.toResponseDtoList(files);
   }
 }

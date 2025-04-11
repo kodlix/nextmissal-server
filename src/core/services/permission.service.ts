@@ -32,6 +32,7 @@ export class PermissionService {
 
     // Create a new permission with the ResourceAction value object
     const permission = new Permission(resourceAction, description);
+
     return this.permissionRepository.create(permission);
   }
 
@@ -76,6 +77,7 @@ export class PermissionService {
     }
 
     permission.updatedAt = new Date();
+
     return this.permissionRepository.update(permission);
   }
 

@@ -160,6 +160,7 @@ export class RoleRepository extends BaseRepository<Role> implements IRoleReposit
       await this.prisma.role.delete({
         where: { id },
       });
+
       return true;
     } catch {
       return false;

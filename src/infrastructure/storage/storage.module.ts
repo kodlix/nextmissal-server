@@ -33,6 +33,7 @@ import { MulterModule } from '@nestjs/platform-express';
         s3Provider: S3StorageProvider,
       ) => {
         const driver = configService.get<string>('storage.driver');
+
         return driver === 's3' ? s3Provider : minioProvider;
       },
       inject: [ConfigService, MinioStorageProvider, S3StorageProvider],
@@ -41,6 +42,7 @@ import { MulterModule } from '@nestjs/platform-express';
       provide: 'STORAGE_SERVICE_INITIALIZATION',
       useFactory: (storageService: StorageService, storageProvider) => {
         storageService.setProvider(storageProvider);
+
         return true;
       },
       inject: [StorageService, 'STORAGE_PROVIDER'],

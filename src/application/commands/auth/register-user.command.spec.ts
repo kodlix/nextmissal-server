@@ -18,6 +18,7 @@ const mockI18nService = {
     const translations = {
       'common.auth.register.success': 'Registration successful',
     };
+
     return translations[key] || key;
   }),
 };

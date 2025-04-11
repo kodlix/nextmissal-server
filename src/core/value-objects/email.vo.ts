@@ -13,6 +13,7 @@ export class Email {
   private isValid(email: string): boolean {
     // Basic email validation regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     return emailRegex.test(email);
   }
 

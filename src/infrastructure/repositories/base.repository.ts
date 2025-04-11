@@ -25,6 +25,7 @@ export abstract class BaseRepository<T> {
     } else {
       this.logger.error(`Error in ${operation}: ${String(error)}`);
     }
+
     return returnValue;
   }
 

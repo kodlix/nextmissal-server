@@ -23,6 +23,7 @@ export class UploadFileCommandHandler
     const { file, userId } = command;
 
     const fileEntity = await this.storageService.uploadFile(file, userId);
+
     return this.fileMapper.toResponseDto(fileEntity);
   }
 }
