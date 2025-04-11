@@ -91,6 +91,7 @@ export class EmailVerificationRepository
         await this.prisma.emailVerification.delete({
           where: { id },
         });
+
         return true;
       },
       false,
@@ -104,6 +105,7 @@ export class EmailVerificationRepository
         await this.prisma.emailVerification.deleteMany({
           where: { email },
         });
+
         return true;
       },
       false,

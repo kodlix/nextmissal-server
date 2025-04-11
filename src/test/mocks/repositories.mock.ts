@@ -12,6 +12,7 @@ export const mockUserRepository = {
     } else if (id === adminFixture.id) {
       return Promise.resolve(adminFixture);
     }
+
     return Promise.resolve(null);
   }),
 
@@ -21,6 +22,7 @@ export const mockUserRepository = {
     } else if (email === adminFixture.email) {
       return Promise.resolve(adminFixture);
     }
+
     return Promise.resolve(null);
   }),
 
@@ -68,6 +70,7 @@ export const mockRoleRepository = {
         permissions: [{ id: '1', name: 'user:read' }],
       });
     }
+
     return Promise.resolve(null);
   }),
 
@@ -93,6 +96,7 @@ export const mockRoleRepository = {
         permissions: [{ id: '1', name: 'user:read' }],
       });
     }
+
     return Promise.resolve(null);
   }),
 
@@ -176,6 +180,7 @@ export const mockRefreshTokenRepository = {
         createdAt: new Date(),
       });
     }
+
     return Promise.resolve(null);
   }),
 
@@ -242,6 +247,7 @@ export const mockEmailVerificationRepository = {
         verified: false,
       });
     }
+
     return Promise.resolve(null);
   }),
 
@@ -276,6 +282,7 @@ export const mockOtpRepository = {
         isVerified: true,
       });
     }
+
     return Promise.resolve(null);
   }),
 
@@ -311,6 +318,7 @@ export const mockPasswordResetRepository = {
         usedAt: null,
       });
     }
+
     return Promise.resolve(null);
   }),
 

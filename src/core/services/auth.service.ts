@@ -110,6 +110,7 @@ export class AuthService {
     if (isValid) {
       otp.markAsVerified();
       await this.otpRepository.update(otp);
+
       return true;
     } else {
       throw new OtpInvalidException();
@@ -173,6 +174,7 @@ export class AuthService {
     }
 
     user.disableOtp();
+
     return this.userRepository.update(user);
   }
 
@@ -239,6 +241,7 @@ export class AuthService {
     }
 
     user.updateLastLogin();
+
     return this.userRepository.update(user);
   }
 
@@ -323,6 +326,7 @@ export class AuthService {
       if (error instanceof EntityNotFoundException) {
         return false; // Email not found, consider it unverified
       }
+
       return false;
     }
   }

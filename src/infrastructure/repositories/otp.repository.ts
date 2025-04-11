@@ -84,6 +84,7 @@ export class OtpRepository extends BaseRepository<Otp> implements IOtpRepository
         await this.prisma.otp.delete({
           where: { id },
         });
+
         return true;
       },
       false,

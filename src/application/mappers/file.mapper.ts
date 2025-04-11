@@ -38,6 +38,7 @@ export class FileMapper {
     for (const file of files) {
       dtos.push(await this.toResponseDto(file));
     }
+
     return dtos;
   }
 }

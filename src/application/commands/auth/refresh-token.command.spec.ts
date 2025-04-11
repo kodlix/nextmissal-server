@@ -47,6 +47,7 @@ const mockConfigService = {
       JWT_SECRET: 'test-jwt-secret',
       JWT_ACCESS_EXPIRATION: '15m',
     };
+
     return config[key];
   }),
 };
@@ -259,6 +260,7 @@ describe('RefreshTokenCommandHandler', () => {
       } else if (roleId === '550e8400-e29b-41d4-a716-446655440003') {
         return Promise.resolve(adminRoleWithPermissions);
       }
+
       return Promise.resolve(null);
     });
 

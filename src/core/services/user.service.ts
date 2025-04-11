@@ -76,6 +76,7 @@ export class UserService {
         // Handle user not found error
         return null;
       }
+
       // If email is invalid, return null instead of throwing
       return null;
     }
@@ -114,6 +115,7 @@ export class UserService {
     }
 
     user.updatedAt = new Date();
+
     return this.userRepository.update(user);
   }
 
@@ -153,6 +155,7 @@ export class UserService {
 
     user.passwordHash = await this.hashPassword(newPassword.getValue());
     user.updatedAt = new Date();
+
     return this.userRepository.update(user);
   }
 
@@ -168,6 +171,7 @@ export class UserService {
     }
 
     user.addRole(role);
+
     return this.userRepository.update(user);
   }
 
@@ -178,6 +182,7 @@ export class UserService {
     }
 
     user.removeRole(roleId);
+
     return this.userRepository.update(user);
   }
 
@@ -188,6 +193,7 @@ export class UserService {
     }
 
     user.activate();
+
     return this.userRepository.update(user);
   }
 
@@ -198,11 +204,13 @@ export class UserService {
     }
 
     user.deactivate();
+
     return this.userRepository.update(user);
   }
 
   async hashPassword(password: string): Promise<string> {
     const salt = await bcrypt.genSalt(10);
+
     return bcrypt.hash(password, salt);
   }
 

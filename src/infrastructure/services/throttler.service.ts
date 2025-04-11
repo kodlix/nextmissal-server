@@ -31,6 +31,7 @@ export class ThrottlerService implements IThrottlerService {
     const now = Date.now();
     if (now > record.ttl) {
       this.storage.delete(identifier);
+
       return true;
     }
 
@@ -55,6 +56,7 @@ export class ThrottlerService implements IThrottlerService {
         count: 1,
         ttl: now + throttleLimit.getTtl * 1000,
       });
+
       return;
     }
 
@@ -88,6 +90,7 @@ export class ThrottlerService implements IThrottlerService {
     const now = Date.now();
     if (now > record.ttl) {
       this.storage.delete(identifier);
+
       return throttleLimit.getLimit;
     }
 

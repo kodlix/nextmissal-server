@@ -108,13 +108,10 @@ export class UserController {
   @ApiOperation({ summary: 'Update current user profile' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Profile updated successfully' })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data' })
-  async updateCurrentUserProfile(
-    @CurrentUser() userId: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
+  async updateCurrentUserProfile(@CurrentUser() user, @Body() updateUserDto: UpdateUserDto) {
     return this.commandBus.execute(
       new UpdateUserCommand(
-        userId,
+        user.sub,
         updateUserDto.firstName,
         updateUserDto.lastName,
         updateUserDto.email,
@@ -163,12 +160,12 @@ export class UserController {
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data' })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Current password is incorrect' })
   async changeCurrentUserPassword(
-    @CurrentUser() userId: string,
+    @CurrentUser() user,
     @Body() changePasswordDto: ChangePasswordDto,
   ) {
     await this.commandBus.execute(
       new ChangePasswordCommand(
-        userId,
+        user.sub,
         changePasswordDto.newPassword,
         changePasswordDto.currentPassword,
       ),
@@ -182,11 +179,8 @@ export class UserController {
   @ApiOperation({ summary: 'Verify current user password' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Password verification result' })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data' })
-  async verifyCurrentUserPassword(
-    @CurrentUser() userId: string,
-    @Body('password') password: string,
-  ) {
-    const isValid = await this.commandBus.execute(new VerifyPasswordCommand(userId, password));
+  async verifyCurrentUserPassword(@CurrentUser() user, @Body('password') password: string) {
+    const isValid = await this.commandBus.execute(new VerifyPasswordCommand(user.sub, password));
 
     return { valid: isValid };
   }

@@ -46,6 +46,7 @@ export class PermissionRepository
   async findAll(): Promise<Permission[]> {
     return this.executeWithErrorHandling('findAll', async () => {
       const permissionRecords = await this.prisma.permission.findMany();
+
       return permissionRecords.map(record => this.mapToModel(record));
     });
   }
@@ -55,6 +56,7 @@ export class PermissionRepository
       const permissionRecords = await this.prisma.permission.findMany({
         where: { resource },
       });
+
       return permissionRecords.map(record => this.mapToModel(record));
     });
   }
@@ -98,6 +100,7 @@ export class PermissionRepository
         await this.prisma.permission.delete({
           where: { id },
         });
+
         return true;
       },
       false,

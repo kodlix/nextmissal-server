@@ -121,6 +121,7 @@ export class RoleController {
   })
   async deleteRole(@Param('id') id: string) {
     await this.commandBus.execute(new DeleteRoleCommand(id));
+
     return { message: 'Role deleted successfully' };
   }
 

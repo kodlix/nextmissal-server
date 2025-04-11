@@ -97,6 +97,7 @@ export class RefreshTokenRepository
         await this.prisma.refreshToken.deleteMany({
           where: { userId },
         });
+
         return true;
       },
       false,

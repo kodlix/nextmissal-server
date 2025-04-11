@@ -101,6 +101,7 @@ export class PasswordResetRepository
         await this.prisma.passwordReset.delete({
           where: { id },
         });
+
         return true;
       },
       false,
@@ -114,6 +115,7 @@ export class PasswordResetRepository
         await this.prisma.passwordReset.deleteMany({
           where: { userId },
         });
+
         return true;
       },
       false,
@@ -127,6 +129,7 @@ export class PasswordResetRepository
         await this.prisma.passwordReset.deleteMany({
           where: { email },
         });
+
         return true;
       },
       false,

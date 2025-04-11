@@ -42,6 +42,7 @@ export class TokenProvider {
   async generateRefreshToken(userId: string): Promise<string> {
     const refreshToken = uuidv4();
     await this.authService.createRefreshToken(userId, refreshToken);
+
     return refreshToken;
   }
 

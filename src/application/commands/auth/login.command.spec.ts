@@ -40,6 +40,7 @@ const mockI18nService = {
       'common.auth.2fa.enabled': 'OTP verification required',
       'common.auth.login.success': 'Login successful',
     };
+
     return translations[key] || key;
   }),
 };
@@ -290,6 +291,7 @@ describe('LoginCommandHandler', () => {
       } else if (roleId === '550e8400-e29b-41d4-a716-446655440003') {
         return Promise.resolve(adminRoleWithPermissions);
       }
+
       return Promise.resolve(null);
     });
 

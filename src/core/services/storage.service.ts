@@ -53,8 +53,10 @@ export class StorageService {
     const file = await this.fileRepository.findById(id);
     if (file) {
       file.makePublic();
+
       return this.fileRepository.update(file);
     }
+
     return null;
   }
 
@@ -62,8 +64,10 @@ export class StorageService {
     const file = await this.fileRepository.findById(id);
     if (file) {
       file.makePrivate();
+
       return this.fileRepository.update(file);
     }
+
     return null;
   }
 

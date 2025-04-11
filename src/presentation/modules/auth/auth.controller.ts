@@ -167,6 +167,7 @@ export class AuthController {
     const isVerified = await this.commandBus.execute(
       new CheckEmailVerificationStatusCommand(email),
     );
+
     return { verified: isVerified };
   }
 
