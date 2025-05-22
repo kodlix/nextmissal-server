@@ -6,6 +6,7 @@ import * as path from 'path';
 import { IStorageProvider, IStorageFile } from '@core/services/storage.service';
 import { File } from '@core/entities/file.entity';
 import { IFileRepository } from '@core/repositories/file.repository.interface';
+import { FILE_REPOSITORY } from '@shared/constants/tokens';
 
 @Injectable()
 export class MinioStorageProvider implements IStorageProvider {
@@ -15,7 +16,7 @@ export class MinioStorageProvider implements IStorageProvider {
 
   constructor(
     private readonly configService: ConfigService,
-    @Inject('IFileRepository') private readonly fileRepository: IFileRepository,
+    @Inject(FILE_REPOSITORY) private readonly fileRepository: IFileRepository,
   ) {
     const minioConfig = this.configService.get('storage.minio');
     this.publicBucket = minioConfig.publicBucket;

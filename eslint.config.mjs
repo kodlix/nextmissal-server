@@ -10,10 +10,15 @@ export default [
       'node_modules/**',
       'coverage/**',
       'prisma/**',
+      'test/**',
       '*.js',
       '.eslintrc.js',
       'jest.config.js',
-      '.idea'
+      '.idea',
+      '.vscode',
+      '.DS_Store',
+      'package-lock.json',
+      '**/*.spec.ts'
     ],
   },
   {

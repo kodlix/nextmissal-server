@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
+import { USER_REPOSITORY, ROLE_REPOSITORY } from '@shared/constants/tokens';
 
 // Controllers
 import { UserController } from './user.controller';
@@ -47,11 +48,11 @@ const commandHandlers = [
 
     // Repository tokens
     {
-      provide: 'UserRepository',
+      provide: USER_REPOSITORY,
       useClass: UserRepository,
     },
     {
-      provide: 'RoleRepository',
+      provide: ROLE_REPOSITORY,
       useClass: RoleRepository,
     },
 

@@ -14,8 +14,8 @@ const mockUserService = {
 
 // Mock i18n service
 const mockI18nService = {
-  t: jest.fn().mockImplementation(key => {
-    const translations = {
+  t: jest.fn().mockImplementation((key: string) => {
+    const translations: Record<string, string> = {
       'common.auth.register.success': 'Registration successful',
     };
 

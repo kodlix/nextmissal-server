@@ -3,6 +3,7 @@ import { NotFoundException, Injectable, Inject } from '@nestjs/common';
 import { IUserRepository } from '@core/repositories/user.repository.interface';
 import { IUserDetailResponse } from '@application/dtos/responses/user.response';
 import { UserMapper } from '@application/mappers/user.mapper';
+import { USER_REPOSITORY } from '@shared/constants/tokens';
 
 export class GetUserQuery implements IQuery {
   constructor(public readonly userId: string) {}
@@ -12,7 +13,7 @@ export class GetUserQuery implements IQuery {
 @QueryHandler(GetUserQuery)
 export class GetUserQueryHandler implements IQueryHandler<GetUserQuery> {
   constructor(
-    @Inject('UserRepository')
+    @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
   ) {}
 

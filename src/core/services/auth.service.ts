@@ -2,6 +2,13 @@ import * as speakeasy from 'speakeasy';
 import * as QRCode from 'qrcode';
 import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import {
+  USER_REPOSITORY,
+  OTP_REPOSITORY,
+  REFRESH_TOKEN_REPOSITORY,
+  EMAIL_VERIFICATION_REPOSITORY,
+  PASSWORD_RESET_REPOSITORY,
+} from '@shared/constants/tokens';
 import { User } from '../entities/user.entity';
 import { Otp } from '../entities/otp.entity';
 import { RefreshToken } from '../entities/refresh-token.entity';
@@ -27,15 +34,15 @@ import { LoggerService } from '@infrastructure/logger/logger.service';
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject('UserRepository')
+    @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
-    @Inject('OtpRepository')
+    @Inject(OTP_REPOSITORY)
     private readonly otpRepository: IOtpRepository,
-    @Inject('RefreshTokenRepository')
+    @Inject(REFRESH_TOKEN_REPOSITORY)
     private readonly refreshTokenRepository: IRefreshTokenRepository,
-    @Inject('EmailVerificationRepository')
+    @Inject(EMAIL_VERIFICATION_REPOSITORY)
     private readonly emailVerificationRepository: IEmailVerificationRepository,
-    @Inject('PasswordResetRepository')
+    @Inject(PASSWORD_RESET_REPOSITORY)
     private readonly passwordResetRepository: IPasswordResetRepository,
     private readonly configService: ConfigService,
     @Inject(LoggerService) private readonly logger: LoggerService,

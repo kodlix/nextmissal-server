@@ -3,44 +3,44 @@ import { ApiProperty } from '@nestjs/swagger';
 // Basic Permission Response dto
 export class PermissionResponse {
   @ApiProperty({ example: '550e8400-e29b-41d4-a716-446655440000' })
-  id: string;
+  id!: string;
 
   @ApiProperty({ example: 'user:read' })
-  name: string;
+  name!: string;
 
   @ApiProperty({ example: 'Can read user information' })
-  description: string;
+  description!: string;
 
   @ApiProperty({ example: 'user' })
-  resource: string;
+  resource!: string;
 
   @ApiProperty({ example: 'read' })
-  action: string;
+  action!: string;
 }
 
 // Basic Role Response dto
 export class RoleBaseResponse {
   @ApiProperty({ example: '550e8400-e29b-41d4-a716-446655440000' })
-  id: string;
+  id!: string;
 
   @ApiProperty({ example: 'admin' })
-  name: string;
+  name!: string;
 
   @ApiProperty({ example: 'Administrator role with full access' })
-  description: string;
+  description!: string;
 
   @ApiProperty({ example: false })
-  isDefault: boolean;
+  isDefault!: boolean;
 }
 
 // Detailed Role Response with permissions
 export class RoleDetailResponse extends RoleBaseResponse {
   @ApiProperty({ type: [PermissionResponse] })
-  permissions: PermissionResponse[];
+  permissions!: PermissionResponse[];
 
   @ApiProperty({ example: '2023-01-01T00:00:00.000Z' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @ApiProperty({ example: '2023-01-01T00:00:00.000Z' })
-  updatedAt: Date;
+  updatedAt!: Date;
 }

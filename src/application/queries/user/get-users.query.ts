@@ -3,6 +3,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { IUserRepository } from '@core/repositories/user.repository.interface';
 import { IUserDetailResponse } from '@application/dtos/responses/user.response';
 import { UserMapper } from '@application/mappers/user.mapper';
+import { USER_REPOSITORY } from '@shared/constants/tokens';
 
 export class GetUsersQuery implements IQuery {}
 
@@ -10,7 +11,7 @@ export class GetUsersQuery implements IQuery {}
 @QueryHandler(GetUsersQuery)
 export class GetUsersQueryHandler implements IQueryHandler<GetUsersQuery> {
   constructor(
-    @Inject('UserRepository')
+    @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
   ) {}
 

@@ -8,7 +8,7 @@ export class RequestPasswordResetDto {
   })
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  email!: string;
 }
 
 export class ResetPasswordDto {
@@ -18,7 +18,7 @@ export class ResetPasswordDto {
   })
   @IsString()
   @IsNotEmpty()
-  token: string;
+  token!: string;
 
   @ApiProperty({
     description: 'The new password',
@@ -31,5 +31,5 @@ export class ResetPasswordDto {
     message:
       'Password must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number or special character',
   })
-  newPassword: string;
+  newPassword!: string;
 }

@@ -8,6 +8,7 @@ import { UserMapper } from '@application/mappers/user.mapper';
 import { IUserRepository } from '@core/repositories/user.repository.interface';
 import { AuthService } from '@core/services/auth.service';
 import { v4 as uuidv4 } from 'uuid';
+import { USER_REPOSITORY } from '@shared/constants/tokens';
 
 export class VerifyOtpCommand implements ICommand {
   constructor(
@@ -20,7 +21,7 @@ export class VerifyOtpCommand implements ICommand {
 @CommandHandler(VerifyOtpCommand)
 export class VerifyOtpCommandHandler implements ICommandHandler<VerifyOtpCommand> {
   constructor(
-    @Inject('UserRepository')
+    @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,

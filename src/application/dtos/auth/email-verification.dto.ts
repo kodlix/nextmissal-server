@@ -8,7 +8,7 @@ export class SendVerificationEmailDto {
   })
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  email!: string;
 }
 
 export class VerifyEmailDto {
@@ -18,7 +18,7 @@ export class VerifyEmailDto {
   })
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  email!: string;
 
   @ApiProperty({
     description: 'The verification code',
@@ -27,5 +27,5 @@ export class VerifyEmailDto {
   @IsString()
   @IsNotEmpty()
   @Length(6, 6)
-  code: string;
+  code!: string;
 }

@@ -1,5 +1,11 @@
 import { PasswordReset } from '../entities/password-reset.entity';
 
+/**
+ * Password reset repository interface
+ *
+ * Implementations:
+ * - {@link PasswordResetRepository} - Production Prisma/PostgreSQL implementation
+ */
 export interface IPasswordResetRepository {
   findById(id: string): Promise<PasswordReset | null>;
   findByUserId(userId: string): Promise<PasswordReset | null>;

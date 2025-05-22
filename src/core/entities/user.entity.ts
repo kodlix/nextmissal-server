@@ -54,7 +54,7 @@ export class User {
 
   disableOtp(): void {
     this.otpEnabled = false;
-    this.otpSecret = null;
+    this.otpSecret = undefined;
     this.updatedAt = new Date();
   }
 

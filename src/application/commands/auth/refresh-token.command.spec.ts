@@ -16,6 +16,7 @@ import { Token } from '@core/value-objects/token.vo';
 import { Role } from '@core/entities/role.entity';
 import { Permission } from '@core/entities/permission.entity';
 import { ResourceAction, ActionType } from '@core/value-objects/resource-action.vo';
+import { USER_REPOSITORY, ROLE_REPOSITORY } from '@shared/constants/tokens';
 
 // Mock UUID generation
 jest.mock('uuid', () => ({
@@ -43,8 +44,8 @@ const mockJwtService = {
 };
 
 const mockConfigService = {
-  get: jest.fn(key => {
-    const config = {
+  get: jest.fn((key: string) => {
+    const config: Record<string, string> = {
       JWT_SECRET: 'test-jwt-secret',
       JWT_ACCESS_EXPIRATION: '15m',
     };
@@ -121,8 +122,8 @@ describe('RefreshTokenCommandHandler', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RefreshTokenCommandHandler,
-        { provide: 'UserRepository', useValue: mockUserRepository },
-        { provide: 'RoleRepository', useValue: mockRoleRepository },
+        { provide: USER_REPOSITORY, useValue: mockUserRepository },
+        { provide: ROLE_REPOSITORY, useValue: mockRoleRepository },
         { provide: AuthService, useValue: mockAuthService },
         { provide: JwtService, useValue: mockJwtService },
         { provide: ConfigService, useValue: mockConfigService },
@@ -131,8 +132,8 @@ describe('RefreshTokenCommandHandler', () => {
     }).compile();
 
     handler = module.get<RefreshTokenCommandHandler>(RefreshTokenCommandHandler);
-    userRepository = module.get<IUserRepository>('UserRepository');
-    roleRepository = module.get<IRoleRepository>('RoleRepository');
+    userRepository = module.get<IUserRepository>(USER_REPOSITORY);
+    roleRepository = module.get<IRoleRepository>(ROLE_REPOSITORY);
     authService = module.get<AuthService>(AuthService);
     jwtService = module.get<JwtService>(JwtService);
     configService = module.get<ConfigService>(ConfigService);

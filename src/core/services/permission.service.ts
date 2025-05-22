@@ -7,11 +7,12 @@ import {
 } from '@core/exceptions/domain-exceptions';
 import { ResourceAction, ActionType } from '@core/value-objects/resource-action.vo';
 import { PermissionName } from '@core/value-objects/permission-name.vo';
+import { PERMISSION_REPOSITORY } from '@shared/constants/tokens';
 
 @Injectable()
 export class PermissionService {
   constructor(
-    @Inject('PermissionRepository')
+    @Inject(PERMISSION_REPOSITORY)
     private readonly permissionRepository: IPermissionRepository,
   ) {}
 

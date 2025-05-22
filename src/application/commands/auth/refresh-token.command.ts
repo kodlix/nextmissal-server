@@ -8,6 +8,7 @@ import { IUserRepository } from '@core/repositories/user.repository.interface';
 import { IRoleRepository } from '@core/repositories/role.repository.interface';
 import { AuthService } from '@core/services/auth.service';
 import { v4 as uuidv4 } from 'uuid';
+import { USER_REPOSITORY, ROLE_REPOSITORY } from '@shared/constants/tokens';
 
 export class RefreshTokenCommand implements ICommand {
   constructor(public readonly refreshTokenDto: RefreshTokenDto) {}
@@ -17,9 +18,9 @@ export class RefreshTokenCommand implements ICommand {
 @CommandHandler(RefreshTokenCommand)
 export class RefreshTokenCommandHandler implements ICommandHandler<RefreshTokenCommand> {
   constructor(
-    @Inject('UserRepository')
+    @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
-    @Inject('RoleRepository')
+    @Inject(ROLE_REPOSITORY)
     private readonly roleRepository: IRoleRepository,
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,

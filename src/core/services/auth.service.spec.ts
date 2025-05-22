@@ -13,6 +13,15 @@ import {
 } from '../../test/mocks/repositories.factory';
 import { createMockConfigService } from '../../test/mocks/config.factory';
 
+// Tokens
+import {
+  USER_REPOSITORY,
+  OTP_REPOSITORY,
+  REFRESH_TOKEN_REPOSITORY,
+  EMAIL_VERIFICATION_REPOSITORY,
+  PASSWORD_RESET_REPOSITORY,
+} from '@shared/constants/tokens';
+
 // Fixtures
 import { authFixtures } from '../../test/fixtures/auth.fixtures';
 
@@ -42,12 +51,12 @@ jest.mock('qrcode', () => ({
 
 describe('AuthService', () => {
   let service: AuthService;
-  let userRepository;
-  let otpRepository;
-  let refreshTokenRepository;
-  let emailVerificationRepository;
-  let passwordResetRepository;
-  let configService;
+  let userRepository: any;
+  let otpRepository: any;
+  let refreshTokenRepository: any;
+  let emailVerificationRepository: any;
+  let passwordResetRepository: any;
+  let configService: any;
 
   // Mock logger
   const mockLoggerService = {
@@ -71,11 +80,11 @@ describe('AuthService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
-        { provide: 'UserRepository', useValue: userRepository },
-        { provide: 'OtpRepository', useValue: otpRepository },
-        { provide: 'RefreshTokenRepository', useValue: refreshTokenRepository },
-        { provide: 'EmailVerificationRepository', useValue: emailVerificationRepository },
-        { provide: 'PasswordResetRepository', useValue: passwordResetRepository },
+        { provide: USER_REPOSITORY, useValue: userRepository },
+        { provide: OTP_REPOSITORY, useValue: otpRepository },
+        { provide: REFRESH_TOKEN_REPOSITORY, useValue: refreshTokenRepository },
+        { provide: EMAIL_VERIFICATION_REPOSITORY, useValue: emailVerificationRepository },
+        { provide: PASSWORD_RESET_REPOSITORY, useValue: passwordResetRepository },
         { provide: ConfigService, useValue: configService },
         { provide: LoggerService, useValue: mockLoggerService },
       ],

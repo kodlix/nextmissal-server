@@ -1,7 +1,9 @@
 {
+  "displayName": "E2E Tests",
+  "preset": "ts-jest",
+  "testEnvironment": "node",
   "moduleFileExtensions": ["js", "json", "ts"],
   "rootDir": ".",
-  "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
@@ -12,5 +14,9 @@
     "^@infrastructure/(.*)$": "<rootDir>/../src/infrastructure/$1",
     "^@presentation/(.*)$": "<rootDir>/../src/presentation/$1",
     "^@shared/(.*)$": "<rootDir>/../src/shared/$1"
-  }
+  },
+  "testTimeout": 60000,
+  "maxWorkers": 1,
+  "forceExit": true,
+  "detectOpenHandles": true
 }
