@@ -3,6 +3,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { JwtService } from '@nestjs/jwt';
+import { ThrottlerService } from '@infrastructure/services/throttler.service';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
@@ -12,7 +13,13 @@ describe('AuthController (e2e)', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideProvider(ThrottlerService)
+      .useValue({
+        trackRequest: jest.fn(),
+        getRemainingRequests: jest.fn().mockReturnValue(Promise.resolve(999)),
+      })
+      .compile();
 
     app = moduleFixture.createNestApplication();
 

@@ -4,6 +4,7 @@ import { IRoleRepository } from '@core/repositories/role.repository.interface';
 import { RoleDetailResponse } from '@application/dtos/responses/role.response';
 import { EntityNotFoundException } from '@core/exceptions/domain-exceptions';
 import { RoleMapper } from '@application/mappers/role.mapper';
+import { ROLE_REPOSITORY } from '@shared/constants/tokens';
 
 export class GetRoleQuery implements IQuery {
   constructor(public readonly id: string) {}
@@ -12,7 +13,7 @@ export class GetRoleQuery implements IQuery {
 @QueryHandler(GetRoleQuery)
 export class GetRoleQueryHandler implements IQueryHandler<GetRoleQuery> {
   constructor(
-    @Inject('RoleRepository')
+    @Inject(ROLE_REPOSITORY)
     private readonly roleRepository: IRoleRepository,
   ) {}
 

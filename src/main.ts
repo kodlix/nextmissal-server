@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { AllExceptionsFilter } from '@presentation/filters/all-exceptions.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as basicAuth from 'express-basic-auth';
+import helmet from 'helmet';
 import { LoggerService } from '@infrastructure/logger/logger.service';
 
 async function bootstrap() {
@@ -13,6 +14,20 @@ async function bootstrap() {
   const logger = await app.resolve(LoggerService);
 
   logger.setContext('Application');
+
+  // Security middleware
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          scriptSrc: ["'self'"],
+          imgSrc: ["'self'", 'data:', 'https:'],
+        },
+      },
+    }),
+  );
 
   // Global validation pipe
   app.useGlobalPipes(
@@ -27,8 +42,16 @@ async function bootstrap() {
   const exceptionLogger = await app.resolve(LoggerService);
   app.useGlobalFilters(new AllExceptionsFilter(exceptionLogger));
 
-  // Enable CORS
-  app.enableCors();
+  // Enable CORS with security settings
+  const allowedOrigins = configService.get<string>('ALLOWED_ORIGINS')?.split(',') || [
+    'http://localhost:3000',
+  ];
+  app.enableCors({
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept-Language'],
+  });
 
   // API prefix
   app.setGlobalPrefix('api');
@@ -71,20 +94,37 @@ async function bootstrap() {
     )
     .build();
 
-  // Basic Auth for Swagger
-  app.use(
-    '/docs',
-    basicAuth({
-      challenge: true,
-      users: {
-        [process.env.SWAGGER_USER]: process.env.SWAGGER_PASSWORD,
-      },
-    }),
-  );
+  // Basic Auth for Swagger (only in production)
+  if (configService.get<string>('NODE_ENV') === 'production') {
+    app.use(
+      '/docs',
+      basicAuth({
+        challenge: true,
+        users: {
+          [configService.get<string>('SWAGGER_USER', 'admin')]: configService.get<string>(
+            'SWAGGER_PASSWORD',
+            'admin',
+          ),
+        },
+      }),
+    );
+  }
 
   const document = SwaggerModule.createDocument(app, config);
 
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+      displayRequestDuration: true,
+      docExpansion: 'none',
+      filter: true,
+      showRequestHeaders: true,
+      tryItOutEnabled: true,
+    },
+    customSiteTitle: 'NestJS Clean Architecture API',
+    customfavIcon: '/favicon.ico',
+    customCssUrl: '/swagger-ui-custom.css',
+  });
 
   // Start server
   const port = configService.get<number>('PORT', 3000);

@@ -8,7 +8,7 @@ export class CreateRoleDto {
   })
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name!: string;
 
   @ApiProperty({
     description: 'Role description',
@@ -16,7 +16,7 @@ export class CreateRoleDto {
   })
   @IsString()
   @IsNotEmpty()
-  description: string;
+  description!: string;
 
   @ApiPropertyOptional({
     description: 'Whether this role is the default for new users',

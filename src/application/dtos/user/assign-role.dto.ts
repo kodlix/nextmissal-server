@@ -8,5 +8,5 @@ export class AssignRoleDto {
   })
   @IsUUID()
   @IsNotEmpty()
-  roleId: string;
+  roleId!: string;
 }

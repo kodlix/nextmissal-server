@@ -3,6 +3,9 @@ import { ConfigModule } from '@nestjs/config';
 import { CqrsModule } from '@nestjs/cqrs';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 
+// Controllers
+import { HealthController } from '@presentation/controllers/health.controller';
+
 // Modules
 import { PrismaModule } from '@infrastructure/database/prisma/prisma.module';
 import { ThrottlerModule } from '@infrastructure/throttler/throttler.module';
@@ -55,6 +58,7 @@ import configuration from '@infrastructure/config/configuration';
     AdminModule,
     StorageModule,
   ],
+  controllers: [HealthController],
   providers: [
     // Global interceptors
     {

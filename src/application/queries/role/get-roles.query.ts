@@ -3,13 +3,14 @@ import { Inject } from '@nestjs/common';
 import { IRoleRepository } from '@core/repositories/role.repository.interface';
 import { RoleDetailResponse } from '@application/dtos/responses/role.response';
 import { RoleMapper } from '@application/mappers/role.mapper';
+import { ROLE_REPOSITORY } from '@shared/constants/tokens';
 
 export class GetRolesQuery implements IQuery {}
 
 @QueryHandler(GetRolesQuery)
 export class GetRolesQueryHandler implements IQueryHandler<GetRolesQuery> {
   constructor(
-    @Inject('RoleRepository')
+    @Inject(ROLE_REPOSITORY)
     private readonly roleRepository: IRoleRepository,
   ) {}
 

@@ -17,7 +17,8 @@ export class FileMapper {
     if (file.isPublic) {
       url = `${this.configService.get<string>('storage.publicUrl')}/public/${file.path}`;
     } else {
-      url = await this.storageService.getFileUrl(file.id);
+      const fileUrl = await this.storageService.getFileUrl(file.id);
+      url = fileUrl || '';
     }
 
     return new FileResponseDto({

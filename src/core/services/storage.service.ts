@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { IFileRepository } from '../repositories/file.repository.interface';
 import { File } from '../entities/file.entity';
+import { FILE_REPOSITORY } from '@shared/constants/tokens';
 
 export interface IStorageFile {
   buffer: Buffer;
@@ -21,7 +22,7 @@ export class StorageService {
   private provider: IStorageProvider;
 
   constructor(
-    @Inject('IFileRepository') private readonly fileRepository: IFileRepository,
+    @Inject(FILE_REPOSITORY) private readonly fileRepository: IFileRepository,
     private readonly configService: ConfigService,
   ) {}
 

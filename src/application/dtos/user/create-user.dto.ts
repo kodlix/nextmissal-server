@@ -16,7 +16,7 @@ export class CreateUserDto {
   })
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  email!: string;
 
   @ApiProperty({
     description: 'User password',
@@ -30,7 +30,7 @@ export class CreateUserDto {
     message:
       'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character',
   })
-  password: string;
+  password!: string;
 
   @ApiProperty({
     description: 'User first name',
@@ -38,7 +38,7 @@ export class CreateUserDto {
   })
   @IsString()
   @IsNotEmpty()
-  firstName: string;
+  firstName!: string;
 
   @ApiProperty({
     description: 'User last name',
@@ -46,7 +46,7 @@ export class CreateUserDto {
   })
   @IsString()
   @IsNotEmpty()
-  lastName: string;
+  lastName!: string;
 
   @ApiPropertyOptional({
     description: 'List of role IDs to assign to the user',

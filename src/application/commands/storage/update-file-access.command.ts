@@ -38,6 +38,10 @@ export class UpdateFileAccessCommandHandler
       ? await this.storageService.makeFilePublic(fileId)
       : await this.storageService.makeFilePrivate(fileId);
 
+    if (!updatedFile) {
+      throw new Error('File not found after update');
+    }
+
     return this.fileMapper.toResponseDto(updatedFile);
   }
 }

@@ -7,13 +7,14 @@ import {
   EntityAlreadyExistsException,
   ForbiddenActionException,
 } from '@core/exceptions/domain-exceptions';
+import { ROLE_REPOSITORY, PERMISSION_REPOSITORY } from '@shared/constants/tokens';
 
 @Injectable()
 export class RoleService {
   constructor(
-    @Inject('RoleRepository')
+    @Inject(ROLE_REPOSITORY)
     private readonly roleRepository: IRoleRepository,
-    @Inject('PermissionRepository')
+    @Inject(PERMISSION_REPOSITORY)
     private readonly permissionRepository: IPermissionRepository,
   ) {}
 

@@ -4,6 +4,7 @@ import { RoleDetailResponse } from '@application/dtos/responses/role.response';
 import { IRoleRepository } from '@core/repositories/role.repository.interface';
 import { Inject } from '@nestjs/common';
 import { RoleMapper } from '@application/mappers/role.mapper';
+import { ROLE_REPOSITORY } from '@shared/constants/tokens';
 
 export class UpdateRoleCommand {
   constructor(
@@ -20,7 +21,7 @@ export class UpdateRoleCommandHandler
 {
   constructor(
     private readonly roleService: RoleService,
-    @Inject('RoleRepository')
+    @Inject(ROLE_REPOSITORY)
     private readonly roleRepository: IRoleRepository,
   ) {}
 
@@ -32,6 +33,10 @@ export class UpdateRoleCommandHandler
 
     // Fetch the updated role with permissions
     const updatedRole = await this.roleRepository.findById(role.id);
+
+    if (!updatedRole) {
+      throw new Error('Role not found after update');
+    }
 
     // Use the mapper to convert to response DTO
     return RoleMapper.toDetailResponse(updatedRole);

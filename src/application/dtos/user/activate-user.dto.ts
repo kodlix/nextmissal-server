@@ -8,5 +8,5 @@ export class ActivateUserDto {
   })
   @IsBoolean()
   @IsNotEmpty()
-  active: boolean;
+  active!: boolean;
 }

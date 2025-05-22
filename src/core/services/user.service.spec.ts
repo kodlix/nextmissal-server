@@ -8,6 +8,9 @@ import {
   createMockRoleRepository,
 } from '../../test/mocks/repositories.factory';
 
+// Tokens
+import { USER_REPOSITORY, ROLE_REPOSITORY } from '@shared/constants/tokens';
+
 // Fixtures
 import { userFixtures } from '../../test/fixtures/user.fixtures';
 
@@ -39,8 +42,8 @@ describe('UserService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
-        { provide: 'UserRepository', useValue: userRepository },
-        { provide: 'RoleRepository', useValue: roleRepository },
+        { provide: USER_REPOSITORY, useValue: userRepository },
+        { provide: ROLE_REPOSITORY, useValue: roleRepository },
       ],
     }).compile();
 

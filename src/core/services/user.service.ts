@@ -1,5 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import { Injectable, Inject } from '@nestjs/common';
+import { USER_REPOSITORY, ROLE_REPOSITORY } from '@shared/constants/tokens';
 import { User } from '../entities/user.entity';
 import { IUserRepository } from '../repositories/user.repository.interface';
 import { IRoleRepository } from '../repositories/role.repository.interface';
@@ -15,9 +16,9 @@ import { FirstName, LastName } from '@core/value-objects/name.vo';
 @Injectable()
 export class UserService {
   constructor(
-    @Inject('UserRepository')
+    @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
-    @Inject('RoleRepository')
+    @Inject(ROLE_REPOSITORY)
     private readonly roleRepository: IRoleRepository,
   ) {}
 

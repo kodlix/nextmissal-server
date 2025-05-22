@@ -8,7 +8,7 @@ export class Setup2FADto {
   })
   @IsString()
   @IsNotEmpty()
-  userId: string;
+  userId!: string;
 }
 
 export class Verify2FADto {
@@ -18,7 +18,7 @@ export class Verify2FADto {
   })
   @IsString()
   @IsNotEmpty()
-  userId: string;
+  userId!: string;
 
   @ApiProperty({
     description: 'The 2FA verification token',
@@ -26,7 +26,7 @@ export class Verify2FADto {
   })
   @IsString()
   @IsNotEmpty()
-  token: string;
+  token!: string;
 }
 
 export class Disable2FADto {
@@ -36,7 +36,7 @@ export class Disable2FADto {
   })
   @IsString()
   @IsNotEmpty()
-  userId: string;
+  userId!: string;
 }
 
 export class Generate2FADto {
@@ -46,5 +46,5 @@ export class Generate2FADto {
   })
   @IsString()
   @IsNotEmpty()
-  userId: string;
+  userId!: string;
 }

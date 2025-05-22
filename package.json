@@ -30,7 +30,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "lint": "eslint \"src/**/*.ts\" --ignore-pattern \"**/*.spec.ts\" --ignore-pattern \"**/*.test.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -40,7 +40,8 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev --name init",
     "db:push": "prisma db push",
-    "db:seed": "ts-node -r tsconfig-paths/register prisma/seed.ts"
+    "db:seed": "ts-node -r tsconfig-paths/register prisma/seed.ts",
+    "prepare": "husky"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.787.0",
@@ -61,6 +62,8 @@
     "class-validator": "^0.14.1",
     "dotenv": "^16.4.7",
     "express-basic-auth": "^1.2.1",
+    "express-session": "^1.18.1",
+    "helmet": "^8.1.0",
     "minio": "^8.0.5",
     "multer": "^1.4.5-lts.2",
     "nestjs-i18n": "^10.5.1",
@@ -80,17 +83,22 @@
     "@nestjs/testing": "^11.0.12",
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.1",
+    "@types/express-session": "^1.18.1",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.13.17",
     "@types/nodemailer": "^6.4.17",
     "@types/passport-jwt": "^4.0.1",
+    "@types/qrcode": "^1.5.5",
+    "@types/speakeasy": "^2.0.10",
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^8.29.0",
     "@typescript-eslint/parser": "^8.29.0",
     "eslint": "^9.23.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.5",
+    "husky": "^9.1.7",
     "jest": "^29.7.0",
+    "lint-staged": "^16.0.0",
     "prettier": "^3.5.3",
     "source-map-support": "^0.5.21",
     "supertest": "^7.1.0",
@@ -100,28 +108,13 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.2"
   },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
+  "lint-staged": {
+    "*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write"
     ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node",
-    "moduleNameMapper": {
-      "^@core/(.*)$": "<rootDir>/core/$1",
-      "^@application/(.*)$": "<rootDir>/application/$1",
-      "^@infrastructure/(.*)$": "<rootDir>/infrastructure/$1",
-      "^@presentation/(.*)$": "<rootDir>/presentation/$1",
-      "^@shared/(.*)$": "<rootDir>/shared/$1"
-    }
+    "*.{json,md}": [
+      "prettier --write"
+    ]
   }
 }

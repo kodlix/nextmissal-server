@@ -4,6 +4,16 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
+// Constants
+import {
+  USER_REPOSITORY,
+  ROLE_REPOSITORY,
+  OTP_REPOSITORY,
+  REFRESH_TOKEN_REPOSITORY,
+  EMAIL_VERIFICATION_REPOSITORY,
+  PASSWORD_RESET_REPOSITORY,
+} from '@shared/constants/tokens';
+
 // Controllers
 import { AuthController } from './auth.controller';
 
@@ -76,27 +86,27 @@ const commandHandlers = [
 
     // Repository tokens
     {
-      provide: 'UserRepository',
+      provide: USER_REPOSITORY,
       useClass: UserRepository,
     },
     {
-      provide: 'RoleRepository',
+      provide: ROLE_REPOSITORY,
       useClass: RoleRepository,
     },
     {
-      provide: 'OtpRepository',
+      provide: OTP_REPOSITORY,
       useClass: OtpRepository,
     },
     {
-      provide: 'RefreshTokenRepository',
+      provide: REFRESH_TOKEN_REPOSITORY,
       useClass: RefreshTokenRepository,
     },
     {
-      provide: 'EmailVerificationRepository',
+      provide: EMAIL_VERIFICATION_REPOSITORY,
       useClass: EmailVerificationRepository,
     },
     {
-      provide: 'PasswordResetRepository',
+      provide: PASSWORD_RESET_REPOSITORY,
       useClass: PasswordResetRepository,
     },
 

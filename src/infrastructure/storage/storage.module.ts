@@ -6,6 +6,7 @@ import { S3StorageProvider } from './providers/s3.provider';
 import { FileRepository } from '../repositories/file.repository';
 import storageConfig from '../config/storage.config';
 import { MulterModule } from '@nestjs/platform-express';
+import { FILE_REPOSITORY } from '@shared/constants/tokens';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { MulterModule } from '@nestjs/platform-express';
   providers: [
     FileRepository,
     {
-      provide: 'IFileRepository',
+      provide: FILE_REPOSITORY,
       useExisting: FileRepository,
     },
     StorageService,

@@ -8,6 +8,7 @@ import { IRoleRepository } from '@core/repositories/role.repository.interface';
 import { TokenProvider } from '@presentation/modules/auth/providers/token.provider';
 import { UserMapper } from '@application/mappers/user.mapper';
 import { I18nService } from 'nestjs-i18n';
+import { ROLE_REPOSITORY } from '@shared/constants/tokens';
 import { LoggerService } from '@infrastructure/logger/logger.service';
 
 export class LoginCommand implements ICommand {
@@ -22,7 +23,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
     private readonly authService: AuthService,
     private readonly tokenProvider: TokenProvider,
     private readonly i18n: I18nService,
-    @Inject('RoleRepository')
+    @Inject(ROLE_REPOSITORY)
     private readonly roleRepository: IRoleRepository,
     @Inject(LoggerService) private readonly logger: LoggerService,
   ) {

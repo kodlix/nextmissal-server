@@ -14,6 +14,7 @@ import { Permission } from '@core/entities/permission.entity';
 import { ResourceAction, ActionType } from '@core/value-objects/resource-action.vo';
 import { I18nService } from 'nestjs-i18n';
 import { LoggerService } from '@infrastructure/logger/logger.service';
+import { ROLE_REPOSITORY } from '@shared/constants/tokens';
 
 // Mock dependencies
 const mockUserService = {
@@ -34,8 +35,8 @@ const mockRoleRepository = {
 };
 
 const mockI18nService = {
-  t: jest.fn().mockImplementation(key => {
-    const translations = {
+  t: jest.fn().mockImplementation((key: string) => {
+    const translations: Record<string, string> = {
       'common.auth.login.failed': 'Invalid credentials',
       'common.auth.verification.email_sent': 'Email verification required',
       'common.auth.2fa.enabled': 'OTP verification required',
@@ -107,7 +108,7 @@ describe('LoginCommandHandler', () => {
         { provide: UserService, useValue: mockUserService },
         { provide: AuthService, useValue: mockAuthService },
         { provide: TokenProvider, useValue: mockTokenProvider },
-        { provide: 'RoleRepository', useValue: mockRoleRepository },
+        { provide: ROLE_REPOSITORY, useValue: mockRoleRepository },
         { provide: I18nService, useValue: mockI18nService },
         { provide: LoggerService, useValue: mockLoggerService },
       ],
@@ -117,7 +118,7 @@ describe('LoginCommandHandler', () => {
     userService = module.get<UserService>(UserService);
     authService = module.get<AuthService>(AuthService);
     tokenProvider = module.get<TokenProvider>(TokenProvider);
-    roleRepository = module.get<IRoleRepository>('RoleRepository');
+    roleRepository = module.get<IRoleRepository>(ROLE_REPOSITORY);
 
     // Mock UserMapper if needed
     jest.spyOn(UserMapper, 'toAuthResponse').mockImplementation((user, emailVerified) => {
