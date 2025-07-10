@@ -1,0 +1,15 @@
+refactor(arch): Transition to a modular, feature-based architecture
+
+This commit marks a significant architectural refactoring of the application, moving from a layered architecture to a more modular, feature-based approach.
+
+The previous architecture, based on `application`, `infrastructure`, and `presentation` layers, was becoming cumbersome and leading to high coupling between layers. This new structure aims to improve modularity, scalability, and maintainability.
+
+Key changes in this refactoring include:
+
+- **Removal of Layered Directories:** The `src/application`, `src/infrastructure`, and `src/presentation` directories have been eliminated.
+- **Introduction of `src/modules`:** Core features of the application are now encapsulated within their own modules inside the `src/modules` directory. This promotes better separation of concerns and makes it easier to work on individual features in isolation.
+- **Introduction of `src/shared`:** Common, reusable components, such as guards, filters, and interceptors, have been moved to the `src/shared` directory.
+- **Reorganization of `src/core`:** The `src/core` directory now contains cross-cutting concerns and foundational services that are shared across all modules. Some of the infrastructure-related code has been moved into subdirectories within `@core`.
+- **Updated Module Aliases:** The module aliases in `jest.config.js` and `tsconfig.json` have been updated to reflect the new directory structure.
+
+This new architecture should make the codebase more organized, easier to navigate, and more flexible for future development.
