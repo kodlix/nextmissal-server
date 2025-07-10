@@ -1,4 +1,4 @@
-import { Permission } from '@core/entities/permission.entity';
+import { Permission } from 'src/modules/auth/entities/permission.entity';
 import { PermissionId } from '@core/value-objects/permission-id.vo';
 import { InvalidValueObjectException } from '@core/exceptions/domain-exceptions';
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaService } from '@infrastructure/database/prisma/prisma.service';
-import { LoggerService } from '@infrastructure/logger/logger.service';
+import { PrismaService } from '@core/database/prisma/prisma.service';
+import { LoggerService } from '@core/logger/logger.service';
 import {
   IHealthResponse,
   IDatabaseHealthResponse,
@@ -9,7 +9,7 @@ import {
   ILivenessResponse,
   IHealthCheckDetail,
   IComprehensiveHealthResponse,
-} from '@application/dtos/responses/health.response';
+} from 'src/modules/health/health.response';
 import {
   HealthCheckException,
   DatabaseConnectionException,

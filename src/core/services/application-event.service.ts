@@ -6,8 +6,8 @@ import {
   UserRoleAssignedEvent,
   UserTwoFactorEnabledEvent,
 } from '@core/events/user.events';
-import { LoggerService } from '@infrastructure/logger/logger.service';
-import { User } from '@core/entities/user.entity';
+import { LoggerService } from '@core/logger/logger.service';
+import { User } from 'src/modules/user/entities/user.entity';
 
 /**
  * Application Event Service that registers domain event handlers

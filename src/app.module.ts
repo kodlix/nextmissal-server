@@ -4,27 +4,27 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 
 // Modules
-import { PrismaModule } from '@infrastructure/database/prisma/prisma.module';
-import { ThrottlerModule } from '@infrastructure/throttler/throttler.module';
-import { I18nModule } from '@infrastructure/i18n/i18n.module';
-import { LoggerModule } from '@infrastructure/logger/logger.module';
-import { AuthModule } from '@presentation/modules/auth/auth.module';
-import { UserModule } from '@presentation/modules/user/user.module';
-import { RoleModule } from '@presentation/modules/role/role.module';
-import { AdminModule } from '@presentation/modules/admin/admin.module';
-import { StorageModule } from '@presentation/modules/storage/storage.module';
-import { HealthModule } from '@presentation/modules/health/health.module';
+import { PrismaModule } from '@core/database/prisma/prisma.module';
+import { ThrottlerModule } from '@core/throttler/throttler.module';
+import { I18nModule } from '@core/i18n/i18n.module';
+import { LoggerModule } from '@core/logger/logger.module';
+import { AuthModule } from 'src/modules/auth/auth.module';
+import { UserModule } from 'src/modules/user/user.module';
+import { RoleModule } from 'src/modules/role/role.module';
+import { AdminModule } from 'src/modules/admin/admin.module';
+import { StorageModule } from 'src/modules/storage/storage.module';
+import { HealthModule } from 'src/modules/health/health.module';
 import { CoreModule } from '@core/core.module';
 
 // Global providers
-import { LoggingInterceptor } from '@presentation/interceptors/logging.interceptor';
-import { TransformInterceptor } from '@presentation/interceptors/transform.interceptor';
-import { AllExceptionsFilter } from '@presentation/filters/all-exceptions.filter';
-import { DomainExceptionsFilter } from '@presentation/filters/domain-exceptions.filter';
-import { JwtAuthGuard } from '@presentation/guards/jwt-auth.guard';
+import { LoggingInterceptor } from '@shared/interceptors/logging.interceptor';
+import { TransformInterceptor } from '@shared/interceptors/transform.interceptor';
+import { AllExceptionsFilter } from '@shared/filters/all-exceptions.filter';
+import { DomainExceptionsFilter } from '@shared/filters/domain-exceptions.filter';
+import { JwtAuthGuard } from '@shared/guards/jwt-auth.guard';
 
 // Config
-import configuration from '@infrastructure/config/configuration';
+import configuration from '@core/config/configuration';
 
 @Module({
   imports: [

@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { DomainEventService } from './services/domain-event.service';
 import { DomainValidationService } from './services/domain-validation.service';
-import { UserAuthorizationService } from './services/user-authorization.service';
+import { UserAuthorizationService } from '../modules/auth/services/user-authorization.service';
 import { ApplicationEventService } from './services/application-event.service';
 import { HealthService } from './services/health.service';
-import { LoggerModule } from '@infrastructure/logger/logger.module';
+import { LoggerModule } from '@core/logger/logger.module';
 import { ConfigModule } from '@nestjs/config';
-import { PrismaModule } from '@infrastructure/database/prisma/prisma.module';
+import { PrismaModule } from '@core/database/prisma/prisma.module';
 
 /**
  * Core Domain Module

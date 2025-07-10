@@ -2,11 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AllExceptionsFilter } from '@presentation/filters/all-exceptions.filter';
+import { AllExceptionsFilter } from '@shared/filters/all-exceptions.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as basicAuth from 'express-basic-auth';
 import helmet from 'helmet';
-import { LoggerService } from '@infrastructure/logger/logger.service';
+import { LoggerService } from '@core/logger/logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -65,10 +65,12 @@ async function bootstrap() {
     .setTitle('NestJS Clean Architecture API')
     .setDescription('The API documentation for the NestJS Clean Architecture template')
     .setVersion('1.0')
-    .addTag('auth', 'Authentication endpoints')
-    .addTag('users', 'User management endpoints')
-    .addTag('roles', 'Role management endpoints')
-    .addTag('admin', 'Admin endpoints')
+    .addTag('Auth', 'Authentication endpoints')
+    .addTag('Users', 'User management endpoints')
+    .addTag('Roles', 'Role management endpoints')
+    .addTag('Admin', 'Admin endpoints')
+    .addTag('Storage', 'File storage endpoints')
+    .addTag('Health', 'Application health endpoints')
     .addGlobalParameters({
       name: 'Accept-Language',
       in: 'header',
