@@ -8,12 +8,12 @@ import { PrismaModule } from '@core/database/prisma/prisma.module';
 import { ThrottlerModule } from '@core/throttler/throttler.module';
 import { I18nModule } from '@core/i18n/i18n.module';
 import { LoggerModule } from '@core/logger/logger.module';
-import { AuthModule } from 'src/modules/auth/auth.module';
-import { UserModule } from 'src/modules/user/user.module';
-import { RoleModule } from 'src/modules/role/role.module';
-import { AdminModule } from 'src/modules/admin/admin.module';
-import { StorageModule } from 'src/modules/storage/storage.module';
-import { HealthModule } from 'src/modules/health/health.module';
+import { AuthModule } from '@modules/auth/auth.module';
+import { UserModule } from '@modules/user/user.module';
+import { RoleModule } from '@modules/role/role.module';
+import { AdminModule } from '@modules/admin/admin.module';
+import { StorageModule } from '@modules/storage/storage.module';
+import { HealthModule } from '@modules/health/health.module';
 import { CoreModule } from '@core/core.module';
 
 // Global providers

@@ -1,4 +1,4 @@
-import { Role } from 'src/modules/role/entities/role.entity';
+import { Role } from '@modules/role/entities/role.entity';
 import { RoleId } from '@core/value-objects/role-id.vo';
 import { PermissionsCollection } from './permissions.collection';
 import { InvalidValueObjectException } from '@core/exceptions/domain-exceptions';

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { User } from 'src/modules/user/entities/user.entity';
-import { IUserRepository } from 'src/modules/user/repositories/user.repository.interface';
+import { User } from '@modules/user/entities/user.entity';
+import { IUserRepository } from '@modules/user/repositories/user.repository.interface';
 import { PrismaService } from '@core/database/prisma/prisma.service';
-import { Role } from 'src/modules/role/entities/role.entity';
-import { Permission } from 'src/modules/auth/entities/permission.entity';
+import { Role } from '@modules/role/entities/role.entity';
+import { Permission } from '@modules/auth/entities/permission.entity';
 import {
   User as PrismaUser,
   UserRole as PrismaUserRole,
@@ -12,7 +12,7 @@ import {
   Permission as PrismaPermission,
 } from '@prisma/client';
 import { ResourceAction, ActionType } from '@core/value-objects/resource-action.vo';
-import { BaseRepository } from '../../../core/repositories/base.repository';
+import { BaseRepository } from '@core/repositories/base.repository';
 
 // Define a type for User with its relations (roles with nested permissions)
 type UserWithRelations = PrismaUser & {

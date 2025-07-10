@@ -1,6 +1,6 @@
 import { ICommand, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Injectable } from '@nestjs/common';
-import { AuthService } from 'src/modules/auth/services/auth.service';
+import { AuthService } from '@modules/auth/services/auth.service';
 
 export class Setup2FACommand implements ICommand {
   constructor(public readonly userId: string) {}

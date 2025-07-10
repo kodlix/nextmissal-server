@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PasswordReset } from 'src/modules/auth/entities/password-reset.entity';
-import { IPasswordResetRepository } from 'src/modules/auth/repositories/password-reset.repository.interface';
+import { PasswordReset } from '@modules/auth/entities/password-reset.entity';
+import { IPasswordResetRepository } from '@modules/auth/repositories/password-reset.repository.interface';
 import { PrismaService } from '@core/database/prisma/prisma.service';
 import { BaseRepository } from '../../../core/repositories/base.repository';
 import { Email } from '@core/value-objects/email.vo';

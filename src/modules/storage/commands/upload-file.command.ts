@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { StorageService, IStorageFile } from 'src/modules/storage/services/storage.service';
+import { StorageService, IStorageFile } from '@modules/storage/services/storage.service';
 import { FileMapper } from '../file.mapper';
 import { FileResponseDto } from '../file.response';
 

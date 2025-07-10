@@ -4,9 +4,9 @@ import { StorageController } from './storage.controller';
 import { StorageModule as InfrastructureStorageModule } from '@core/storage/storage.module';
 
 // Commands
-import { UploadFileCommandHandler } from 'src/modules/storage/commands/upload-file.command';
-import { DeleteFileCommandHandler } from 'src/modules/storage/commands/delete-file.command';
-import { UpdateFileAccessCommandHandler } from 'src/modules/storage/commands/update-file-access.command';
+import { UploadFileCommandHandler } from '@modules/storage/commands/upload-file.command';
+import { DeleteFileCommandHandler } from '@modules/storage/commands/delete-file.command';
+import { UpdateFileAccessCommandHandler } from '@modules/storage/commands/update-file-access.command';
 
 // Queries
 import { GetFileQueryHandler } from '@modules/storage/queries/get-file.query';

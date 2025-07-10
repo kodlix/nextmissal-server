@@ -1,7 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { UserAuthorizationService } from 'src/modules/auth/services/user-authorization.service';
-import { User } from 'src/modules/user/entities/user.entity';
+import { UserAuthorizationService } from '@modules/auth/services/user-authorization.service';
+import { User } from '@modules/user/entities/user.entity';
 
 /**
  * Enhanced PermissionsGuard that uses the UserAuthorizationService

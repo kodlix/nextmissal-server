@@ -4,16 +4,17 @@ import { DomainValidationService } from './services/domain-validation.service';
 import { UserAuthorizationService } from '../modules/auth/services/user-authorization.service';
 import { ApplicationEventService } from './services/application-event.service';
 import { HealthService } from './services/health.service';
-import { LoggerModule } from '@core/logger/logger.module';
+
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from '@core/database/prisma/prisma.module';
+import { EventsModule } from '@core/events/events.module';
 
 /**
  * Core Domain Module
  * Contains all domain services and DDD infrastructure
  */
 @Module({
-  imports: [LoggerModule, ConfigModule, PrismaModule],
+  imports: [ConfigModule, PrismaModule, EventsModule],
   providers: [
     DomainEventService,
     DomainValidationService,

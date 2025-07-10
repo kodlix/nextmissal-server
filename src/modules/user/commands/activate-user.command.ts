@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserService } from '@modules/user/services/user.service';
-import { IUserBaseResponse } from 'src/modules/user/user.response';
+import { IUserBaseResponse } from '@modules/user/user.response';
 
 export class ActivateUserCommand {
   constructor(

@@ -3,36 +3,33 @@ import { CommandBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 
 // DTOs
-import { RegisterDto } from 'src/modules/auth/dtos/register.dto';
-import { LoginDto } from 'src/modules/auth/dtos/login.dto';
-import { VerifyOtpDto } from 'src/modules/auth/dtos/verify-otp.dto';
-import { RefreshTokenDto } from 'src/modules/auth/dtos/refresh-token.dto';
+import { RegisterDto } from '@modules/auth/dtos/register.dto';
+import { LoginDto } from '@modules/auth/dtos/login.dto';
+import { VerifyOtpDto } from '@modules/auth/dtos/verify-otp.dto';
+import { RefreshTokenDto } from '@modules/auth/dtos/refresh-token.dto';
 import {
   SendVerificationEmailDto,
   VerifyEmailDto,
-} from 'src/modules/auth/dtos/email-verification.dto';
-import {
-  RequestPasswordResetDto,
-  ResetPasswordDto,
-} from 'src/modules/auth/dtos/password-reset.dto';
+} from '@modules/auth/dtos/email-verification.dto';
+import { RequestPasswordResetDto, ResetPasswordDto } from '@modules/auth/dtos/password-reset.dto';
 
 // Commands
-import { RegisterUserCommand } from 'src/modules/auth/commands/register-user.command';
-import { LoginCommand } from 'src/modules/auth/commands/login.command';
-import { VerifyOtpCommand } from 'src/modules/auth/commands/verify-otp.command';
-import { RefreshTokenCommand } from 'src/modules/auth/commands/refresh-token.command';
-import { LogoutCommand } from 'src/modules/auth/commands/logout.command';
-import { SendVerificationEmailCommand } from 'src/modules/auth/commands/send-verification-email.command';
-import { VerifyEmailCommand } from 'src/modules/auth/commands/verify-email.command';
-import { CheckEmailVerificationStatusCommand } from 'src/modules/auth/commands/check-email-verification-status.command';
-import { RequestPasswordResetCommand } from 'src/modules/auth/commands/request-password-reset.command';
-import { ResetPasswordCommand } from 'src/modules/auth/commands/reset-password.command';
+import { RegisterUserCommand } from '@modules/auth/commands/register-user.command';
+import { LoginCommand } from '@modules/auth/commands/login.command';
+import { VerifyOtpCommand } from '@modules/auth/commands/verify-otp.command';
+import { RefreshTokenCommand } from '@modules/auth/commands/refresh-token.command';
+import { LogoutCommand } from '@modules/auth/commands/logout.command';
+import { SendVerificationEmailCommand } from '@modules/auth/commands/send-verification-email.command';
+import { VerifyEmailCommand } from '@modules/auth/commands/verify-email.command';
+import { CheckEmailVerificationStatusCommand } from '@modules/auth/commands/check-email-verification-status.command';
+import { RequestPasswordResetCommand } from '@modules/auth/commands/request-password-reset.command';
+import { ResetPasswordCommand } from '@modules/auth/commands/reset-password.command';
 
 // Guards & Decorators
 import { Public } from '@shared/decorators/public.decorator';
 import { CurrentUser } from '@shared/decorators/current-user.decorator';
 import { SkipThrottle, Throttle } from '@shared/decorators/throttle.decorator';
-import { IJwtPayload } from 'src/modules/user/user.response';
+import { IJwtPayload } from '@modules/user/user.response';
 
 @ApiTags('Auth')
 @Throttle(60, 5) // 5 requests per minute

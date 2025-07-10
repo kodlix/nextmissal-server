@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { User } from 'src/modules/user/entities/user.entity';
-import { Role } from 'src/modules/role/entities/role.entity';
+import { User } from '@modules/user/entities/user.entity';
+import { Role } from '@modules/role/entities/role.entity';
 import {
   ActiveUserSpecification,
   TwoFactorEnabledSpecification,
@@ -9,11 +9,11 @@ import {
   CanAssignRoleSpecification,
   EligibleForAdminRoleSpecification,
   CompleteUserAccountSpecification,
-} from 'src/modules/user/specifications/user.specifications';
+} from '@modules/user/specifications/user.specifications';
 import {
   AdminRoleSpecification,
   CanDeleteRoleSpecification,
-} from 'src/modules/role/specifications/role.specifications';
+} from '@modules/role/specifications/role.specifications';
 
 /**
  * Domain service for user authorization and access control business logic

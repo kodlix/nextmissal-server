@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { User } from 'src/modules/user/entities/user.entity';
-import { Role } from 'src/modules/role/entities/role.entity';
-import { Permission } from 'src/modules/auth/entities/permission.entity';
+import { User } from '@modules/user/entities/user.entity';
+import { Role } from '@modules/role/entities/role.entity';
+import { Permission } from '@modules/auth/entities/permission.entity';
 import { Email } from '@core/value-objects/email.vo';
 import { Password } from '@core/value-objects/password.vo';
 import {
   ActiveUserSpecification,
   CompleteUserAccountSpecification,
   AdminUserSpecification,
-} from 'src/modules/user/specifications/user.specifications';
+} from '@modules/user/specifications/user.specifications';
 import {
   DefaultRoleSpecification,
   AdminRoleSpecification,
   HasMinimumPermissionsSpecification,
-} from 'src/modules/role/specifications/role.specifications';
+} from '@modules/role/specifications/role.specifications';
 import { BusinessRuleValidationException } from '@core/exceptions/domain-exceptions';
 
 /**

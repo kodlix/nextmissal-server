@@ -9,7 +9,7 @@ import {
   ILivenessResponse,
   IHealthCheckDetail,
   IComprehensiveHealthResponse,
-} from 'src/modules/health/health.response';
+} from '@modules/health/health.response';
 import {
   HealthCheckException,
   DatabaseConnectionException,

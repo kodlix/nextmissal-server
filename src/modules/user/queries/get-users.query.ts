@@ -1,7 +1,7 @@
 import { IQuery, IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Injectable, Inject } from '@nestjs/common';
-import { IUserRepository } from 'src/modules/user/repositories/user.repository.interface';
-import { IUserDetailResponse } from 'src/modules/user/user.response';
+import { IUserRepository } from '@modules/user/repositories/user.repository.interface';
+import { IUserDetailResponse } from '@modules/user/user.response';
 import { UserMapper } from '@modules/user/user.mapper';
 import { USER_REPOSITORY } from '@shared/constants/tokens';
 

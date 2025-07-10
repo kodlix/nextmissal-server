@@ -1,6 +1,6 @@
 import { Specification } from '../../../core/specifications/specification.base';
-import { User } from 'src/modules/user/entities/user.entity';
-import { Role } from 'src/modules/role/entities/role.entity';
+import { User } from '@modules/user/entities/user.entity';
+import { Role } from '@modules/role/entities/role.entity';
 import { RoleId } from '@core/value-objects/role-id.vo';
 
 /**

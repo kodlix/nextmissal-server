@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { StorageService } from 'src/modules/storage/services/storage.service';
+import { StorageService } from '@modules/storage/services/storage.service';
 import { FileMapper } from '../file.mapper';
 import { FileResponseDto } from '../file.response';
 

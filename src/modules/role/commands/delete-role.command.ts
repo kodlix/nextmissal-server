@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { RoleService } from 'src/modules/role/services/role.service';
+import { RoleService } from '@modules/role/services/role.service';
 
 export class DeleteRoleCommand {
   constructor(public readonly id: string) {}

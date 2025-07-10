@@ -1,7 +1,7 @@
 import { IQuery, IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { IRoleRepository } from 'src/modules/role/repositories/role.repository.interface';
-import { RoleDetailResponse } from 'src/modules/role/role.response';
+import { IRoleRepository } from '@modules/role/repositories/role.repository.interface';
+import { RoleDetailResponse } from '@modules/role/role.response';
 import { EntityNotFoundException } from '@core/exceptions/domain-exceptions';
 import { RoleMapper } from '@modules/role/role.mapper';
 import { ROLE_REPOSITORY } from '@shared/constants/tokens';

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Otp } from 'src/modules/auth/entities/otp.entity';
-import { IOtpRepository } from 'src/modules/auth/repositories/otp.repository.interface';
+import { Otp } from '@modules/auth/entities/otp.entity';
+import { IOtpRepository } from '@modules/auth/repositories/otp.repository.interface';
 import { PrismaService } from '@core/database/prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { Otp as PrismaOtp } from '@prisma/client';

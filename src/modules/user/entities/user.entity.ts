@@ -23,7 +23,7 @@ import {
   UserCannotRemoveLastRoleException,
   InvalidValueObjectException,
 } from '@core/exceptions/domain-exceptions';
-import { CanAssignRoleSpecification } from 'src/modules/user/specifications/user.specifications';
+import { CanAssignRoleSpecification } from '@modules/user/specifications/user.specifications';
 import { RolesCollection } from '@core/value-objects/collections/roles.collection';
 
 export class User extends AggregateRoot {

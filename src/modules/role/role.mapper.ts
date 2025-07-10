@@ -1,6 +1,6 @@
-import { Role } from 'src/modules/role/entities/role.entity';
-import { Permission } from 'src/modules/auth/entities/permission.entity';
-import { RoleDetailResponse, PermissionResponse } from 'src/modules/role/role.response';
+import { Role } from '@modules/role/entities/role.entity';
+import { Permission } from '@modules/auth/entities/permission.entity';
+import { RoleDetailResponse, PermissionResponse } from '@modules/role/role.response';
 
 export class RoleMapper {
   /**

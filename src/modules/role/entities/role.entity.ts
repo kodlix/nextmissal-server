@@ -7,7 +7,7 @@ import {
   PermissionAlreadyAssignedException,
   InvalidValueObjectException,
 } from '@core/exceptions/domain-exceptions';
-import { CanAssignPermissionToRoleSpecification } from 'src/modules/role/specifications/role.specifications';
+import { CanAssignPermissionToRoleSpecification } from '@modules/role/specifications/role.specifications';
 import { PermissionsCollection } from '@core/value-objects/collections/permissions.collection';
 
 export class Role extends AggregateRoot {

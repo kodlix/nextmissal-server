@@ -1,9 +1,9 @@
 import { Module, DynamicModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { StorageService } from 'src/modules/storage/services/storage.service';
+import { StorageService } from '@modules/storage/services/storage.service';
 import { MinioStorageProvider } from './providers/minio.provider';
 import { S3StorageProvider } from './providers/s3.provider';
-import { FileRepository } from '../../modules/role/commands/file.repository';
+import { FileRepository } from '../../modules/storage/repositories/file.repository';
 import storageConfig from '../../core/config/storage.config';
 import { MulterModule } from '@nestjs/platform-express';
 import { FILE_REPOSITORY } from '@shared/constants/tokens';

@@ -1,11 +1,11 @@
 import { ICommand, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { LoginDto } from 'src/modules/auth/dtos/login.dto';
-import { AuthResponse } from 'src/modules/user/user.response';
+import { LoginDto } from '@modules/auth/dtos/login.dto';
+import { AuthResponse } from '@modules/user/user.response';
 import { UnauthorizedException, Injectable, Inject } from '@nestjs/common';
 import { UserService } from '@modules/user/services/user.service';
-import { AuthService } from 'src/modules/auth/services/auth.service';
-import { IRoleRepository } from 'src/modules/role/repositories/role.repository.interface';
-import { TokenProvider } from 'src/modules/auth/providers/token.provider';
+import { AuthService } from '@modules/auth/services/auth.service';
+import { IRoleRepository } from '@modules/role/repositories/role.repository.interface';
+import { TokenProvider } from '@modules/auth/providers/token.provider';
 import { UserMapper } from '@modules/user/user.mapper';
 import { I18nService } from 'nestjs-i18n';
 import { ROLE_REPOSITORY } from '@shared/constants/tokens';

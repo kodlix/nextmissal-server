@@ -24,15 +24,15 @@ import {
 } from '@nestjs/swagger';
 
 import { CurrentUser } from '@shared/decorators/current-user.decorator';
-import { UploadFileCommand } from 'src/modules/storage/commands/upload-file.command';
-import { DeleteFileCommand } from 'src/modules/storage/commands/delete-file.command';
-import { UpdateFileAccessCommand } from 'src/modules/storage/commands/update-file-access.command';
+import { UploadFileCommand } from '@modules/storage/commands/upload-file.command';
+import { DeleteFileCommand } from '@modules/storage/commands/delete-file.command';
+import { UpdateFileAccessCommand } from '@modules/storage/commands/update-file-access.command';
 import { GetFileQuery } from '@modules/storage/queries/get-file.query';
 import { GetUserFilesQuery } from '@modules/storage/queries/get-user-files.query';
 
 import { UpdateFileAccessDto } from '@modules/storage/dtos/update-file-access.dto';
-import { FileResponseDto } from 'src/modules/storage/file.response';
-import { IJwtPayload } from 'src/modules/user/user.response';
+import { FileResponseDto } from '@modules/storage/file.response';
+import { IJwtPayload } from '@modules/user/user.response';
 
 @ApiTags('Storage')
 @Controller('storage')

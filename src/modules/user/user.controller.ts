@@ -32,13 +32,13 @@ import { GetUserQuery } from '@modules/user/queries/get-user.query';
 import { GetUsersQuery } from '@modules/user/queries/get-users.query';
 
 // Commands
-import { UpdateUserCommand } from 'src/modules/user/commands/update-user.command';
-import { ChangePasswordCommand } from 'src/modules/user/commands/change-password.command';
-import { ActivateUserCommand } from 'src/modules/user/commands/activate-user.command';
-import { AssignRoleCommand } from 'src/modules/user/commands/assign-role.command';
-import { RemoveRoleCommand } from 'src/modules/user/commands/remove-role.command';
-import { VerifyPasswordCommand } from 'src/modules/user/commands/verify-password.command';
-import { IJwtPayload } from 'src/modules/user/user.response';
+import { UpdateUserCommand } from '@modules/user/commands/update-user.command';
+import { ChangePasswordCommand } from '@modules/user/commands/change-password.command';
+import { ActivateUserCommand } from '@modules/user/commands/activate-user.command';
+import { AssignRoleCommand } from '@modules/user/commands/assign-role.command';
+import { RemoveRoleCommand } from '@modules/user/commands/remove-role.command';
+import { VerifyPasswordCommand } from '@modules/user/commands/verify-password.command';
+import { IJwtPayload } from '@modules/user/user.response';
 
 @ApiTags('Users')
 @Controller('users')

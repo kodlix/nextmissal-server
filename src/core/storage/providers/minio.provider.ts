@@ -3,9 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import * as Minio from 'minio';
 import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
-import { IStorageProvider, IStorageFile } from 'src/modules/storage/services/storage.service';
-import { File } from 'src/modules/storage/entities/file.entity';
-import { IFileRepository } from 'src/modules/storage/repositories/file.repository.interface';
+import { IStorageProvider, IStorageFile } from '@modules/storage/services/storage.service';
+import { File } from '@modules/storage/entities/file.entity';
+import { IFileRepository } from '@modules/storage/repositories/file.repository.interface';
 import { FILE_REPOSITORY } from '@shared/constants/tokens';
 
 @Injectable()

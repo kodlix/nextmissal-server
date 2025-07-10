@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../core/database/prisma/prisma.service';
-import { IFileRepository } from 'src/modules/storage/repositories/file.repository.interface';
-import { File } from 'src/modules/storage/entities/file.entity';
+import { IFileRepository } from '@modules/storage/repositories/file.repository.interface';
+import { File } from '@modules/storage/entities/file.entity';
 import { BaseRepository } from '../../../core/repositories/base.repository';
 
 /**

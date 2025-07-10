@@ -17,7 +17,7 @@ import {
   IDatabaseHealthResponse,
   IReadinessResponse,
   ILivenessResponse,
-} from 'src/modules/health/health.response';
+} from '@modules/health/health.response';
 
 @ApiTags('Health')
 @Controller('health')

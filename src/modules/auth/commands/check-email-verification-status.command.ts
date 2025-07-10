@@ -1,6 +1,6 @@
 import { ICommand, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Injectable } from '@nestjs/common';
-import { AuthService } from 'src/modules/auth/services/auth.service';
+import { AuthService } from '@modules/auth/services/auth.service';
 
 export class CheckEmailVerificationStatusCommand implements ICommand {
   constructor(public readonly email: string) {}

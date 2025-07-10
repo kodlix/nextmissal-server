@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { FileResponseDto } from './file.response';
-import { File } from 'src/modules/storage/entities/file.entity';
-import { StorageService } from 'src/modules/storage/services/storage.service';
+import { File } from '@modules/storage/entities/file.entity';
+import { StorageService } from '@modules/storage/services/storage.service';
 
 @Injectable()
 export class FileMapper {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { EmailVerification } from 'src/modules/auth/entities/email-verification.entity';
-import { IEmailVerificationRepository } from 'src/modules/auth/repositories/email-verification.repository.interface';
+import { EmailVerification } from '@modules/auth/entities/email-verification.entity';
+import { IEmailVerificationRepository } from '@modules/auth/repositories/email-verification.repository.interface';
 import { PrismaService } from '@core/database/prisma/prisma.service';
 import { BaseRepository } from '../../../core/repositories/base.repository';
 import { Email } from '@core/value-objects/email.vo';

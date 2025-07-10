@@ -27,11 +27,11 @@ import { GetRolesQuery } from '@modules/role/queries/get-roles.query';
 import { GetRoleQuery } from '@modules/role/queries/get-role.query';
 
 // Commands
-import { CreateRoleCommand } from 'src/modules/role/commands/create-role.command';
-import { UpdateRoleCommand } from 'src/modules/role/commands/update-role.command';
-import { DeleteRoleCommand } from 'src/modules/role/commands/delete-role.command';
-import { AssignPermissionCommand } from 'src/modules/role/commands/assign-permission.command';
-import { RemovePermissionCommand } from 'src/modules/role/commands/remove-permission.command';
+import { CreateRoleCommand } from '@modules/role/commands/create-role.command';
+import { UpdateRoleCommand } from '@modules/role/commands/update-role.command';
+import { DeleteRoleCommand } from '@modules/role/commands/delete-role.command';
+import { AssignPermissionCommand } from '@modules/role/commands/assign-permission.command';
+import { RemovePermissionCommand } from '@modules/role/commands/remove-permission.command';
 
 @ApiTags('Roles')
 @Controller('roles')

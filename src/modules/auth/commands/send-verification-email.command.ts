@@ -1,8 +1,8 @@
 import { ICommand, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { SendVerificationEmailDto } from 'src/modules/auth/dtos/email-verification.dto';
+import { SendVerificationEmailDto } from '@modules/auth/dtos/email-verification.dto';
 import { Injectable } from '@nestjs/common';
-import { AuthService } from 'src/modules/auth/services/auth.service';
-import { EmailProvider } from 'src/modules/auth/providers/email.provider';
+import { AuthService } from '@modules/auth/services/auth.service';
+import { EmailProvider } from '@modules/auth/providers/email.provider';
 
 export class SendVerificationEmailCommand implements ICommand {
   constructor(public readonly dto: SendVerificationEmailDto) {}

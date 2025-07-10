@@ -1,13 +1,13 @@
 import { ICommand, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { VerifyEmailDto } from 'src/modules/auth/dtos/email-verification.dto';
+import { VerifyEmailDto } from '@modules/auth/dtos/email-verification.dto';
 import { Injectable, Inject, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
-import { AuthService } from 'src/modules/auth/services/auth.service';
-import { IUserRepository } from 'src/modules/user/repositories/user.repository.interface';
-import { IRoleRepository } from 'src/modules/role/repositories/role.repository.interface';
-import { IAuthTokenResponse } from 'src/modules/user/user.response';
+import { AuthService } from '@modules/auth/services/auth.service';
+import { IUserRepository } from '@modules/user/repositories/user.repository.interface';
+import { IRoleRepository } from '@modules/role/repositories/role.repository.interface';
+import { IAuthTokenResponse } from '@modules/user/user.response';
 import { UserMapper } from '@modules/user/user.mapper';
 import { USER_REPOSITORY, ROLE_REPOSITORY } from '@shared/constants/tokens';
 

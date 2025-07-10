@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DomainEvent, AggregateRoot } from '@core/events/domain-event.base';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 /**
  * Domain Event Service for managing and dispatching domain events
@@ -7,21 +8,7 @@ import { DomainEvent, AggregateRoot } from '@core/events/domain-event.base';
  */
 @Injectable()
 export class DomainEventService {
-  private readonly eventHandlers = new Map<string, Array<(event: DomainEvent) => Promise<void>>>();
-
-  /**
-   * Register an event handler for a specific event type
-   */
-  registerHandler<T extends DomainEvent>(
-    eventName: string,
-    handler: (event: T) => Promise<void>,
-  ): void {
-    if (!this.eventHandlers.has(eventName)) {
-      this.eventHandlers.set(eventName, []);
-    }
-
-    this.eventHandlers.get(eventName)!.push(handler as (event: DomainEvent) => Promise<void>);
-  }
+  constructor(private eventEmitter: EventEmitter2) {}
 
   /**
    * Dispatch all domain events from an aggregate root
@@ -60,32 +47,13 @@ export class DomainEventService {
    * Dispatch a single domain event
    */
   async dispatchEvent(event: DomainEvent): Promise<void> {
-    const handlers = this.eventHandlers.get(event.getEventName()) || [];
-
-    // Execute all handlers for this event type
-    const promises = handlers.map(handler => handler(event));
-
     try {
-      await Promise.all(promises);
+      this.eventEmitter.emit(event.getEventName(), event);
     } catch (error) {
       // Log error but don't throw to prevent transaction rollback
       console.error(`Error handling domain event ${event.getEventName()}:`, error);
       // In a real application, you'd use proper logging and potentially
       // implement a dead letter queue or retry mechanism
     }
-  }
-
-  /**
-   * Get all registered event types
-   */
-  getRegisteredEventTypes(): string[] {
-    return Array.from(this.eventHandlers.keys());
-  }
-
-  /**
-   * Clear all handlers (useful for testing)
-   */
-  clearAllHandlers(): void {
-    this.eventHandlers.clear();
   }
 }

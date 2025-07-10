@@ -18,36 +18,37 @@ import {
 import { AuthController } from './auth.controller';
 
 // Repositories
-import { UserRepository } from 'src/modules/user/repositories/user.repository';
-import { RoleRepository } from 'src/modules/role/repositories/role.repository';
-import { OtpRepository } from 'src/modules/auth/repositories/otp.repository';
-import { RefreshTokenRepository } from 'src/modules/auth/repositories/refresh-token.repository';
-import { EmailVerificationRepository } from 'src/modules/auth/repositories/email-verification.repository';
-import { PasswordResetRepository } from 'src/modules/auth/repositories/password-reset.repository';
+import { UserRepository } from '@modules/user/repositories/user.repository';
+import { RoleRepository } from '@modules/role/repositories/role.repository';
+import { OtpRepository } from '@modules/auth/repositories/otp.repository';
+import { RefreshTokenRepository } from '@modules/auth/repositories/refresh-token.repository';
+import { EmailVerificationRepository } from '@modules/auth/repositories/email-verification.repository';
+import { PasswordResetRepository } from '@modules/auth/repositories/password-reset.repository';
 import { EmailProvider } from './providers/email.provider';
 import { TokenProvider } from './providers/token.provider';
 
 // Services
 import { UserService } from '@modules/user/services/user.service';
-import { AuthService } from 'src/modules/auth/services/auth.service';
+import { AuthService } from '@modules/auth/services/auth.service';
 import { PrismaModule } from '@core/database/prisma/prisma.module';
 import { I18nModule } from '@core/i18n/i18n.module';
 import { CoreModule } from '@core/core.module';
 
 // Command Handlers
-import { RegisterUserCommandHandler } from 'src/modules/auth/commands/register-user.command';
-import { LoginCommandHandler } from 'src/modules/auth/commands/login.command';
-import { VerifyOtpCommandHandler } from 'src/modules/auth/commands/verify-otp.command';
-import { RefreshTokenCommandHandler } from 'src/modules/auth/commands/refresh-token.command';
-import { LogoutCommandHandler } from 'src/modules/auth/commands/logout.command';
-import { SendVerificationEmailCommandHandler } from 'src/modules/auth/commands/send-verification-email.command';
-import { VerifyEmailCommandHandler } from 'src/modules/auth/commands/verify-email.command';
-import { CheckEmailVerificationStatusCommandHandler } from 'src/modules/auth/commands/check-email-verification-status.command';
-import { RequestPasswordResetCommandHandler } from 'src/modules/auth/commands/request-password-reset.command';
-import { ResetPasswordCommandHandler } from 'src/modules/auth/commands/reset-password.command';
+import { RegisterUserCommandHandler } from '@modules/auth/commands/register-user.command';
+import { LoginCommandHandler } from '@modules/auth/commands/login.command';
+import { VerifyOtpCommandHandler } from '@modules/auth/commands/verify-otp.command';
+import { RefreshTokenCommandHandler } from '@modules/auth/commands/refresh-token.command';
+import { LogoutCommandHandler } from '@modules/auth/commands/logout.command';
+import { SendVerificationEmailCommandHandler } from '@modules/auth/commands/send-verification-email.command';
+import { VerifyEmailCommandHandler } from '@modules/auth/commands/verify-email.command';
+import { CheckEmailVerificationStatusCommandHandler } from '@modules/auth/commands/check-email-verification-status.command';
+import { RequestPasswordResetCommandHandler } from '@modules/auth/commands/request-password-reset.command';
+import { ResetPasswordCommandHandler } from '@modules/auth/commands/reset-password.command';
 
 // Strategies
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { UserEventsListener } from './listeners/user-events.listener';
 
 const commandHandlers = [
   RegisterUserCommandHandler,
@@ -118,6 +119,9 @@ const commandHandlers = [
 
     // Strategy
     JwtStrategy,
+
+    // Event Listeners
+    UserEventsListener,
 
     // Command handlers
     ...commandHandlers,

@@ -1,7 +1,7 @@
 import { ICommand, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { ResetPasswordDto } from 'src/modules/auth/dtos/password-reset.dto';
+import { ResetPasswordDto } from '@modules/auth/dtos/password-reset.dto';
 import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
-import { AuthService } from 'src/modules/auth/services/auth.service';
+import { AuthService } from '@modules/auth/services/auth.service';
 import { UserService } from '@modules/user/services/user.service';
 import {
   EntityNotFoundException,

@@ -14,6 +14,8 @@ import { Password } from '@core/value-objects/password.vo';
 import { FirstName, LastName } from '@core/value-objects/name.vo';
 import { RoleId } from '@core/value-objects/role-id.vo';
 import { DomainValidationService } from '@core/services/domain-validation.service';
+import { DomainEventService } from '@core/services/domain-event.service';
+import { UserCreatedEvent } from '@modules/user/events/user-created.event';
 
 @Injectable()
 export class UserService {
@@ -23,6 +25,7 @@ export class UserService {
     @Inject(ROLE_REPOSITORY)
     private readonly roleRepository: IRoleRepository,
     private readonly domainValidationService: DomainValidationService,
+    private readonly domainEventService: DomainEventService,
   ) {}
 
   async createUser(
@@ -56,7 +59,14 @@ export class UserService {
     }
 
     // Save the user
-    return this.userRepository.create(user);
+    const createdUser = await this.userRepository.create(user);
+
+    // Dispatch UserCreatedEvent
+    await this.domainEventService.dispatchEvent(
+      new UserCreatedEvent(createdUser.id, createdUser.email.getValue()),
+    );
+
+    return createdUser;
   }
 
   async validateCredentials(emailStr: string, passwordStr: string): Promise<User | null> {

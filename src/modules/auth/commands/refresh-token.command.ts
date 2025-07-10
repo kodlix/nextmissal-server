@@ -1,12 +1,12 @@
 import { ICommand, CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { RefreshTokenDto } from 'src/modules/auth/dtos/refresh-token.dto';
-import { IAuthRefreshTokenResponse } from 'src/modules/user/user.response';
+import { RefreshTokenDto } from '@modules/auth/dtos/refresh-token.dto';
+import { IAuthRefreshTokenResponse } from '@modules/user/user.response';
 import { UnauthorizedException, Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { IUserRepository } from 'src/modules/user/repositories/user.repository.interface';
-import { IRoleRepository } from 'src/modules/role/repositories/role.repository.interface';
-import { AuthService } from 'src/modules/auth/services/auth.service';
+import { IUserRepository } from '@modules/user/repositories/user.repository.interface';
+import { IRoleRepository } from '@modules/role/repositories/role.repository.interface';
+import { AuthService } from '@modules/auth/services/auth.service';
 import { v4 as uuidv4 } from 'uuid';
 import { USER_REPOSITORY, ROLE_REPOSITORY } from '@shared/constants/tokens';
 

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { RefreshToken } from 'src/modules/auth/entities/refresh-token.entity';
-import { IRefreshTokenRepository } from 'src/modules/auth/repositories/refresh-token.repository.interface';
+import { RefreshToken } from '@modules/auth/entities/refresh-token.entity';
+import { IRefreshTokenRepository } from '@modules/auth/repositories/refresh-token.repository.interface';
 import { PrismaService } from '@core/database/prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { RefreshToken as PrismaRefreshToken } from '@prisma/client';

@@ -1,11 +1,11 @@
-import { User } from 'src/modules/user/entities/user.entity';
-import { Role } from 'src/modules/role/entities/role.entity';
+import { User } from '@modules/user/entities/user.entity';
+import { Role } from '@modules/role/entities/role.entity';
 import {
   IUserBaseResponse,
   IUserDetailResponse,
   IUserRoleResponse,
   IUserWithAuthResponse,
-} from 'src/modules/user/user.response';
+} from '@modules/user/user.response';
 
 export class UserMapper {
   /**
