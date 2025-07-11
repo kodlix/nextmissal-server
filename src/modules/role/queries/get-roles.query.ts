@@ -4,8 +4,21 @@ import { IRoleRepository } from '@modules/role/repositories/role.repository.inte
 import { RoleDetailResponse } from '@modules/role/role.response';
 import { RoleMapper } from '@modules/role/role.mapper';
 import { ROLE_REPOSITORY } from '@shared/constants/tokens';
+import { Paginated } from '@shared/dtos/paginated.dto';
 
-export class GetRolesQuery implements IQuery {}
+export class GetRolesQuery implements IQuery {
+  readonly page: number;
+  readonly limit: number;
+  readonly search?: string;
+  readonly sort?: string;
+
+  constructor(page: number, limit: number, search?: string, sort?: string) {
+    this.page = page;
+    this.limit = limit;
+    this.search = search;
+    this.sort = sort;
+  }
+}
 
 @QueryHandler(GetRolesQuery)
 export class GetRolesQueryHandler implements IQueryHandler<GetRolesQuery> {
@@ -14,10 +27,14 @@ export class GetRolesQueryHandler implements IQueryHandler<GetRolesQuery> {
     private readonly roleRepository: IRoleRepository,
   ) {}
 
-  async execute(): Promise<RoleDetailResponse[]> {
-    const roles = await this.roleRepository.findAll();
+  async execute(query: GetRolesQuery): Promise<Paginated<RoleDetailResponse>> {
+    const [roles, total] = await Promise.all([
+      this.roleRepository.findAll(query.page, query.limit, query.search, query.sort),
+      this.roleRepository.countAll(query.search),
+    ]);
 
-    // Use the mapper to convert each role to response DTO
-    return roles.map(role => RoleMapper.toDetailResponse(role));
+    const roleDetails = roles.map(role => RoleMapper.toDetailResponse(role));
+
+    return new Paginated<RoleDetailResponse>(roleDetails, total, query.page, query.limit);
   }
 }

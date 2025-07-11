@@ -10,9 +10,17 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { QueryBus, CommandBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiParam,
+  ApiQuery,
+} from '@nestjs/swagger';
 
 // Guards & Decorators
 import { RolesGuard } from '@shared/guards/roles.guard';
@@ -26,6 +34,7 @@ import { UpdateUserDto } from '@modules/user/dtos/update-user.dto';
 import { ChangePasswordDto } from '@modules/user/dtos/change-password.dto';
 import { ActivateUserDto } from '@modules/user/dtos/activate-user.dto';
 import { AssignRoleDto } from '@modules/user/dtos/assign-role.dto';
+import { PaginationDto } from '@shared/dtos/pagination.dto';
 
 // Queries
 import { GetUserQuery } from '@modules/user/queries/get-user.query';
@@ -38,7 +47,8 @@ import { ActivateUserCommand } from '@modules/user/commands/activate-user.comman
 import { AssignRoleCommand } from '@modules/user/commands/assign-role.command';
 import { RemoveRoleCommand } from '@modules/user/commands/remove-role.command';
 import { VerifyPasswordCommand } from '@modules/user/commands/verify-password.command';
-import { IJwtPayload } from '@modules/user/user.response';
+import { IJwtPayload, IUserDetailResponse } from '@modules/user/user.response';
+import { Paginated } from '@shared/dtos/paginated.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -54,10 +64,38 @@ export class UserController {
   @Roles(RolesEnum.ADMIN)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get all users (Admin only)' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Returns a list of all users' })
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Items per page',
+    example: 10,
+  })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+    description: 'Search term for first name, last name, or email',
+    example: 'John Doe',
+  })
+  @ApiQuery({
+    name: 'sort',
+    required: false,
+    type: String,
+    description: 'Sort order (e.g., firstName:asc,lastName:desc)',
+    example: 'firstName:asc',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Returns a list of all users',
+    type: () => Paginated<IUserDetailResponse>,
+  })
   @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'User does not have admin role' })
-  async getAllUsers() {
-    return this.queryBus.execute(new GetUsersQuery());
+  async getAllUsers(@Query() pagination: PaginationDto) {
+    return this.queryBus.execute(
+      new GetUsersQuery(pagination.page, pagination.limit, pagination.search, pagination.sort),
+    );
   }
 
   @Get(':id')

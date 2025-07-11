@@ -12,7 +12,7 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(uuid())
+  id            BigInt    @id @default(autoincrement())
   email         String    @unique
   passwordHash  String
   firstName     String
@@ -23,7 +23,7 @@ model User {
   lastLoginAt   DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  
+
   roles         UserRole[]
   otps          Otp[]
   refreshTokens RefreshToken[]
@@ -32,34 +32,34 @@ model User {
 }
 
 model Role {
-  id          String   @id @default(uuid())
+  id          BigInt   @id @default(autoincrement())
   name        String   @unique
   description String
   isDefault   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
+
   users       UserRole[]
   permissions RolePermission[]
 }
 
 model Permission {
-  id          String   @id @default(uuid())
+  id          BigInt   @id @default(autoincrement())
   name        String   @unique
   description String
   resource    String
   action      String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
+
   roles       RolePermission[]
 }
 
 model UserRole {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
+  userId    BigInt
   role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  roleId    String
+  roleId    BigInt
   createdAt DateTime @default(now())
 
   @@id([userId, roleId])
@@ -67,18 +67,18 @@ model UserRole {
 
 model RolePermission {
   role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  roleId       String
+  roleId       BigInt
   permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
-  permissionId String
+  permissionId BigInt
   createdAt    DateTime   @default(now())
 
   @@id([roleId, permissionId])
 }
 
 model Otp {
-  id         String    @id @default(uuid())
+  id         BigInt    @id @default(autoincrement())
   user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     String
+  userId     BigInt
   secret     String
   expiresAt  DateTime
   verifiedAt DateTime?
@@ -86,9 +86,9 @@ model Otp {
 }
 
 model RefreshToken {
-  id        String    @id @default(uuid())
+  id        BigInt    @id @default(autoincrement())
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
+  userId    BigInt
   token     String    @unique
   expiresAt DateTime
   revokedAt DateTime?
@@ -96,40 +96,40 @@ model RefreshToken {
 }
 
 model EmailVerification {
-  id         String    @id @default(uuid())
-  email      String    
+  id         BigInt    @id @default(autoincrement())
+  email      String
   code       String
   expiresAt  DateTime
   verifiedAt DateTime?
   createdAt  DateTime  @default(now())
-  
+
   @@index([email])
 }
 
 model PasswordReset {
-  id        String    @id @default(uuid())
-  userId    String
-  email     String    
+  id        BigInt    @id @default(autoincrement())
+  userId    BigInt
+  email     String
   token     String    @unique
   expiresAt DateTime
   usedAt    DateTime?
   createdAt DateTime  @default(now())
-  
+
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@index([email])
   @@index([token])
 }
 
 model File {
-  id          String    @id @default(uuid())
+  id          BigInt    @id @default(autoincrement())
   filename    String
   originalName String
   path        String
   mimeType    String
   size        Int
   bucket      String
-  userId      String?
+  userId      BigInt?
   isPublic    Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

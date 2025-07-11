@@ -4,8 +4,21 @@ import { IUserRepository } from '@modules/user/repositories/user.repository.inte
 import { IUserDetailResponse } from '@modules/user/user.response';
 import { UserMapper } from '@modules/user/user.mapper';
 import { USER_REPOSITORY } from '@shared/constants/tokens';
+import { Paginated } from '@shared/dtos/paginated.dto';
 
-export class GetUsersQuery implements IQuery {}
+export class GetUsersQuery implements IQuery {
+  readonly page: number;
+  readonly limit: number;
+  readonly search?: string;
+  readonly sort?: string;
+
+  constructor(page: number, limit: number, search?: string, sort?: string) {
+    this.page = page;
+    this.limit = limit;
+    this.search = search;
+    this.sort = sort;
+  }
+}
 
 @Injectable()
 @QueryHandler(GetUsersQuery)
@@ -15,10 +28,14 @@ export class GetUsersQueryHandler implements IQueryHandler<GetUsersQuery> {
     private readonly userRepository: IUserRepository,
   ) {}
 
-  async execute(): Promise<IUserDetailResponse[]> {
-    const users = await this.userRepository.findAll();
+  async execute(query: GetUsersQuery): Promise<Paginated<IUserDetailResponse>> {
+    const [users, total] = await Promise.all([
+      this.userRepository.findAll(query.page, query.limit),
+      this.userRepository.countAll(),
+    ]);
 
-    // Use the mapper to convert each user to response DTO
-    return users.map(user => UserMapper.toDetailResponse(user));
+    const userDetails = users.map(user => UserMapper.toDetailResponse(user));
+
+    return new Paginated<IUserDetailResponse>(userDetails, total, query.page, query.limit);
   }
 }

@@ -98,7 +98,7 @@ const rolePermissionsMap = {
 
 // Default admin user
 const adminUser = {
-  email: 'admin@example.com',
+  email: 'admin@yopmail.com',
   firstName: 'Admin',
   lastName: 'User',
   password: 'Admin@123', // This will be hashed before saving

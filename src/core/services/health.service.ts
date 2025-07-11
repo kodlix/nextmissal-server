@@ -192,7 +192,7 @@ export class HealthService {
 
   private async checkDatabase(): Promise<void> {
     try {
-      await this.prismaService.$queryRaw`SELECT 1`;
+      await this.prismaService.$queryRaw`SELECT * FROM "public".User LIMIT 1`;
     } catch (error) {
       throw new DatabaseConnectionException(`Database check failed: ${error.message}`);
     }

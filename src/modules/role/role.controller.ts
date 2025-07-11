@@ -9,9 +9,19 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { QueryBus, CommandBus } from '@nestjs/cqrs';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiParam,
+  ApiQuery,
+} from '@nestjs/swagger';
+import { Paginated } from '@shared/dtos/paginated.dto';
+import { RoleDetailResponse } from './role.response';
 
 // Guards & Decorators
 import { PermissionsGuard } from '@shared/guards/permissions.guard';
@@ -21,6 +31,7 @@ import { CanWrite, CanDelete } from '@shared/decorators/resource-permissions.dec
 // DTOs
 import { CreateRoleDto } from '@modules/role/dtos/create-role.dto';
 import { UpdateRoleDto } from '@modules/role/dtos/update-role.dto';
+import { PaginationDto } from '@shared/dtos/pagination.dto';
 
 // Queries
 import { GetRolesQuery } from '@modules/role/queries/get-roles.query';
@@ -47,10 +58,38 @@ export class RoleController {
   @Get()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get all roles (Admin only)' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Returns a list of all roles' })
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Items per page',
+    example: 10,
+  })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+    description: 'Search term for role name or description',
+    example: 'admin',
+  })
+  @ApiQuery({
+    name: 'sort',
+    required: false,
+    type: String,
+    description: 'Sort order (e.g., name:asc,description:desc)',
+    example: 'name:asc',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Returns a list of all roles',
+    type: () => Paginated<RoleDetailResponse>,
+  })
   @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'User does not have admin role' })
-  async getAllRoles() {
-    return this.queryBus.execute(new GetRolesQuery());
+  async getAllRoles(@Query() pagination: PaginationDto) {
+    return this.queryBus.execute(
+      new GetRolesQuery(pagination.page, pagination.limit, pagination.search, pagination.sort),
+    );
   }
 
   @Get(':id')
