@@ -5,7 +5,7 @@ import { IUserBaseResponse } from '@modules/user/user.response';
 import { UserMapper } from '@modules/user/user.mapper';
 
 export class Disable2FACommand implements ICommand {
-  constructor(public readonly userId: string) {}
+  constructor(public readonly userId: bigint) {}
 }
 
 @Injectable()

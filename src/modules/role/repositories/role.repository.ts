@@ -9,7 +9,7 @@ import {
   Permission as PrismaPermission,
 } from '@prisma/client';
 import { ResourceAction, ActionType } from '@core/value-objects/resource-action.vo';
-import { BaseRepository } from '../../../core/repositories/base.repository';
+import { BaseRepository } from '@core/repositories/base.repository';
 
 // Define a type for Role with its related permissions
 type RoleWithPermissions = PrismaRole & {
@@ -23,8 +23,11 @@ export class RoleRepository extends BaseRepository<Role> implements IRoleReposit
   constructor(private readonly prisma: PrismaService) {
     super();
   }
+  countAll(search: string) {
+    throw new Error('Method not implemented.');
+  }
 
-  async findById(id: string): Promise<Role | null> {
+  async findById(id: bigint): Promise<Role | null> {
     const roleRecord = await this.prisma.role.findUnique({
       where: { id },
       include: {
@@ -98,7 +101,7 @@ export class RoleRepository extends BaseRepository<Role> implements IRoleReposit
   async create(role: Role): Promise<Role> {
     const createdRole = await this.prisma.role.create({
       data: {
-        id: role.id.getValue(),
+        id: role.id,
         name: role.name,
         description: role.description,
         isDefault: role.isDefault,
@@ -106,7 +109,7 @@ export class RoleRepository extends BaseRepository<Role> implements IRoleReposit
           create:
             role.permissions?.map(permission => ({
               permission: {
-                connect: { id: permission.id.getValue() },
+                connect: { id: permission.id },
               },
             })) || [],
         },
@@ -127,13 +130,13 @@ export class RoleRepository extends BaseRepository<Role> implements IRoleReposit
     // First delete all permission associations to recreate them
     await this.prisma.rolePermission.deleteMany({
       where: {
-        roleId: role.id.getValue(),
+        roleId: role.id,
       },
     });
 
     // Update the role with new permission associations
     const updatedRole = await this.prisma.role.update({
-      where: { id: role.id.getValue() },
+      where: { id: role.id },
       data: {
         name: role.name,
         description: role.description,
@@ -142,7 +145,7 @@ export class RoleRepository extends BaseRepository<Role> implements IRoleReposit
           create:
             role.permissions?.map(permission => ({
               permission: {
-                connect: { id: permission.id.getValue() },
+                connect: { id: permission.id },
               },
             })) || [],
         },
@@ -159,7 +162,7 @@ export class RoleRepository extends BaseRepository<Role> implements IRoleReposit
     return this.mapToModel(updatedRole as RoleWithPermissions);
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: bigint): Promise<boolean> {
     try {
       await this.prisma.role.delete({
         where: { id },

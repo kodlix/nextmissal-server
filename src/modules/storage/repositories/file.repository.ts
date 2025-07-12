@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../core/database/prisma/prisma.service';
+import { PrismaService } from '@core/database/prisma/prisma.service';
 import { IFileRepository } from '@modules/storage/repositories/file.repository.interface';
 import { File } from '@modules/storage/entities/file.entity';
-import { BaseRepository } from '../../../core/repositories/base.repository';
+import { BaseRepository } from '@core/repositories/base.repository';
 
 /**
  * Interface representing file data from storage
  */
 export interface IFileData {
-  id: string;
+  id: bigint;
   filename: string;
   originalName: string;
   path: string;
   mimeType: string;
   size: number;
   bucket: string;
-  userId: string;
+  userId: bigint;
   isPublic: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -27,7 +27,7 @@ export class FileRepository extends BaseRepository<File> implements IFileReposit
     super();
   }
 
-  async findById(id: string): Promise<File | null> {
+  async findById(id: bigint): Promise<File | null> {
     const fileData = await this.prisma.file.findUnique({
       where: { id },
     });
@@ -35,7 +35,7 @@ export class FileRepository extends BaseRepository<File> implements IFileReposit
     return fileData ? this.mapToEntity(fileData) : null;
   }
 
-  async findByUserId(userId: string): Promise<File[]> {
+  async findByUserId(userId: bigint): Promise<File[]> {
     const files = await this.prisma.file.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
@@ -82,7 +82,7 @@ export class FileRepository extends BaseRepository<File> implements IFileReposit
     return this.mapToEntity(fileData);
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: bigint): Promise<void> {
     await this.prisma.file.delete({
       where: { id },
     });

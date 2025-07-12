@@ -1,5 +1,5 @@
 import { Role } from '@modules/role/entities/role.entity';
-import { RoleId } from '@core/value-objects/role-id.vo';
+// 
 import { PermissionsCollection } from './permissions.collection';
 import { InvalidValueObjectException } from '@core/exceptions/domain-exceptions';
 
@@ -36,8 +36,8 @@ export class RolesCollection {
   /**
    * Remove a role from the collection
    */
-  remove(roleId: RoleId): RolesCollection {
-    const filteredRoles = this._roles.filter(r => !r.id.equals(roleId));
+  remove(roleId: bigint): RolesCollection {
+    const filteredRoles = this._roles.filter(r => r.id !== roleId);
 
     if (filteredRoles.length === this._roles.length) {
       // Role not found, return same collection
@@ -50,8 +50,8 @@ export class RolesCollection {
   /**
    * Check if collection contains a specific role
    */
-  contains(roleId: RoleId): boolean {
-    return this._roles.some(r => r.id.equals(roleId));
+  contains(roleId: bigint): boolean {
+    return this._roles.some(r => r.id === roleId);
   }
 
   /**
@@ -64,8 +64,8 @@ export class RolesCollection {
   /**
    * Get role by ID
    */
-  getById(roleId: RoleId): Role | undefined {
-    return this._roles.find(r => r.id.equals(roleId));
+  getById(roleId: bigint): Role | undefined {
+    return this._roles.find(r => r.id === roleId);
   }
 
   /**
@@ -289,12 +289,12 @@ export class RolesCollection {
 
   private validateRoles(roles: Role[]): void {
     // Check for duplicate role IDs
-    const roleIds = new Set<string>();
+    const roleIds = new Set<bigint>();
     const roleNames = new Set<string>();
     let defaultRoleCount = 0;
 
     for (const role of roles) {
-      const id = role.id.getValue();
+      const id = role.id;
       const name = role.name.toLowerCase();
 
       if (roleIds.has(id)) {

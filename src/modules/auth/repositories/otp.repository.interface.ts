@@ -7,9 +7,9 @@ import { Otp } from '../entities/otp.entity';
  * - {@link OtpRepository} - Production Prisma/PostgreSQL implementation
  */
 export interface IOtpRepository {
-  findById(id: string): Promise<Otp | null>;
-  findByUserId(userId: string): Promise<Otp | null>;
+  findById(id: bigint): Promise<Otp | null>;
+  findByUserId(userId: bigint): Promise<Otp | null>;
   create(otp: Otp): Promise<Otp>;
   update(otp: Otp): Promise<Otp>;
-  delete(id: string): Promise<boolean>;
+  delete(id: bigint): Promise<boolean>;
 }

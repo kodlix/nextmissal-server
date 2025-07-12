@@ -12,7 +12,7 @@ import {
 import { Email } from '@core/value-objects/email.vo';
 import { Password } from '@core/value-objects/password.vo';
 import { FirstName, LastName } from '@core/value-objects/name.vo';
-import { RoleId } from '@core/value-objects/role-id.vo';
+
 import { DomainValidationService } from '@core/services/domain-validation.service';
 import { DomainEventService } from '@core/services/domain-event.service';
 import { UserCreatedEvent } from '@modules/user/events/user-created.event';
@@ -97,7 +97,7 @@ export class UserService {
   }
 
   async updateUserDetails(
-    userId: string,
+    userId: bigint,
     firstName?: string,
     lastName?: string,
     emailStr?: string,
@@ -121,7 +121,7 @@ export class UserService {
       // Check if email is already in use by another user
       const existingUser = await this.userRepository.findByEmail(email.getValue());
       // If the email is already in use, check if it's the same user
-      if (existingUser && existingUser.id.getValue() !== userId) {
+      if (existingUser && existingUser.id !== userId) {
         throw new EntityAlreadyExistsException('User', 'email');
       }
 
@@ -133,7 +133,7 @@ export class UserService {
     return this.userRepository.update(user);
   }
 
-  async verifyCurrentPassword(userId: string, currentPassword: string): Promise<boolean> {
+  async verifyCurrentPassword(userId: bigint, currentPassword: string): Promise<boolean> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new EntityNotFoundException('User', userId);
@@ -143,7 +143,7 @@ export class UserService {
   }
 
   async changePassword(
-    userId: string,
+    userId: bigint,
     newPasswordStr: string,
     currentPassword?: string,
   ): Promise<User> {
@@ -178,7 +178,7 @@ export class UserService {
     return this.userRepository.update(user);
   }
 
-  async assignRoleToUser(userId: string, roleId: string): Promise<User> {
+  async assignRoleToUser(userId: bigint, roleId: bigint): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new EntityNotFoundException('User', userId);
@@ -201,18 +201,18 @@ export class UserService {
     return this.userRepository.update(user);
   }
 
-  async removeRoleFromUser(userId: string, roleId: string): Promise<User> {
+  async removeRoleFromUser(userId: bigint, roleId: bigint): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new EntityNotFoundException('User', userId);
     }
 
-    user.removeRole(RoleId.fromString(roleId));
+    user.removeRole(roleId);
 
     return this.userRepository.update(user);
   }
 
-  async activateUser(userId: string): Promise<User> {
+  async activateUser(userId: bigint): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new EntityNotFoundException('User', userId);
@@ -223,7 +223,7 @@ export class UserService {
     return this.userRepository.update(user);
   }
 
-  async deactivateUser(userId: string): Promise<User> {
+  async deactivateUser(userId: bigint): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new EntityNotFoundException('User', userId);

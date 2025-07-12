@@ -1,8 +1,8 @@
-import { Role } from '../../role/entities/role.entity';
+import { Role } from '@modules/role/entities/role.entity';
 import { Email } from '@core/value-objects/email.vo';
 import { FirstName, LastName } from '@core/value-objects/name.vo';
-import { UserId } from '@core/value-objects/user-id.vo';
-import { RoleId } from '@core/value-objects/role-id.vo';
+
+
 import { AggregateRoot } from '@core/events/domain-event.base';
 import {
   UserRegisteredEvent,
@@ -27,7 +27,7 @@ import { CanAssignRoleSpecification } from '@modules/user/specifications/user.sp
 import { RolesCollection } from '@core/value-objects/collections/roles.collection';
 
 export class User extends AggregateRoot {
-  private readonly _id: UserId;
+  private readonly _id: bigint;
   private _email: Email;
   private _passwordHash: string;
   private _firstName: FirstName;
@@ -41,7 +41,6 @@ export class User extends AggregateRoot {
   private _updatedAt: Date;
 
   private constructor(
-    id: UserId,
     email: Email,
     passwordHash: string,
     firstName: FirstName,
@@ -50,7 +49,6 @@ export class User extends AggregateRoot {
     createdAt?: Date,
   ) {
     super();
-    this._id = id;
     this._email = email;
     this._passwordHash = passwordHash;
     this._firstName = firstName;
@@ -69,11 +67,10 @@ export class User extends AggregateRoot {
     firstName: FirstName,
     lastName: LastName,
   ): User {
-    const userId = UserId.create();
-    const user = new User(userId, email, passwordHash, firstName, lastName);
+    const user = new User(email, passwordHash, firstName, lastName);
 
     user.addDomainEvent(
-      new UserRegisteredEvent(userId, email.getValue(), firstName.getValue(), lastName.getValue()),
+      new UserRegisteredEvent(email.getValue(), firstName.getValue(), lastName.getValue()),
     );
 
     return user;
@@ -81,7 +78,7 @@ export class User extends AggregateRoot {
 
   // Factory method for reconstituting from persistence
   static fromData(data: {
-    id: string;
+    id: bigint;
     email: string;
     passwordHash: string;
     firstName: string;
@@ -95,7 +92,6 @@ export class User extends AggregateRoot {
     updatedAt: Date;
   }): User {
     const user = new User(
-      UserId.fromString(data.id),
       new Email(data.email),
       data.passwordHash,
       new FirstName(data.firstName),
@@ -114,7 +110,7 @@ export class User extends AggregateRoot {
   }
 
   // Getters
-  get id(): UserId {
+  get id(): bigint {
     return this._id;
   }
 
@@ -231,9 +227,9 @@ export class User extends AggregateRoot {
         throw new InactiveUserException('assign role');
       }
       if (this.hasRole(role.id)) {
-        throw new UserAlreadyHasRoleException(this._id.getValue(), role.name);
+        throw new UserAlreadyHasRoleException(this._id, role.name);
       }
-      throw new UserNotEligibleForRoleException(this._id.getValue(), role.name);
+      throw new UserNotEligibleForRoleException(this._id, role.name);
     }
 
     this._roles.push(role);
@@ -241,7 +237,7 @@ export class User extends AggregateRoot {
     this.addDomainEvent(new UserRoleAssignedEvent(this._id, role.id, role.name));
   }
 
-  removeRole(roleId: RoleId): void {
+  removeRole(roleId: bigint): void {
     if (!this._isActive) {
       throw new InactiveUserException('remove role');
     }
@@ -250,12 +246,12 @@ export class User extends AggregateRoot {
       throw new UserCannotRemoveLastRoleException();
     }
 
-    const roleToRemove = this._roles.find(r => r.id.equals(roleId));
+    const roleToRemove = this._roles.find(r => r.id === roleId);
     if (!roleToRemove) {
       return; // Role not found, no change needed
     }
 
-    this._roles = this._roles.filter(r => !r.id.equals(roleId));
+    this._roles = this._roles.filter(r => r.id !== roleId);
     this._updatedAt = new Date();
     this.addDomainEvent(new UserRoleRemovedEvent(this._id, roleId, roleToRemove.name));
   }
@@ -319,8 +315,8 @@ export class User extends AggregateRoot {
   }
 
   // Query methods
-  hasRole(roleId: RoleId): boolean {
-    return this._roles.some(r => r.id.equals(roleId));
+  hasRole(roleId: bigint): boolean {
+    return this._roles.some(r => r.id === roleId);
   }
 
   hasPermission(permissionName: string): boolean {

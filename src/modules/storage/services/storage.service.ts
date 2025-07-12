@@ -12,7 +12,7 @@ export interface IStorageFile {
 }
 
 export interface IStorageProvider {
-  upload(file: IStorageFile, userId?: string): Promise<File>;
+  upload(file: IStorageFile, userId?: bigint): Promise<File>;
   getSignedUrl(file: File): Promise<string>;
   delete(file: File): Promise<void>;
 }
@@ -30,19 +30,19 @@ export class StorageService {
     this.provider = provider;
   }
 
-  async uploadFile(file: IStorageFile, userId?: string): Promise<File> {
+  async uploadFile(file: IStorageFile, userId?: bigint): Promise<File> {
     return this.provider.upload(file, userId);
   }
 
-  async getFileById(id: string): Promise<File | null> {
+  async getFileById(id: bigint): Promise<File | null> {
     return this.fileRepository.findById(id);
   }
 
-  async getFilesByUserId(userId: string): Promise<File[]> {
+  async getFilesByUserId(userId: bigint): Promise<File[]> {
     return this.fileRepository.findByUserId(userId);
   }
 
-  async deleteFile(id: string): Promise<void> {
+  async deleteFile(id: bigint): Promise<void> {
     const file = await this.fileRepository.findById(id);
     if (file) {
       await this.provider.delete(file);
@@ -50,7 +50,7 @@ export class StorageService {
     }
   }
 
-  async makeFilePublic(id: string): Promise<File | null> {
+  async makeFilePublic(id: bigint): Promise<File | null> {
     const file = await this.fileRepository.findById(id);
     if (file) {
       file.makePublic();
@@ -61,7 +61,7 @@ export class StorageService {
     return null;
   }
 
-  async makeFilePrivate(id: string): Promise<File | null> {
+  async makeFilePrivate(id: bigint): Promise<File | null> {
     const file = await this.fileRepository.findById(id);
     if (file) {
       file.makePrivate();
@@ -72,7 +72,7 @@ export class StorageService {
     return null;
   }
 
-  async getFileUrl(id: string): Promise<string | null> {
+  async getFileUrl(id: bigint): Promise<string | null> {
     const file = await this.fileRepository.findById(id);
     if (!file) {
       return null;

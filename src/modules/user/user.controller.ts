@@ -106,7 +106,7 @@ export class UserController {
   @ApiResponse({ status: HttpStatus.OK, description: 'Returns user information' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' })
   @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'User does not have admin role' })
-  async getUserById(@Param('id') id: string) {
+  async getUserById(@Param('id') id: bigint) {
     return this.queryBus.execute(new GetUserQuery(id));
   }
 
@@ -131,7 +131,7 @@ export class UserController {
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' })
   @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'User does not have admin role' })
-  async updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  async updateUser(@Param('id') id: bigint, @Body() updateUserDto: UpdateUserDto) {
     return this.commandBus.execute(
       new UpdateUserCommand(
         id,
@@ -169,7 +169,7 @@ export class UserController {
   @ApiResponse({ status: HttpStatus.OK, description: 'User deleted successfully' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' })
   @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'User does not have admin role' })
-  async deleteUser(@Param('id') _id: string) {
+  async deleteUser(@Param('id') _id: bigint) {
     // This would normally use a command
     return { message: 'User deleted successfully' };
   }
@@ -183,7 +183,7 @@ export class UserController {
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' })
   @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'User does not have admin role' })
-  async changePassword(@Param('id') id: string, @Body() changePasswordDto: ChangePasswordDto) {
+  async changePassword(@Param('id') id: bigint, @Body() changePasswordDto: ChangePasswordDto) {
     await this.commandBus.execute(
       new ChangePasswordCommand(
         id,
@@ -239,7 +239,7 @@ export class UserController {
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' })
   @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'User does not have admin role' })
-  async activateUser(@Param('id') id: string, @Body() activateUserDto: ActivateUserDto) {
+  async activateUser(@Param('id') id: bigint, @Body() activateUserDto: ActivateUserDto) {
     return this.commandBus.execute(new ActivateUserCommand(id, activateUserDto.active));
   }
 
@@ -252,7 +252,7 @@ export class UserController {
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User or role not found' })
   @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'User does not have admin role' })
-  async assignRoleToUser(@Param('id') id: string, @Body() assignRoleDto: AssignRoleDto) {
+  async assignRoleToUser(@Param('id') id: bigint, @Body() assignRoleDto: AssignRoleDto) {
     return this.commandBus.execute(new AssignRoleCommand(id, assignRoleDto.roleId));
   }
 
@@ -269,7 +269,7 @@ export class UserController {
   @ApiResponse({ status: HttpStatus.OK, description: 'Role removed successfully' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'User not found' })
   @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'User does not have admin role' })
-  async removeRoleFromUser(@Param('id') id: string, @Param('roleId') roleId: string) {
+  async removeRoleFromUser(@Param('id') id: bigint, @Param('roleId') roleId: bigint) {
     return this.commandBus.execute(new RemoveRoleCommand(id, roleId));
   }
 }

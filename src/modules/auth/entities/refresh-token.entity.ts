@@ -1,17 +1,16 @@
 import { v4 as uuidv4 } from 'uuid';
-import { UserId } from '@core/value-objects/user-id.vo';
+
 import { Token } from '@core/value-objects/token.vo';
 
 export class RefreshToken {
-  id: string;
-  userId: UserId;
+  id: bigint;
+  userId: bigint;
   token: Token;
   expiresAt: Date;
   revokedAt?: Date;
   createdAt: Date;
 
-  constructor(userId: UserId, token: Token, expirationDays: number, id?: string) {
-    this.id = id || uuidv4();
+  constructor(userId: bigint, token: Token, expirationDays: number, id?: bigint) {
     this.userId = userId;
     this.token = token;
 

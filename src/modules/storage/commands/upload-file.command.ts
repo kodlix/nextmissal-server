@@ -6,7 +6,7 @@ import { FileResponseDto } from '../file.response';
 export class UploadFileCommand {
   constructor(
     public readonly file: IStorageFile,
-    public readonly userId?: string,
+    public readonly userId?: bigint,
   ) {}
 }
 

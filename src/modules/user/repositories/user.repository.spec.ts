@@ -59,7 +59,7 @@ describe('UserRepository', () => {
   describe('findById', () => {
     it('should return a user if found', async () => {
       // Arrange
-      const userId = '550e8400-e29b-41d4-a716-446655440000';
+      const userId = BigInt(9999);
       const mockUser = createMockUserRecord(userId);
 
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
@@ -73,7 +73,7 @@ describe('UserRepository', () => {
         include: expect.any(Object),
       });
       expect(result).toBeInstanceOf(User);
-      expect(result.id.getValue()).toBe(userId);
+      expect(result.id).toBe(userId);
       expect(result.email.getValue()).toBe('test@example.com');
       expect(result.firstName.getValue()).toBe('John');
       expect(result.lastName.getValue()).toBe('Doe');
@@ -81,7 +81,7 @@ describe('UserRepository', () => {
 
     it('should return null if user not found', async () => {
       // Arrange
-      const userId = 'non-existent-id';
+      const userId = BigInt(9999);
       mockPrismaService.user.findUnique.mockResolvedValue(null);
 
       // Act
@@ -100,7 +100,7 @@ describe('UserRepository', () => {
     it('should return a user if found by email', async () => {
       // Arrange
       const email = 'test@example.com';
-      const mockUser = createMockUserRecord('user-id', email);
+      const mockUser = createMockUserRecord(BigInt(112), email);
 
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
 
@@ -127,7 +127,7 @@ describe('UserRepository', () => {
         new LastName('Doe'),
       );
 
-      const mockCreatedUser = createMockUserRecord(newUser.id.getValue(), newUser.email.getValue());
+      const mockCreatedUser = createMockUserRecord(newUser.id, newUser.email.getValue());
       mockPrismaService.user.create.mockResolvedValue(mockCreatedUser);
 
       // Act
@@ -136,7 +136,7 @@ describe('UserRepository', () => {
       // Assert
       expect(prismaService.user.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
-          id: newUser.id.getValue(),
+          id: newUser.id,
           email: newUser.email.getValue(),
           passwordHash: newUser.passwordHash,
           firstName: newUser.firstName.getValue(),
@@ -145,7 +145,7 @@ describe('UserRepository', () => {
         include: expect.any(Object),
       });
       expect(result).toBeInstanceOf(User);
-      expect(result.id.getValue()).toBe(newUser.id.getValue());
+      expect(result.id).toBe(newUser.id);
     });
   });
 
@@ -160,7 +160,7 @@ describe('UserRepository', () => {
       );
 
       const mockUpdatedUser = createMockUserRecord(
-        existingUser.id.getValue(),
+        existingUser.id,
         existingUser.email.getValue(),
       );
       mockPrismaService.userRole.deleteMany.mockResolvedValue({ count: 0 });
@@ -171,10 +171,10 @@ describe('UserRepository', () => {
 
       // Assert
       expect(prismaService.userRole.deleteMany).toHaveBeenCalledWith({
-        where: { userId: existingUser.id.getValue() },
+        where: { userId: existingUser.id },
       });
       expect(prismaService.user.update).toHaveBeenCalledWith({
-        where: { id: existingUser.id.getValue() },
+        where: { id: existingUser.id },
         data: expect.objectContaining({
           email: existingUser.email.getValue(),
           firstName: existingUser.firstName.getValue(),
@@ -183,14 +183,14 @@ describe('UserRepository', () => {
         include: expect.any(Object),
       });
       expect(result).toBeInstanceOf(User);
-      expect(result.id.getValue()).toBe(existingUser.id.getValue());
+      expect(result.id).toBe(existingUser.id);
     });
   });
 
   describe('delete', () => {
     it('should delete a user', async () => {
       // Arrange
-      const userId = '550e8400-e29b-41d4-a716-446655440000';
+      const userId = BigInt(1001);
       mockPrismaService.user.delete.mockResolvedValue({ id: userId });
 
       // Act
@@ -206,7 +206,7 @@ describe('UserRepository', () => {
 });
 
 // Helper function to create mock Prisma User records
-function createMockUserRecord(id: string, email = 'test@example.com') {
+function createMockUserRecord(id: bigint, email = 'test@example.com') {
   return {
     id,
     email,

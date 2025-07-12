@@ -11,7 +11,7 @@ export class CreateRoleCommand {
     public readonly name: string,
     public readonly description: string,
     public readonly isDefault?: boolean,
-    public readonly permissionIds?: string[],
+    public readonly permissionIds?: bigint[],
   ) {}
 }
 
@@ -34,12 +34,12 @@ export class CreateRoleCommandHandler
     // If permission IDs are provided, assign them to the role
     if (permissionIds && permissionIds.length > 0) {
       for (const permissionId of permissionIds) {
-        await this.roleService.assignPermissionToRole(role.id.getValue(), permissionId);
+        await this.roleService.assignPermissionToRole(role.id, permissionId);
       }
     }
 
     // Get the updated role with permissions
-    const updatedRole = await this.roleRepository.findById(role.id.getValue());
+    const updatedRole = await this.roleRepository.findById(role.id);
 
     if (!updatedRole) {
       throw new Error('Role not found after creation');

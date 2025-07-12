@@ -1,5 +1,5 @@
 export class FileResponseDto {
-  id!: string;
+  id!: bigint;
   filename!: string;
   originalName!: string;
   mimeType!: string;

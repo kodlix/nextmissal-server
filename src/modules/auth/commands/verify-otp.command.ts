@@ -12,7 +12,7 @@ import { USER_REPOSITORY } from '@shared/constants/tokens';
 
 export class VerifyOtpCommand implements ICommand {
   constructor(
-    public readonly userId: string,
+    public readonly userId: bigint,
     public readonly verifyOtpDto: VerifyOtpDto,
   ) {}
 }
@@ -45,7 +45,7 @@ export class VerifyOtpCommandHandler implements ICommandHandler<VerifyOtpCommand
 
     // Generate JWT tokens
     const payload = {
-      sub: user.id.getValue(),
+      sub: user.id,
       email: user.email.getValue(),
       roles: user.roles.map(role => role.name),
     };
@@ -56,9 +56,10 @@ export class VerifyOtpCommandHandler implements ICommandHandler<VerifyOtpCommand
     });
 
     const refreshToken = uuidv4();
-    await this.authService.createRefreshToken(user.id.getValue(), refreshToken);
+    await this.authService.createRefreshToken(user.id, refreshToken);
 
     return {
+      userId: user.id,
       accessToken,
       refreshToken,
       user: UserMapper.toAuthResponse(user, true),

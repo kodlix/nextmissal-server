@@ -5,8 +5,8 @@ import { UserMapper } from '@modules/user/user.mapper';
 
 export class AssignRoleCommand {
   constructor(
-    public readonly userId: string,
-    public readonly roleId: string,
+    public readonly userId: bigint,
+    public readonly roleId: bigint,
   ) {}
 }
 

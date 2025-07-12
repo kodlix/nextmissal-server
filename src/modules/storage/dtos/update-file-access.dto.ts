@@ -3,7 +3,7 @@ import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 export class UpdateFileAccessDto {
   @IsString()
   @IsNotEmpty()
-  fileId!: string;
+  fileId!: bigint;
 
   @IsBoolean()
   @IsNotEmpty()

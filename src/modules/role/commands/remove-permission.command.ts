@@ -8,8 +8,8 @@ import { ROLE_REPOSITORY } from '@shared/constants/tokens';
 
 export class RemovePermissionCommand {
   constructor(
-    public readonly roleId: string,
-    public readonly permissionId: string,
+    public readonly roleId: bigint,
+    public readonly permissionId: bigint,
   ) {}
 }
 
@@ -30,7 +30,7 @@ export class RemovePermissionCommandHandler
     const role = await this.roleService.removePermissionFromRole(roleId, permissionId);
 
     // Fetch the updated role with permissions
-    const updatedRole = await this.roleRepository.findById(role.id.getValue());
+    const updatedRole = await this.roleRepository.findById(role.id);
 
     if (!updatedRole) {
       throw new Error('Role not found after update');

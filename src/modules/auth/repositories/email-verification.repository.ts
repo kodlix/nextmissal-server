@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EmailVerification } from '@modules/auth/entities/email-verification.entity';
 import { IEmailVerificationRepository } from '@modules/auth/repositories/email-verification.repository.interface';
 import { PrismaService } from '@core/database/prisma/prisma.service';
-import { BaseRepository } from '../../../core/repositories/base.repository';
+import { BaseRepository } from '@core/repositories/base.repository';
 import { Email } from '@core/value-objects/email.vo';
 import { VerificationCode } from '@core/value-objects/verification-code.vo';
 import { EmailVerification as PrismaEmailVerification } from '@prisma/client';
@@ -16,7 +16,7 @@ export class EmailVerificationRepository
     super();
   }
 
-  async findById(id: string): Promise<EmailVerification | null> {
+  async findById(id: bigint): Promise<EmailVerification | null> {
     return this.executeWithErrorHandling('findById', async () => {
       const record = await this.prisma.emailVerification.findUnique({
         where: { id },
@@ -84,7 +84,7 @@ export class EmailVerificationRepository
     });
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: bigint): Promise<boolean> {
     return this.executeWithErrorHandling(
       'delete',
       async () => {

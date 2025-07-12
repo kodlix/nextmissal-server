@@ -9,7 +9,7 @@ export class UserEventsListener {
 
   @OnEvent('UserCreatedEvent')
   handleUserCreatedEvent(event: UserCreatedEvent) {
-    this.logger.log(`User created: ${event.userId.getValue()} with email ${event.email}`);
+    this.logger.log(`User created: ${event.userId} with email ${event.email}`);
     // Here you can add logic to send a welcome email, provision resources, etc.
   }
 }

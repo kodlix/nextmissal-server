@@ -20,7 +20,6 @@ export class ApplicationEventService {
   async handleUserRegisteredEvent(event: UserRegisteredEvent) {
     this.logger.log({
       message: 'User registered',
-      userId: event.userId.getValue(),
       email: event.email,
       eventId: event.eventId,
     });
@@ -34,7 +33,7 @@ export class ApplicationEventService {
   async handleUserActivatedEvent(event: UserActivatedEvent) {
     this.logger.log({
       message: 'User activated',
-      userId: event.userId.getValue(),
+      userId: event.userId,
       eventId: event.eventId,
     });
     // Here you could add additional side effects like:
@@ -47,8 +46,8 @@ export class ApplicationEventService {
   async handleUserRoleAssignedEvent(event: UserRoleAssignedEvent) {
     this.logger.log({
       message: 'Role assigned to user',
-      userId: event.userId.getValue(),
-      roleId: event.roleId.getValue(),
+      userId: event.userId,
+      roleId: event.roleId,
       roleName: event.roleName,
       eventId: event.eventId,
     });
@@ -62,7 +61,7 @@ export class ApplicationEventService {
   async handleUserTwoFactorEnabledEvent(event: UserTwoFactorEnabledEvent) {
     this.logger.log({
       message: 'Two-factor authentication enabled',
-      userId: event.userId.getValue(),
+      userId: event.userId,
       eventId: event.eventId,
     });
     // Here you could add additional side effects like:

@@ -6,7 +6,7 @@ import { UserMapper } from '@modules/user/user.mapper';
 import { USER_REPOSITORY } from '@shared/constants/tokens';
 
 export class GetUserQuery implements IQuery {
-  constructor(public readonly userId: string) {}
+  constructor(public readonly userId: bigint) {}
 }
 
 @Injectable()

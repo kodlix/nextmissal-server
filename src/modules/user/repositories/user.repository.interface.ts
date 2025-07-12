@@ -1,4 +1,5 @@
 import { User } from '../entities/user.entity';
+import { GetUsersQuery } from '../queries/get-users.query';
 
 /**
  * User repository interface
@@ -7,11 +8,12 @@ import { User } from '../entities/user.entity';
  * - {@link UserRepository} - Production Prisma/PostgreSQL implementation
  */
 export interface IUserRepository {
-  findById(id: string): Promise<User | null>;
+  countAll(query: GetUsersQuery): any;
+  findById(id: bigint): Promise<User | null>;
   findByEmail(email: string): Promise<User | null>;
-  findAll(): Promise<User[]>;
-  findUsersByRoleId(roleId: string): Promise<User[]>;
+  findAll(query: GetUsersQuery): Promise<User[]>;
+  findUsersByRoleId(roleId: bigint): Promise<User[]>;
   create(user: User): Promise<User>;
   update(user: User): Promise<User>;
-  delete(id: string): Promise<boolean>;
+  delete(id: bigint): Promise<boolean>;
 }

@@ -1,4 +1,4 @@
-import { Permission } from '../../auth/entities/permission.entity';
+import { Permission } from '@modules/auth/entities/permission.entity';
 
 /**
  * Permission repository interface
@@ -7,11 +7,11 @@ import { Permission } from '../../auth/entities/permission.entity';
  * - {@link PermissionRepository} - Production Prisma/PostgreSQL implementation
  */
 export interface IPermissionRepository {
-  findById(id: string): Promise<Permission | null>;
+  findById(id: bigint): Promise<Permission | null>;
   findByName(name: string): Promise<Permission | null>;
   findAll(): Promise<Permission[]>;
   findByResource(resource: string): Promise<Permission[]>;
   create(permission: Permission): Promise<Permission>;
   update(permission: Permission): Promise<Permission>;
-  delete(id: string): Promise<boolean>;
+  delete(id: bigint): Promise<boolean>;
 }

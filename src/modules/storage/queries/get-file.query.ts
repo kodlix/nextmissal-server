@@ -6,8 +6,8 @@ import { FileResponseDto } from '../file.response';
 
 export class GetFileQuery {
   constructor(
-    public readonly fileId: string,
-    public readonly userId?: string,
+    public readonly fileId: bigint,
+    public readonly userId?: bigint,
   ) {}
 }
 

@@ -1,7 +1,6 @@
-import { Specification } from '../../../core/specifications/specification.base';
+import { Specification } from '@core/specifications/specification.base';
 import { Role } from '@modules/role/entities/role.entity';
 import { Permission } from '@modules/auth/entities/permission.entity';
-import { PermissionId } from '@core/value-objects/permission-id.vo';
 
 /**
  * Specification to check if a role is the default role
@@ -25,7 +24,7 @@ export class AdminRoleSpecification extends Specification<Role> {
  * Specification to check if a role has a specific permission
  */
 export class RoleHasPermissionSpecification extends Specification<Role> {
-  constructor(private readonly permissionId: PermissionId) {
+  constructor(private readonly permissionId: bigint) {
     super();
   }
 

@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Permission } from '../../auth/entities/permission.entity';
+import { Permission } from '@modules/auth/entities/permission.entity';
 import { IPermissionRepository } from '../repositories/permission.repository.interface';
 import {
   EntityNotFoundException,
@@ -37,7 +37,7 @@ export class PermissionService {
   }
 
   async updatePermission(
-    id: string,
+    id: bigint,
     name?: string,
     description?: string,
     resource?: string,
@@ -50,7 +50,7 @@ export class PermissionService {
 
     if (name) {
       const existingPermission = await this.permissionRepository.findByName(name);
-      if (existingPermission && existingPermission.id.getValue() !== id) {
+      if (existingPermission && existingPermission.id !== id) {
         throw new EntityAlreadyExistsException('Permission', 'name');
       }
       // We'll need to update resourceAction if name changes
@@ -76,7 +76,7 @@ export class PermissionService {
     return this.permissionRepository.update(permission);
   }
 
-  async deletePermission(id: string): Promise<boolean> {
+  async deletePermission(id: bigint): Promise<boolean> {
     const permission = await this.permissionRepository.findById(id);
     if (!permission) {
       throw new EntityNotFoundException('Permission', id);

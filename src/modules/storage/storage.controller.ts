@@ -87,7 +87,7 @@ export class StorageController {
   @ApiOperation({ summary: 'Get file by ID' })
   @ApiParam({ name: 'id', description: 'File ID' })
   async getFile(
-    @Param('id') id: string,
+    @Param('id') id: bigint,
     @CurrentUser() user: IJwtPayload,
   ): Promise<FileResponseDto> {
     return this.queryBus.execute(new GetFileQuery(id, user.sub));
@@ -104,7 +104,7 @@ export class StorageController {
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Delete a file' })
   @ApiParam({ name: 'id', description: 'File ID' })
-  async deleteFile(@Param('id') id: string, @CurrentUser() user: IJwtPayload): Promise<void> {
+  async deleteFile(@Param('id') id: bigint, @CurrentUser() user: IJwtPayload): Promise<void> {
     return this.commandBus.execute(new DeleteFileCommand(id, user.sub));
   }
 

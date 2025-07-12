@@ -1,5 +1,5 @@
 import { Permission } from '@modules/auth/entities/permission.entity';
-import { PermissionId } from '@core/value-objects/permission-id.vo';
+// import { PermissionId } from '@core/value-objects/permission-id.vo';
 import { InvalidValueObjectException } from '@core/exceptions/domain-exceptions';
 
 /**
@@ -37,8 +37,8 @@ export class PermissionsCollection {
   /**
    * Remove a permission from the collection
    */
-  remove(permissionId: PermissionId): PermissionsCollection {
-    const filteredPermissions = this._permissions.filter(p => !p.id.equals(permissionId));
+  remove(permissionId: bigint): PermissionsCollection {
+    const filteredPermissions = this._permissions.filter(p => p.id !== permissionId);
 
     if (filteredPermissions.length === this._permissions.length) {
       // Permission not found, return same collection
@@ -51,8 +51,8 @@ export class PermissionsCollection {
   /**
    * Check if collection contains a specific permission
    */
-  contains(permissionId: PermissionId): boolean {
-    return this._permissions.some(p => p.id.equals(permissionId));
+  contains(permissionId: bigint): boolean {
+    return this._permissions.some(p => p.id === permissionId);
   }
 
   /**
@@ -65,8 +65,8 @@ export class PermissionsCollection {
   /**
    * Get permission by ID
    */
-  getById(permissionId: PermissionId): Permission | undefined {
-    return this._permissions.find(p => p.id.equals(permissionId));
+  getById(permissionId: bigint): Permission | undefined {
+    return this._permissions.find(p => p.id === permissionId);
   }
 
   /**
@@ -219,11 +219,11 @@ export class PermissionsCollection {
 
   private validatePermissions(permissions: Permission[]): void {
     // Check for duplicates
-    const permissionIds = new Set<string>();
+    const permissionIds = new Set<bigint>();
     const permissionNames = new Set<string>();
 
     for (const permission of permissions) {
-      const id = permission.id.getValue();
+      const id = permission.id;
       const name = permission.getPermissionName();
 
       if (permissionIds.has(id)) {

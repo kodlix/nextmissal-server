@@ -5,7 +5,7 @@ import { UserMapper } from '@modules/user/user.mapper';
 
 export class UpdateUserCommand {
   constructor(
-    public readonly userId: string,
+    public readonly userId: bigint,
     public readonly firstName?: string,
     public readonly lastName?: string,
     public readonly email?: string,

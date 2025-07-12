@@ -10,7 +10,7 @@ export class DomainException extends HttpException {
 
 // Entity not found
 export class EntityNotFoundException extends DomainException {
-  constructor(entityName: string, id?: string) {
+  constructor(entityName: string, id?: bigint | string ) {
     const message = id ? `${entityName} with ID ${id} not found` : `${entityName} not found`;
     super(message, HttpStatus.NOT_FOUND);
   }
@@ -88,13 +88,13 @@ export abstract class FileDomainException extends DomainException {}
 
 // User domain exceptions
 export class UserNotEligibleForRoleException extends UserDomainException {
-  constructor(userId: string, roleName: string) {
+  constructor(userId: bigint, roleName: string) {
     super(`User ${userId} is not eligible for role: ${roleName}`, HttpStatus.FORBIDDEN);
   }
 }
 
 export class UserAlreadyHasRoleException extends UserDomainException {
-  constructor(userId: string, roleName: string) {
+  constructor(userId: bigint, roleName: string) {
     super(`User ${userId} already has role: ${roleName}`, HttpStatus.CONFLICT);
   }
 }
@@ -154,13 +154,13 @@ export class TwoFactorRequiredException extends AuthenticationDomainException {
 
 // File domain exceptions
 export class FileNotOwnedByUserException extends FileDomainException {
-  constructor(fileId: string, userId: string) {
+  constructor(fileId: bigint, userId: bigint) {
     super(`File ${fileId} is not owned by user ${userId}`, HttpStatus.FORBIDDEN);
   }
 }
 
 export class FileAccessDeniedException extends FileDomainException {
-  constructor(fileId: string) {
+  constructor(fileId: bigint) {
     super(`Access denied to file ${fileId}`, HttpStatus.FORBIDDEN);
   }
 }

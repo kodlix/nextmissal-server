@@ -9,12 +9,12 @@ import {
   EMAIL_VERIFICATION_REPOSITORY,
   PASSWORD_RESET_REPOSITORY,
 } from '@shared/constants/tokens';
-import { User } from '../../user/entities/user.entity';
+import { User } from '@modules/user/entities/user.entity';
 import { Otp } from '../entities/otp.entity';
 import { RefreshToken } from '../entities/refresh-token.entity';
 import { EmailVerification } from '../entities/email-verification.entity';
 import { PasswordReset } from '../entities/password-reset.entity';
-import { IUserRepository } from '../../user/repositories/user.repository.interface';
+import { IUserRepository } from '@modules/user/repositories/user.repository.interface';
 import { IOtpRepository } from '../repositories/otp.repository.interface';
 import { IRefreshTokenRepository } from '../repositories/refresh-token.repository.interface';
 import { IEmailVerificationRepository } from '../repositories/email-verification.repository.interface';
@@ -26,7 +26,7 @@ import {
   AuthenticationException,
 } from '@core/exceptions/domain-exceptions';
 import { Email } from '@core/value-objects/email.vo';
-import { UserId } from '@core/value-objects/user-id.vo';
+
 import { Token } from '@core/value-objects/token.vo';
 import { VerificationCode } from '@core/value-objects/verification-code.vo';
 import { LoggerService } from '@core/logger/logger.service';
@@ -68,7 +68,7 @@ export class AuthService {
     };
   }
 
-  async generateOtp(userId: string): Promise<string> {
+  async generateOtp(userId: bigint): Promise<string> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new EntityNotFoundException('User', userId);
@@ -81,7 +81,7 @@ export class AuthService {
     }).base32;
 
     // Create a new OTP entity
-    const otp = new Otp(UserId.fromString(userId), secret, this.otpConfig.expiration);
+    const otp = new Otp(userId, secret, this.otpConfig.expiration);
 
     // Save the OTP
     await this.otpRepository.create(otp);
@@ -95,7 +95,7 @@ export class AuthService {
     });
   }
 
-  async verifyOtp(userId: string, token: string): Promise<boolean> {
+  async verifyOtp(userId: bigint, token: string): Promise<boolean> {
     this.logger.debug({ message: 'Verifying OTP', userId });
 
     const user = await this.userRepository.findById(userId);
@@ -139,7 +139,7 @@ export class AuthService {
     }
   }
 
-  async setupTwoFactorAuth(userId: string): Promise<{ secret: string; qrCodeUrl: string }> {
+  async setupTwoFactorAuth(userId: bigint): Promise<{ secret: string; qrCodeUrl: string }> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new EntityNotFoundException('User', userId);
@@ -164,7 +164,7 @@ export class AuthService {
     };
   }
 
-  async verifyTwoFactorToken(userId: string, token: string): Promise<boolean> {
+  async verifyTwoFactorToken(userId: bigint, token: string): Promise<boolean> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new EntityNotFoundException('User', userId);
@@ -189,7 +189,7 @@ export class AuthService {
     return true;
   }
 
-  async disableTwoFactorAuth(userId: string): Promise<User> {
+  async disableTwoFactorAuth(userId: bigint): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new EntityNotFoundException('User', userId);
@@ -200,13 +200,13 @@ export class AuthService {
     return this.userRepository.update(user);
   }
 
-  async createRefreshToken(userId: string, token: string): Promise<RefreshToken> {
+  async createRefreshToken(userId: bigint, token: string): Promise<RefreshToken> {
     // Delete any existing refresh tokens for this user
     await this.refreshTokenRepository.deleteByUserId(userId);
 
     // Create a new refresh token
     const refreshToken = new RefreshToken(
-      UserId.fromString(userId),
+      userId,
       new Token(token),
       this.tokenConfig.refreshExpiration,
     );
@@ -226,7 +226,7 @@ export class AuthService {
     if (refreshToken.isExpired()) {
       this.logger.warn({
         message: 'Refresh token has expired',
-        userId: refreshToken.userId.getValue(),
+        userId: refreshToken.userId,
         expiresAt: refreshToken.expiresAt,
       });
       throw new AuthenticationException('Refresh token has expired');
@@ -235,7 +235,7 @@ export class AuthService {
     if (refreshToken.isRevoked()) {
       this.logger.warn({
         message: 'Refresh token has been revoked',
-        userId: refreshToken.userId.getValue(),
+        userId: refreshToken.userId,
         revokedAt: refreshToken.revokedAt,
       });
       throw new AuthenticationException('Refresh token has been revoked');
@@ -243,7 +243,7 @@ export class AuthService {
 
     this.logger.debug({
       message: 'Refresh token validated successfully',
-      userId: refreshToken.userId.getValue(),
+      userId: refreshToken.userId,
     });
 
     return refreshToken;
@@ -264,7 +264,7 @@ export class AuthService {
     await this.refreshTokenRepository.update(refreshToken);
   }
 
-  async revokeAllRefreshTokens(userId: string): Promise<void> {
+  async revokeAllRefreshTokens(userId: bigint): Promise<void> {
     // Check if user exists
     const user = await this.userRepository.findById(userId);
     if (!user) {
@@ -274,7 +274,7 @@ export class AuthService {
     await this.refreshTokenRepository.deleteByUserId(userId);
   }
 
-  async updateLastLogin(userId: string): Promise<User> {
+  async updateLastLogin(userId: bigint): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new EntityNotFoundException('User', userId);
@@ -389,7 +389,7 @@ export class AuthService {
       }
 
       // Delete any existing password reset tokens for this user
-      await this.passwordResetRepository.deleteByUserId(user.id.getValue());
+      await this.passwordResetRepository.deleteByUserId(user.id);
 
       // Create a new password reset token
       const passwordReset = new PasswordReset(
@@ -432,9 +432,9 @@ export class AuthService {
     }
 
     // Find the user
-    const user = await this.userRepository.findById(passwordReset.userId.getValue());
+    const user = await this.userRepository.findById(passwordReset.userId);
     if (!user) {
-      throw new EntityNotFoundException('User', passwordReset.userId.getValue());
+      throw new EntityNotFoundException('User', passwordReset.userId);
     }
 
     return user;
@@ -473,7 +473,7 @@ export class AuthService {
     await this.passwordResetRepository.update(passwordReset);
 
     // Revoke all refresh tokens for this user
-    await this.refreshTokenRepository.deleteByUserId(user.id.getValue());
+    await this.refreshTokenRepository.deleteByUserId(user.id);
 
     this.logger.log({
       message: 'Password reset completed successfully',

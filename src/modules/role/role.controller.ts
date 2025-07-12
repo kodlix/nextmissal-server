@@ -99,7 +99,7 @@ export class RoleController {
   @ApiResponse({ status: HttpStatus.OK, description: 'Returns role information' })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Role not found' })
   @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'User does not have admin role' })
-  async getRoleById(@Param('id') id: string) {
+  async getRoleById(@Param('id') id: bigint) {
     return this.queryBus.execute(new GetRoleQuery(id));
   }
 
@@ -136,7 +136,7 @@ export class RoleController {
     status: HttpStatus.FORBIDDEN,
     description: 'User does not have required permission',
   })
-  async updateRole(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
+  async updateRole(@Param('id') id: bigint, @Body() updateRoleDto: UpdateRoleDto) {
     return this.commandBus.execute(
       new UpdateRoleCommand(
         id,
@@ -158,7 +158,7 @@ export class RoleController {
     status: HttpStatus.FORBIDDEN,
     description: 'User does not have required permission',
   })
-  async deleteRole(@Param('id') id: string) {
+  async deleteRole(@Param('id') id: bigint) {
     await this.commandBus.execute(new DeleteRoleCommand(id));
 
     return { message: 'Role deleted successfully' };
@@ -185,8 +185,8 @@ export class RoleController {
     description: 'User does not have required permission',
   })
   async assignPermissionToRole(
-    @Param('roleId') roleId: string,
-    @Param('permissionId') permissionId: string,
+    @Param('roleId') roleId: bigint,
+    @Param('permissionId') permissionId: bigint,
   ) {
     return this.commandBus.execute(new AssignPermissionCommand(roleId, permissionId));
   }
@@ -212,8 +212,8 @@ export class RoleController {
     description: 'User does not have required permission',
   })
   async removePermissionFromRole(
-    @Param('roleId') roleId: string,
-    @Param('permissionId') permissionId: string,
+    @Param('roleId') roleId: bigint,
+    @Param('permissionId') permissionId: bigint,
   ) {
     return this.commandBus.execute(new RemovePermissionCommand(roleId, permissionId));
   }

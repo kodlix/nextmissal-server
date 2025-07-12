@@ -4,8 +4,8 @@ import { StorageService } from '@modules/storage/services/storage.service';
 
 export class DeleteFileCommand {
   constructor(
-    public readonly fileId: string,
-    public readonly userId?: string,
+    public readonly fileId: bigint,
+    public readonly userId?: bigint,
   ) {}
 }
 

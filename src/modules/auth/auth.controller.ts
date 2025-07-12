@@ -80,7 +80,7 @@ export class AuthController {
       },
     },
   })
-  async verifyOtp(@Body('userId') userId: string, @Body() verifyOtpDto: VerifyOtpDto) {
+  async verifyOtp(@Body('userId') userId: bigint, @Body() verifyOtpDto: VerifyOtpDto) {
     return this.commandBus.execute(new VerifyOtpCommand(userId, verifyOtpDto));
   }
 

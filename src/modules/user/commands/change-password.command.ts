@@ -3,7 +3,7 @@ import { UserService } from '@modules/user/services/user.service';
 
 export class ChangePasswordCommand {
   constructor(
-    public readonly userId: string,
+    public readonly userId: bigint,
     public readonly newPassword: string,
     public readonly currentPassword?: string,
   ) {}

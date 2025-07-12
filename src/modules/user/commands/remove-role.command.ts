@@ -5,8 +5,8 @@ import { UserMapper } from '@modules/user/user.mapper';
 
 export class RemoveRoleCommand {
   constructor(
-    public readonly userId: string,
-    public readonly roleId: string,
+    public readonly userId: bigint,
+    public readonly roleId: bigint,
   ) {}
 }
 

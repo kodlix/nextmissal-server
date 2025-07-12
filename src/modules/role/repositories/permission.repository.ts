@@ -4,7 +4,7 @@ import { IPermissionRepository } from '@modules/role/repositories/permission.rep
 import { PrismaService } from '@core/database/prisma/prisma.service';
 import { Permission as PrismaPermission } from '@prisma/client';
 import { ResourceAction, ActionType } from '@core/value-objects/resource-action.vo';
-import { BaseRepository } from '../../../core/repositories/base.repository';
+import { BaseRepository } from '@core/repositories/base.repository';
 
 @Injectable()
 export class PermissionRepository
@@ -15,7 +15,7 @@ export class PermissionRepository
     super();
   }
 
-  async findById(id: string): Promise<Permission | null> {
+  async findById(id: bigint): Promise<Permission | null> {
     return this.executeWithErrorHandling('findById', async () => {
       const permissionRecord = await this.prisma.permission.findUnique({
         where: { id },
@@ -65,7 +65,7 @@ export class PermissionRepository
     return this.executeWithErrorHandling('create', async () => {
       const createdPermission = await this.prisma.permission.create({
         data: {
-          id: permission.id.getValue(),
+          id: permission.id,
           name: permission.name.getValue(),
           description: permission.description,
           resource: permission.resourceAction.getResource(),
@@ -80,7 +80,7 @@ export class PermissionRepository
   async update(permission: Permission): Promise<Permission> {
     return this.executeWithErrorHandling('update', async () => {
       const updatedPermission = await this.prisma.permission.update({
-        where: { id: permission.id.getValue() },
+        where: { id: permission.id },
         data: {
           name: permission.name.getValue(),
           description: permission.description,
@@ -93,7 +93,7 @@ export class PermissionRepository
     });
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: bigint): Promise<boolean> {
     return this.executeWithErrorHandling(
       'delete',
       async () => {

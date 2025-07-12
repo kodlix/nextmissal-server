@@ -11,7 +11,7 @@ import { RefreshToken } from '@modules/auth/entities/refresh-token.entity';
 import { User } from '@modules/user/entities/user.entity';
 import { Email } from '@core/value-objects/email.vo';
 import { FirstName, LastName } from '@core/value-objects/name.vo';
-import { UserId } from '@core/value-objects/user-id.vo';
+
 import { Token } from '@core/value-objects/token.vo';
 import { Role } from '@modules/role/entities/role.entity';
 import { Permission } from '@modules/auth/entities/permission.entity';
@@ -75,7 +75,6 @@ const createTestUser = (): User => {
 
   // Add role - need to use fromData method to set ID
   const role = Role.fromData({
-    id: '550e8400-e29b-41d4-a716-446655440001',
     name: 'user',
     description: 'Regular user role',
     isDefault: true,
@@ -90,7 +89,7 @@ const createTestUser = (): User => {
 
 const createValidRefreshToken = (): RefreshToken => {
   return new RefreshToken(
-    UserId.fromString('550e8400-e29b-41d4-a716-446655440000'),
+    BigInt(4245),
     new Token('550e8400-e29b-41d4-a716-446655440005'), // Use UUID format for token
     7, // 7 days expiration
   );
@@ -99,7 +98,6 @@ const createValidRefreshToken = (): RefreshToken => {
 const createRoleWithPermissions = (): Role => {
   const resourceAction = new ResourceAction('user', ActionType.READ);
   const permission = Permission.fromData({
-    id: '550e8400-e29b-41d4-a716-446655440002',
     resourceAction,
     description: 'Can read user details',
     createdAt: new Date(),
@@ -107,7 +105,6 @@ const createRoleWithPermissions = (): Role => {
   });
 
   const role = Role.fromData({
-    id: '550e8400-e29b-41d4-a716-446655440001',
     name: 'user',
     description: 'Regular user role',
     isDefault: true,
@@ -192,7 +189,7 @@ describe('RefreshTokenCommandHandler', () => {
 
     expect(jwtService.sign).toHaveBeenCalledWith(
       expect.objectContaining({
-        sub: user.id.getValue(),
+        sub: user.id,
         email: user.email.getValue(),
         emailVerified: true,
         roles: ['user'],
@@ -205,7 +202,7 @@ describe('RefreshTokenCommandHandler', () => {
     );
 
     expect(authService.createRefreshToken).toHaveBeenCalledWith(
-      user.id.getValue(),
+      user.id,
       '550e8400-e29b-41d4-a716-446655440010',
     );
   });
@@ -257,7 +254,6 @@ describe('RefreshTokenCommandHandler', () => {
 
     // Add another role to the user - mock the eligibility check
     const adminRole = Role.fromData({
-      id: '550e8400-e29b-41d4-a716-446655440003',
       name: 'admin',
       description: 'Administrator role',
       isDefault: false,
@@ -277,7 +273,6 @@ describe('RefreshTokenCommandHandler', () => {
 
     const adminResourceAction = new ResourceAction('user', ActionType.WRITE);
     const adminPermission = Permission.fromData({
-      id: '550e8400-e29b-41d4-a716-446655440004',
       resourceAction: adminResourceAction,
       description: 'Can write user details',
       createdAt: new Date(),
@@ -285,7 +280,6 @@ describe('RefreshTokenCommandHandler', () => {
     });
 
     const adminRoleWithPermissions = Role.fromData({
-      id: '550e8400-e29b-41d4-a716-446655440003',
       name: 'admin',
       description: 'Administrator role',
       isDefault: false,

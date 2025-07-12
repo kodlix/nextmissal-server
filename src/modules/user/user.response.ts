@@ -1,12 +1,12 @@
 // User response interfaces
 
 export interface IUserRoleResponse {
-  id: string;
+  id: bigint;
   name: string;
 }
 
 export interface IUserBaseResponse {
-  id: string;
+  id: bigint;
   email: string;
   firstName: string;
   lastName: string;
@@ -27,6 +27,7 @@ export interface IUserWithAuthResponse extends IUserBaseResponse {
 }
 
 export interface IAuthTokenResponse {
+  userId: bigint;
   accessToken: string;
   refreshToken: string;
   user: IUserWithAuthResponse;
@@ -34,13 +35,13 @@ export interface IAuthTokenResponse {
 
 export interface IOtpRequiredResponse {
   requiresOtp: true;
-  userId: string;
+  userid: bigint;
   message: string;
 }
 
 export interface IEmailVerificationRequiredResponse {
-  requiresEmailVerification: true;
-  userId: string;
+  requiresEmailVerification?: true;
+  userId: bigint;
   email: string;
   message: string;
 }
@@ -51,7 +52,7 @@ export interface IAuthRefreshTokenResponse {
 }
 
 export interface IJwtPayload {
-  sub: string;
+  sub: bigint;
   email: string;
   emailVerified?: boolean;
   roles: string[];

@@ -4,7 +4,7 @@ import { IUserBaseResponse } from '@modules/user/user.response';
 
 export class ActivateUserCommand {
   constructor(
-    public readonly userId: string,
+    public readonly userId: bigint,
     public readonly active: boolean,
   ) {}
 }

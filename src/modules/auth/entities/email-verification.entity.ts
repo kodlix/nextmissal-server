@@ -3,15 +3,15 @@ import { Email } from '@core/value-objects/email.vo';
 import { VerificationCode } from '@core/value-objects/verification-code.vo';
 
 export class EmailVerification {
-  id: string;
+  id?: bigint;
   email: Email;
   code: VerificationCode;
   expiresAt: Date;
   verifiedAt: Date | null;
   createdAt: Date;
 
-  constructor(email: Email, code: VerificationCode, expirationMinutes: number = 5, id?: string) {
-    this.id = id || uuid();
+  constructor(email: Email, code: VerificationCode, expirationMinutes: number = 5, id?: bigint) {
+    this.id = id
     this.email = email;
     this.code = code;
 

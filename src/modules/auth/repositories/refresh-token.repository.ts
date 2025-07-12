@@ -4,8 +4,8 @@ import { IRefreshTokenRepository } from '@modules/auth/repositories/refresh-toke
 import { PrismaService } from '@core/database/prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { RefreshToken as PrismaRefreshToken } from '@prisma/client';
-import { BaseRepository } from '../../../core/repositories/base.repository';
-import { UserId } from '@core/value-objects/user-id.vo';
+import { BaseRepository } from '@core/repositories/base.repository';
+
 import { Token } from '@core/value-objects/token.vo';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class RefreshTokenRepository
     super();
   }
 
-  async findById(id: string): Promise<RefreshToken | null> {
+  async findById(id: bigint): Promise<RefreshToken | null> {
     return this.executeWithErrorHandling('findById', async () => {
       const tokenRecord = await this.prisma.refreshToken.findUnique({
         where: { id },
@@ -48,7 +48,7 @@ export class RefreshTokenRepository
     });
   }
 
-  async findByUserId(userId: string): Promise<RefreshToken[]> {
+  async findByUserId(userId: bigint): Promise<RefreshToken[]> {
     return this.executeWithErrorHandling('findByUserId', async () => {
       const tokenRecords = await this.prisma.refreshToken.findMany({
         where: { userId },
@@ -63,7 +63,7 @@ export class RefreshTokenRepository
       const createdToken = await this.prisma.refreshToken.create({
         data: {
           id: token.id,
-          userId: token.userId.getValue(),
+          userId: token.userId,
           token: token.token.getValue(),
           expiresAt: token.expiresAt,
           revokedAt: token.revokedAt,
@@ -90,7 +90,7 @@ export class RefreshTokenRepository
     });
   }
 
-  async deleteByUserId(userId: string): Promise<boolean> {
+  async deleteByUserId(userId: bigint): Promise<boolean> {
     return this.executeWithErrorHandling(
       'deleteByUserId',
       async () => {
@@ -129,7 +129,7 @@ export class RefreshTokenRepository
     );
 
     // Create value objects from primitive values
-    const userIdVO = UserId.fromString(record.userId);
+    const userIdVO = record.userId;
     const tokenVO = new Token(record.token);
 
     const refreshToken = new RefreshToken(userIdVO, tokenVO, refreshExpiration);

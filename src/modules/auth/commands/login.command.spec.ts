@@ -68,7 +68,6 @@ const createTestUser = (): User => {
 
   // Add roles
   const role = Role.fromData({
-    id: '550e8400-e29b-41d4-a716-446655440001',
     name: 'user',
     description: 'Regular user role',
     isDefault: true,
@@ -84,7 +83,6 @@ const createTestUser = (): User => {
 const createRoleWithPermissions = (): Role => {
   const resourceAction = new ResourceAction('user', ActionType.READ);
   const permission = Permission.fromData({
-    id: '550e8400-e29b-41d4-a716-446655440002',
     resourceAction,
     description: 'Can read user details',
     createdAt: new Date(),
@@ -92,7 +90,6 @@ const createRoleWithPermissions = (): Role => {
   });
 
   const role = Role.fromData({
-    id: '550e8400-e29b-41d4-a716-446655440001',
     name: 'user',
     description: 'Regular user role',
     isDefault: true,
@@ -136,13 +133,13 @@ describe('LoginCommandHandler', () => {
     // Mock UserMapper if needed
     jest.spyOn(UserMapper, 'toAuthResponse').mockImplementation((user, emailVerified) => {
       return {
-        id: user.id.getValue(),
+        id: user.id,
         email: user.email.getValue(),
         firstName: user.firstName.getValue(),
         lastName: user.lastName.getValue(),
         emailVerified: emailVerified || false,
         roles: user.roles.map(role => ({
-          id: role.id.getValue(),
+          id: role.id,
           name: role.name,
         })),
       };
@@ -188,7 +185,7 @@ describe('LoginCommandHandler', () => {
     // Assert
     expect(result).toEqual({
       requiresEmailVerification: true,
-      userId: user.id.getValue(),
+      userId: user.id,
       email: user.email.getValue(),
       message: 'Email verification required',
     });
@@ -197,7 +194,7 @@ describe('LoginCommandHandler', () => {
       'test@example.com',
       'Password123!',
     );
-    expect(authService.updateLastLogin).toHaveBeenCalledWith(user.id.getValue());
+    expect(authService.updateLastLogin).toHaveBeenCalledWith(user.id);
     expect(authService.isEmailVerified).toHaveBeenCalledWith('test@example.com');
   });
 
@@ -221,7 +218,7 @@ describe('LoginCommandHandler', () => {
     // Assert
     expect(result).toEqual({
       requiresOtp: true,
-      userId: user.id.getValue(),
+      userId: user.id,
       message: 'OTP verification required',
     });
 
@@ -229,7 +226,7 @@ describe('LoginCommandHandler', () => {
       'test@example.com',
       'Password123!',
     );
-    expect(authService.updateLastLogin).toHaveBeenCalledWith(user.id.getValue());
+    expect(authService.updateLastLogin).toHaveBeenCalledWith(user.id);
     expect(authService.isEmailVerified).toHaveBeenCalledWith('test@example.com');
   });
 
@@ -261,7 +258,7 @@ describe('LoginCommandHandler', () => {
       refreshToken: 'test-refresh-token',
       message: 'Login successful',
       user: expect.objectContaining({
-        id: user.id.getValue(),
+        id: user.id,
         email: user.email.getValue(),
         emailVerified: true,
       }),
@@ -271,9 +268,9 @@ describe('LoginCommandHandler', () => {
       'test@example.com',
       'Password123!',
     );
-    expect(authService.updateLastLogin).toHaveBeenCalledWith(user.id.getValue());
+    expect(authService.updateLastLogin).toHaveBeenCalledWith(user.id);
     expect(authService.isEmailVerified).toHaveBeenCalledWith('test@example.com');
-    expect(roleRepository.findById).toHaveBeenCalledWith(user.roles[0].id.getValue());
+    expect(roleRepository.findById).toHaveBeenCalledWith(user.roles[0].id);
     expect(tokenProvider.generateTokens).toHaveBeenCalledWith(user, ['user:read'], true);
     expect(UserMapper.toAuthResponse).toHaveBeenCalledWith(user, true);
   });
@@ -289,7 +286,6 @@ describe('LoginCommandHandler', () => {
 
     // Add another role to the user - mock the eligibility check
     const adminRole = Role.fromData({
-      id: '550e8400-e29b-41d4-a716-446655440003',
       name: 'admin',
       description: 'Administrator role',
       isDefault: false,
@@ -307,7 +303,6 @@ describe('LoginCommandHandler', () => {
 
     const adminResourceAction = new ResourceAction('user', ActionType.WRITE);
     const adminPermission = Permission.fromData({
-      id: '550e8400-e29b-41d4-a716-446655440004',
       resourceAction: adminResourceAction,
       description: 'Can write user details',
       createdAt: new Date(),
@@ -315,7 +310,6 @@ describe('LoginCommandHandler', () => {
     });
 
     const adminRoleWithPermissions = Role.fromData({
-      id: '550e8400-e29b-41d4-a716-446655440003',
       name: 'admin',
       description: 'Administrator role',
       isDefault: false,

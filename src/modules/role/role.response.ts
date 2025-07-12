@@ -2,8 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 
 // Basic Permission Response dto
 export class PermissionResponse {
-  @ApiProperty({ example: '550e8400-e29b-41d4-a716-446655440000' })
-  id!: string;
+  @ApiProperty({ example: 1 })
+  id!: bigint;
 
   @ApiProperty({ example: 'user:read' })
   name!: string;
@@ -20,8 +20,8 @@ export class PermissionResponse {
 
 // Basic Role Response dto
 export class RoleBaseResponse {
-  @ApiProperty({ example: '550e8400-e29b-41d4-a716-446655440000' })
-  id!: string;
+  @ApiProperty({ example: 1 })
+  id!: bigint;
 
   @ApiProperty({ example: 'admin' })
   name!: string;

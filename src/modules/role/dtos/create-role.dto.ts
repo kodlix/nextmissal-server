@@ -33,5 +33,5 @@ export class CreateRoleDto {
   })
   @IsArray()
   @IsOptional()
-  permissionIds?: string[];
+  permissionIds?: bigint[];
 }

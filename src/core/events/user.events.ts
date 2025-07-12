@@ -1,10 +1,9 @@
 import { DomainEvent } from './domain-event.base';
-import { UserId } from '@core/value-objects/user-id.vo';
-import { RoleId } from '@core/value-objects/role-id.vo';
+
+
 
 export class UserRegisteredEvent extends DomainEvent {
   constructor(
-    public readonly userId: UserId,
     public readonly email: string,
     public readonly firstName: string,
     public readonly lastName: string,
@@ -18,7 +17,7 @@ export class UserRegisteredEvent extends DomainEvent {
 }
 
 export class UserActivatedEvent extends DomainEvent {
-  constructor(public readonly userId: UserId) {
+  constructor(public readonly userId: bigint) {
     super();
   }
 
@@ -28,7 +27,7 @@ export class UserActivatedEvent extends DomainEvent {
 }
 
 export class UserDeactivatedEvent extends DomainEvent {
-  constructor(public readonly userId: UserId) {
+  constructor(public readonly userId: bigint) {
     super();
   }
 
@@ -39,8 +38,8 @@ export class UserDeactivatedEvent extends DomainEvent {
 
 export class UserRoleAssignedEvent extends DomainEvent {
   constructor(
-    public readonly userId: UserId,
-    public readonly roleId: RoleId,
+    public readonly userId: bigint,
+    public readonly roleId: bigint,
     public readonly roleName: string,
   ) {
     super();
@@ -53,8 +52,8 @@ export class UserRoleAssignedEvent extends DomainEvent {
 
 export class UserRoleRemovedEvent extends DomainEvent {
   constructor(
-    public readonly userId: UserId,
-    public readonly roleId: RoleId,
+    public readonly userId: bigint,
+    public readonly roleId: bigint,
     public readonly roleName: string,
   ) {
     super();
@@ -66,7 +65,7 @@ export class UserRoleRemovedEvent extends DomainEvent {
 }
 
 export class UserPasswordChangedEvent extends DomainEvent {
-  constructor(public readonly userId: UserId) {
+  constructor(public readonly userId: bigint) {
     super();
   }
 
@@ -77,7 +76,7 @@ export class UserPasswordChangedEvent extends DomainEvent {
 
 export class UserEmailChangedEvent extends DomainEvent {
   constructor(
-    public readonly userId: UserId,
+    public readonly userId: bigint,
     public readonly oldEmail: string,
     public readonly newEmail: string,
   ) {
@@ -90,7 +89,7 @@ export class UserEmailChangedEvent extends DomainEvent {
 }
 
 export class UserTwoFactorEnabledEvent extends DomainEvent {
-  constructor(public readonly userId: UserId) {
+  constructor(public readonly userId: bigint) {
     super();
   }
 
@@ -100,7 +99,7 @@ export class UserTwoFactorEnabledEvent extends DomainEvent {
 }
 
 export class UserTwoFactorDisabledEvent extends DomainEvent {
-  constructor(public readonly userId: UserId) {
+  constructor(public readonly userId: bigint) {
     super();
   }
 
@@ -111,7 +110,7 @@ export class UserTwoFactorDisabledEvent extends DomainEvent {
 
 export class UserLastLoginUpdatedEvent extends DomainEvent {
   constructor(
-    public readonly userId: UserId,
+    public readonly userId: bigint,
     public readonly loginTime: Date,
   ) {
     super();

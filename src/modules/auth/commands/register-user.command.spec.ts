@@ -45,7 +45,7 @@ describe('RegisterUserCommandHandler', () => {
     // Mock UserMapper
     jest.spyOn(UserMapper, 'toBaseResponse').mockImplementation(user => {
       return {
-        id: user.id.getValue(),
+        id: user.id,
         email: user.email.getValue(),
         firstName: user.firstName.getValue(),
         lastName: user.lastName.getValue(),
@@ -80,7 +80,7 @@ describe('RegisterUserCommandHandler', () => {
 
     // Assert
     expect(result).toEqual({
-      id: createdUser.id.getValue(),
+      id: createdUser.id,
       email: createdUser.email.getValue(),
       firstName: createdUser.firstName.getValue(),
       lastName: createdUser.lastName.getValue(),

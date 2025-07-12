@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { AuthService } from '@modules/auth/services/auth.service';
 
 export class GenerateOtpCommand implements ICommand {
-  constructor(public readonly userId: string) {}
+  constructor(public readonly userId: bigint) {}
 }
 
 @Injectable()

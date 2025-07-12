@@ -8,7 +8,7 @@ import { ROLE_REPOSITORY } from '@shared/constants/tokens';
 
 export class UpdateRoleCommand {
   constructor(
-    public readonly id: string,
+    public readonly id: bigint,
     public readonly name?: string,
     public readonly description?: string,
     public readonly isDefault?: boolean,
@@ -32,7 +32,7 @@ export class UpdateRoleCommandHandler
     const role = await this.roleService.updateRole(id, name, description, isDefault);
 
     // Fetch the updated role with permissions
-    const updatedRole = await this.roleRepository.findById(role.id.getValue());
+    const updatedRole = await this.roleRepository.findById(role.id);
 
     if (!updatedRole) {
       throw new Error('Role not found after update');

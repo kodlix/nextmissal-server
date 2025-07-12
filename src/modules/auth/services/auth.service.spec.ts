@@ -117,7 +117,7 @@
 //       // Assert
 //       expect(refreshTokenRepository.deleteByUserId).toHaveBeenCalledWith(userId);
 //       expect(refreshTokenRepository.create).toHaveBeenCalled();
-//       expect(result.userId.getValue()).toBe(userId);
+//       expect(result.userId).toBe(userId);
 //       expect(result.token.getValue()).toBe(token);
 //     });
 //   });

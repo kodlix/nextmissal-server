@@ -37,7 +37,7 @@ export class S3StorageProvider implements IStorageProvider {
     });
   }
 
-  async upload(file: IStorageFile, userId?: string): Promise<File> {
+  async upload(file: IStorageFile, userId?: bigint): Promise<File> {
     const filename = `${uuidv4()}${path.extname(file.originalname)}`;
     const isPublic = this.isPublicFile(file.mimetype);
     const bucket = isPublic ? this.publicBucket : this.privateBucket;

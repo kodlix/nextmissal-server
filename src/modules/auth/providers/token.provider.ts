@@ -18,7 +18,7 @@ export class TokenProvider {
    */
   buildPayload(user: User, permissions: string[], isEmailVerified: boolean) {
     return {
-      sub: user.id.getValue(),
+      sub: user.id,
       email: user.email.getValue(),
       emailVerified: isEmailVerified,
       roles: user.roles.map(role => role.name),
@@ -39,7 +39,7 @@ export class TokenProvider {
   /**
    * Generate a refresh token and store it
    */
-  async generateRefreshToken(userId: string): Promise<string> {
+  async generateRefreshToken(userId: bigint): Promise<string> {
     const refreshToken = uuidv4();
     await this.authService.createRefreshToken(userId, refreshToken);
 
@@ -52,7 +52,7 @@ export class TokenProvider {
   async generateTokens(user: User, permissions: string[], isEmailVerified: boolean) {
     const payload = this.buildPayload(user, permissions, isEmailVerified);
     const accessToken = this.generateAccessToken(payload);
-    const refreshToken = await this.generateRefreshToken(user.id.getValue());
+    const refreshToken = await this.generateRefreshToken(user.id);
 
     return {
       accessToken,

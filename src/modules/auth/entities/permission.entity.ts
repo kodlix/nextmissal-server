@@ -1,10 +1,9 @@
 import { ResourceAction } from '@core/value-objects/resource-action.vo';
 import { PermissionName } from '@core/value-objects/permission-name.vo';
-import { PermissionId } from '@core/value-objects/permission-id.vo';
 import { InvalidValueObjectException } from '@core/exceptions/domain-exceptions';
 
 export class Permission {
-  private readonly _id: PermissionId;
+  private readonly _id: bigint | undefined;
   private readonly _name: PermissionName;
   private _description: string;
   private readonly _resourceAction: ResourceAction;
@@ -12,14 +11,13 @@ export class Permission {
   private _updatedAt: Date;
 
   private constructor(
-    id: PermissionId,
+    id: bigint | undefined,
     resourceAction: ResourceAction,
     description: string,
     createdAt?: Date,
   ) {
     this.validateDescription(description);
 
-    this._id = id;
     this._name = PermissionName.create(
       resourceAction.getResource(),
       resourceAction.getAction().toString(),
@@ -32,19 +30,19 @@ export class Permission {
 
   // Factory method for creating new permissions
   static create(resourceAction: ResourceAction, description: string): Permission {
-    return new Permission(PermissionId.create(), resourceAction, description);
+    return new Permission(undefined,resourceAction, description);
   }
 
   // Factory method for reconstituting from persistence
   static fromData(data: {
-    id: string;
+    id?: bigint;
     resourceAction: ResourceAction;
     description: string;
     createdAt: Date;
     updatedAt: Date;
   }): Permission {
     const permission = new Permission(
-      PermissionId.fromString(data.id),
+      data.id,
       data.resourceAction,
       data.description,
       data.createdAt,
@@ -56,7 +54,7 @@ export class Permission {
   }
 
   // Getters
-  get id(): PermissionId {
+  get id(): bigint {
     return this._id;
   }
 

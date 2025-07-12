@@ -4,7 +4,7 @@ import { AuthService } from '@modules/auth/services/auth.service';
 
 export class Verify2FACommand implements ICommand {
   constructor(
-    public readonly userId: string,
+    public readonly userId: bigint,
     public readonly token: string,
   ) {}
 }

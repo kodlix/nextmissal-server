@@ -4,7 +4,7 @@ import { FileMapper } from '../file.mapper';
 import { FileResponseDto } from '../file.response';
 
 export class GetUserFilesQuery {
-  constructor(public readonly userId: string) {}
+  constructor(public readonly userId: bigint) {}
 }
 
 @QueryHandler(GetUserFilesQuery)

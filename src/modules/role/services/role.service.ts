@@ -7,7 +7,6 @@ import {
   EntityAlreadyExistsException,
   ForbiddenActionException,
 } from '@core/exceptions/domain-exceptions';
-import { PermissionId } from '@core/value-objects/permission-id.vo';
 import { ROLE_REPOSITORY, PERMISSION_REPOSITORY } from '@shared/constants/tokens';
 
 @Injectable()
@@ -41,7 +40,7 @@ export class RoleService {
   }
 
   async updateRole(
-    id: string,
+    id: bigint,
     name?: string,
     description?: string,
     isDefault?: boolean,
@@ -53,7 +52,7 @@ export class RoleService {
 
     if (name) {
       const existingRole = await this.roleRepository.findByName(name);
-      if (existingRole && existingRole.id.getValue() !== id) {
+      if (existingRole && existingRole.id !== id) {
         throw new EntityAlreadyExistsException('Role', 'name');
       }
     }
@@ -64,7 +63,7 @@ export class RoleService {
       // If making this role default, unset any existing default role
       if (isDefault && !role.isDefault) {
         const currentDefaultRole = await this.roleRepository.findDefaultRole();
-        if (currentDefaultRole && currentDefaultRole.id.getValue() !== id) {
+        if (currentDefaultRole && currentDefaultRole.id !== id) {
           currentDefaultRole.removeAsDefault();
           await this.roleRepository.update(currentDefaultRole);
         }
@@ -81,7 +80,7 @@ export class RoleService {
     return this.roleRepository.update(role);
   }
 
-  async assignPermissionToRole(roleId: string, permissionId: string): Promise<Role> {
+  async assignPermissionToRole(roleId: bigint, permissionId: bigint): Promise<Role> {
     const role = await this.roleRepository.findById(roleId);
     if (!role) {
       throw new EntityNotFoundException('Role', roleId);
@@ -97,18 +96,18 @@ export class RoleService {
     return this.roleRepository.update(role);
   }
 
-  async removePermissionFromRole(roleId: string, permissionId: string): Promise<Role> {
+  async removePermissionFromRole(roleId: bigint, permissionId: bigint): Promise<Role> {
     const role = await this.roleRepository.findById(roleId);
     if (!role) {
       throw new EntityNotFoundException('Role', roleId);
     }
 
-    role.removePermission(PermissionId.fromString(permissionId));
+    role.removePermission(permissionId);
 
     return this.roleRepository.update(role);
   }
 
-  async deleteRole(id: string): Promise<boolean> {
+  async deleteRole(id: bigint): Promise<boolean> {
     const role = await this.roleRepository.findById(id);
     if (!role) {
       throw new EntityNotFoundException('Role', id);

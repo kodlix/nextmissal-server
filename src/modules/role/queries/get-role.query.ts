@@ -7,7 +7,7 @@ import { RoleMapper } from '@modules/role/role.mapper';
 import { ROLE_REPOSITORY } from '@shared/constants/tokens';
 
 export class GetRoleQuery implements IQuery {
-  constructor(public readonly id: string) {}
+  constructor(public readonly id: bigint) {}
 }
 
 @QueryHandler(GetRoleQuery)

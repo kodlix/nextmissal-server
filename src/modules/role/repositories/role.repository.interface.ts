@@ -7,11 +7,12 @@ import { Role } from '../entities/role.entity';
  * - {@link RoleRepository} - Production Prisma/PostgreSQL implementation
  */
 export interface IRoleRepository {
-  findById(id: string): Promise<Role | null>;
+  countAll(search: string): any;
+  findById(id: bigint): Promise<Role | null>;
   findByName(name: string): Promise<Role | null>;
   findAll(): Promise<Role[]>;
   findDefaultRole(): Promise<Role | null>;
   create(role: Role): Promise<Role>;
   update(role: Role): Promise<Role>;
-  delete(id: string): Promise<boolean>;
+  delete(id: bigint): Promise<boolean>;
 }

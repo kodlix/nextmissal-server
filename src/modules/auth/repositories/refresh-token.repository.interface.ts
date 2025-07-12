@@ -7,11 +7,11 @@ import { RefreshToken } from '../entities/refresh-token.entity';
  * - {@link RefreshTokenRepository} - Production Prisma/PostgreSQL implementation
  */
 export interface IRefreshTokenRepository {
-  findById(id: string): Promise<RefreshToken | null>;
+  findById(id: bigint): Promise<RefreshToken | null>;
   findByToken(token: string): Promise<RefreshToken | null>;
-  findByUserId(userId: string): Promise<RefreshToken[]>;
+  findByUserId(userId: bigint): Promise<RefreshToken[]>;
   create(token: RefreshToken): Promise<RefreshToken>;
   update(token: RefreshToken): Promise<RefreshToken>;
-  deleteByUserId(userId: string): Promise<boolean>;
+  deleteByUserId(userId: bigint): Promise<boolean>;
   deleteExpired(): Promise<number>;
 }

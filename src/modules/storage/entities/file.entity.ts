@@ -1,14 +1,14 @@
 import { v4 as uuidv4 } from 'uuid';
 
 export class File {
-  id: string;
+  id: bigint;
   filename: string;
   originalName: string;
   path: string;
   mimeType: string;
   size: number;
   bucket: string;
-  userId: string | null;
+  userId: bigint | null;
   isPublic: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -20,11 +20,10 @@ export class File {
     mimeType: string,
     size: number,
     bucket: string,
-    userId: string | null = null,
+    userId: bigint | null = null,
     isPublic: boolean = false,
-    id?: string,
+    id?: bigint,
   ) {
-    this.id = id || uuidv4();
     this.filename = filename;
     this.originalName = originalName;
     this.path = path;
@@ -51,7 +50,7 @@ export class File {
     }
   }
 
-  updateUser(userId: string | null): void {
+  updateUser(userId: bigint | null): void {
     this.userId = userId;
     this.updatedAt = new Date();
   }
@@ -70,14 +69,14 @@ export class File {
   }
 
   static fromData(data: {
-    id: string;
+    id: bigint;
     filename: string;
     originalName: string;
     path: string;
     mimeType: string;
     size: number;
     bucket: string;
-    userId: string | null;
+    userId: bigint | null;
     isPublic: boolean;
     createdAt: Date;
     updatedAt: Date;

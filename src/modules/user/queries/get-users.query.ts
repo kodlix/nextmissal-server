@@ -30,8 +30,8 @@ export class GetUsersQueryHandler implements IQueryHandler<GetUsersQuery> {
 
   async execute(query: GetUsersQuery): Promise<Paginated<IUserDetailResponse>> {
     const [users, total] = await Promise.all([
-      this.userRepository.findAll(query.page, query.limit),
-      this.userRepository.countAll(),
+      this.userRepository.findAll(query),
+      this.userRepository.countAll(query),
     ]);
 
     const userDetails = users.map(user => UserMapper.toDetailResponse(user));

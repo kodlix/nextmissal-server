@@ -1,19 +1,19 @@
 import { v4 as uuid } from 'uuid';
 import { Email } from '@core/value-objects/email.vo';
 import { Token } from '@core/value-objects/token.vo';
-import { UserId } from '@core/value-objects/user-id.vo';
+
 
 export class PasswordReset {
-  id: string;
-  userId: UserId;
+  id: bigint;
+  userId: bigint;
   email: Email;
   token: Token;
   expiresAt: Date;
   usedAt: Date | null;
   createdAt: Date;
 
-  constructor(userId: UserId, email: Email, expirationMinutes: number = 60, id?: string) {
-    this.id = id || uuid();
+  constructor(userId: bigint, email: Email, expirationMinutes: number = 60, id?: bigint) {
+    this.id = id;
     this.userId = userId;
     this.email = email;
     this.token = Token.generate();

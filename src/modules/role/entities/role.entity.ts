@@ -1,6 +1,5 @@
-import { Permission } from '../../auth/entities/permission.entity';
-import { RoleId } from '@core/value-objects/role-id.vo';
-import { PermissionId } from '@core/value-objects/permission-id.vo';
+import { Permission } from '@modules/auth/entities/permission.entity';
+
 import { AggregateRoot } from '@core/events/domain-event.base';
 import {
   CannotDeleteDefaultRoleException,
@@ -11,7 +10,7 @@ import { CanAssignPermissionToRoleSpecification } from '@modules/role/specificat
 import { PermissionsCollection } from '@core/value-objects/collections/permissions.collection';
 
 export class Role extends AggregateRoot {
-  private readonly _id: RoleId;
+  private readonly _id: bigint;
   private _name: string;
   private _description: string;
   private _permissions: Permission[];
@@ -20,7 +19,6 @@ export class Role extends AggregateRoot {
   private _updatedAt: Date;
 
   private constructor(
-    id: RoleId,
     name: string,
     description: string,
     isDefault: boolean = false,
@@ -30,7 +28,6 @@ export class Role extends AggregateRoot {
     this.validateName(name);
     this.validateDescription(description);
 
-    this._id = id;
     this._name = name;
     this._description = description;
     this._permissions = [];
@@ -41,12 +38,12 @@ export class Role extends AggregateRoot {
 
   // Factory method for creating new roles
   static create(name: string, description: string, isDefault: boolean = false): Role {
-    return new Role(RoleId.create(), name, description, isDefault);
+    return new Role( name, description, isDefault);
   }
 
   // Factory method for reconstituting from persistence
   static fromData(data: {
-    id: string;
+    id?: bigint
     name: string;
     description: string;
     permissions: Permission[];
@@ -55,7 +52,6 @@ export class Role extends AggregateRoot {
     updatedAt: Date;
   }): Role {
     const role = new Role(
-      RoleId.fromString(data.id),
       data.name,
       data.description,
       data.isDefault,
@@ -69,7 +65,7 @@ export class Role extends AggregateRoot {
   }
 
   // Getters
-  get id(): RoleId {
+  get id(): bigint {
     return this._id;
   }
 
@@ -114,13 +110,13 @@ export class Role extends AggregateRoot {
     this._updatedAt = new Date();
   }
 
-  removePermission(permissionId: PermissionId): void {
-    const permissionExists = this._permissions.some(p => p.id.equals(permissionId));
+  removePermission(permissionId: bigint): void {
+    const permissionExists = this._permissions.some(p => p.id === permissionId);
     if (!permissionExists) {
       return; // Permission not found, no change needed
     }
 
-    this._permissions = this._permissions.filter(p => !p.id.equals(permissionId));
+    this._permissions = this._permissions.filter(p => p.id !== permissionId);
     this._updatedAt = new Date();
   }
 
@@ -163,8 +159,8 @@ export class Role extends AggregateRoot {
   }
 
   // Query methods
-  hasPermission(permissionId: PermissionId): boolean {
-    return this._permissions.some(p => p.id.equals(permissionId));
+  hasPermission(permissionId: bigint): boolean {
+    return this._permissions.some(p => p.id === permissionId);
   }
 
   hasPermissionByName(permissionName: string): boolean {

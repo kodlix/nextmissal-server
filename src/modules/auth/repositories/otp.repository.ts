@@ -4,8 +4,8 @@ import { IOtpRepository } from '@modules/auth/repositories/otp.repository.interf
 import { PrismaService } from '@core/database/prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { Otp as PrismaOtp } from '@prisma/client';
-import { BaseRepository } from '../../../core/repositories/base.repository';
-import { UserId } from '@core/value-objects/user-id.vo';
+import { BaseRepository } from '@core/repositories/base.repository';
+
 
 @Injectable()
 export class OtpRepository extends BaseRepository<Otp> implements IOtpRepository {
@@ -16,7 +16,7 @@ export class OtpRepository extends BaseRepository<Otp> implements IOtpRepository
     super();
   }
 
-  async findById(id: string): Promise<Otp | null> {
+  async findById(id: bigint): Promise<Otp | null> {
     return this.executeWithErrorHandling('findById', async () => {
       const otpRecord = await this.prisma.otp.findUnique({
         where: { id },
@@ -30,7 +30,7 @@ export class OtpRepository extends BaseRepository<Otp> implements IOtpRepository
     });
   }
 
-  async findByUserId(userId: string): Promise<Otp | null> {
+  async findByUserId(userId: bigint): Promise<Otp | null> {
     return this.executeWithErrorHandling('findByUserId', async () => {
       const otpRecord = await this.prisma.otp.findFirst({
         where: { userId },
@@ -50,7 +50,7 @@ export class OtpRepository extends BaseRepository<Otp> implements IOtpRepository
       const createdOtp = await this.prisma.otp.create({
         data: {
           id: otp.id,
-          userId: otp.userId.getValue(),
+          userId: otp.userId,
           secret: otp.secret,
           expiresAt: otp.expiresAt,
           verifiedAt: otp.verifiedAt,
@@ -77,7 +77,7 @@ export class OtpRepository extends BaseRepository<Otp> implements IOtpRepository
     });
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: bigint): Promise<boolean> {
     return this.executeWithErrorHandling(
       'delete',
       async () => {
@@ -95,7 +95,7 @@ export class OtpRepository extends BaseRepository<Otp> implements IOtpRepository
     const expirationMinutes = this.configService.get<number>('OTP_EXPIRATION', 5);
 
     // Create value object from primitive value
-    const userIdVO = UserId.fromString(record.userId);
+    const userIdVO = record.userId;
 
     const otp = new Otp(userIdVO, record.secret, expirationMinutes);
 

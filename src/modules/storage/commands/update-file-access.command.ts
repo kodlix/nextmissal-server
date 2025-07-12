@@ -6,9 +6,9 @@ import { FileResponseDto } from '../file.response';
 
 export class UpdateFileAccessCommand {
   constructor(
-    public readonly fileId: string,
+    public readonly fileId: bigint,
     public readonly isPublic: boolean,
-    public readonly userId?: string,
+    public readonly userId?: bigint,
   ) {}
 }
 

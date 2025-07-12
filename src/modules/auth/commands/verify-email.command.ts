@@ -48,12 +48,12 @@ export class VerifyEmailCommandHandler
     }
 
     // 2. Update last login
-    await this.authService.updateLastLogin(user.id.getValue());
+    await this.authService.updateLastLogin(user.id);
 
     // 3. Collect all permissions from all user roles
     const userPermissions = new Set<string>();
     for (const role of user.roles) {
-      const roleWithPermissions = await this.roleRepository.findById(role.id.getValue());
+      const roleWithPermissions = await this.roleRepository.findById(role.id);
       if (roleWithPermissions && roleWithPermissions.permissions) {
         roleWithPermissions.permissions.forEach(permission => {
           userPermissions.add(permission.getStringName());
@@ -63,7 +63,7 @@ export class VerifyEmailCommandHandler
 
     // 4. Generate JWT tokens
     const payload = {
-      sub: user.id.getValue(),
+      sub: user.id,
       email: user.email.getValue(),
       emailVerified: true,
       roles: user.roles.map(role => role.name),
@@ -76,10 +76,11 @@ export class VerifyEmailCommandHandler
     });
 
     const refreshToken = uuidv4();
-    await this.authService.createRefreshToken(user.id.getValue(), refreshToken);
+    await this.authService.createRefreshToken(user.id, refreshToken);
 
     // 5. Return tokens and user information
     return {
+      userId: user.id,
       accessToken,
       refreshToken,
       user: UserMapper.toAuthResponse(user, true),

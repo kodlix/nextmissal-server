@@ -13,6 +13,7 @@ import {
 } from '@prisma/client';
 import { ResourceAction, ActionType } from '@core/value-objects/resource-action.vo';
 import { BaseRepository } from '@core/repositories/base.repository';
+import { GetUsersQuery } from '../queries/get-users.query';
 
 // Define a type for User with its relations (roles with nested permissions)
 type UserWithRelations = PrismaUser & {
@@ -30,8 +31,11 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
   constructor(private readonly prisma: PrismaService) {
     super();
   }
+  countAll(query: GetUsersQuery) {
+    throw new Error('Method not implemented.');
+  }
 
-  async findById(id: string): Promise<User | null> {
+  async findById(id: bigint): Promise<User | null> {
     return this.executeWithErrorHandling('findById', async () => {
       const userRecord = await this.prisma.user.findUnique({
         where: { id },
@@ -113,7 +117,7 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
     });
   }
 
-  async findUsersByRoleId(roleId: string): Promise<User[]> {
+  async findUsersByRoleId(roleId: bigint): Promise<User[]> {
     return this.executeWithErrorHandling('findUsersByRoleId', async () => {
       const userRecords = await this.prisma.user.findMany({
         where: {
@@ -148,7 +152,7 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
     return this.executeWithErrorHandling('create', async () => {
       const createdUser = await this.prisma.user.create({
         data: {
-          id: user.id.getValue(),
+          id: user.id,
           email: user.email.getValue(),
           passwordHash: user.passwordHash,
           firstName: user.firstName.getValue(),
@@ -160,7 +164,7 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
           roles: {
             create: user.roles.map(role => ({
               role: {
-                connect: { id: role.id.getValue() },
+                connect: { id: role.id },
               },
             })),
           },
@@ -191,13 +195,13 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
       // First, delete all role associations to recreate them
       await this.prisma.userRole.deleteMany({
         where: {
-          userId: user.id.getValue(),
+          userId: user.id,
         },
       });
 
       // Update the user with new role associations
       const updatedUser = await this.prisma.user.update({
-        where: { id: user.id.getValue() },
+        where: { id: user.id },
         data: {
           email: user.email.getValue(),
           passwordHash: user.passwordHash,
@@ -210,7 +214,7 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
           roles: {
             create: user.roles.map(role => ({
               role: {
-                connect: { id: role.id.getValue() },
+                connect: { id: role.id },
               },
             })),
           },
@@ -236,7 +240,7 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
     });
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: bigint): Promise<boolean> {
     return this.executeWithErrorHandling(
       'delete',
       async () => {

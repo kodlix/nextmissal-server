@@ -1,7 +1,6 @@
-import { Specification } from '../../../core/specifications/specification.base';
+import { Specification } from '@core/specifications/specification.base';
 import { User } from '@modules/user/entities/user.entity';
 import { Role } from '@modules/role/entities/role.entity';
-import { RoleId } from '@core/value-objects/role-id.vo';
 
 /**
  * Specification to check if a user is active
@@ -25,7 +24,7 @@ export class TwoFactorEnabledSpecification extends Specification<User> {
  * Specification to check if a user has a specific role
  */
 export class UserHasRoleSpecification extends Specification<User> {
-  constructor(private readonly roleId: RoleId) {
+  constructor(private readonly roleId: bigint) {
     super();
   }
 

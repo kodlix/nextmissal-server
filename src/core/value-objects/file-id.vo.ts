@@ -1,15 +1,15 @@
 import { EntityId } from './entity-id.vo';
 
 export class FileId extends EntityId {
-  private constructor(value: string) {
+  private constructor(value: bigint) {
     super(value);
   }
 
-  static create(value?: string): FileId {
-    return new FileId(value || EntityId.generateId());
+  static create(value?: bigint): FileId {
+    return new FileId(value);
   }
 
-  static fromString(value: string): FileId {
+  static fromString(value: bigint): FileId {
     return new FileId(value);
   }
 }

@@ -8,7 +8,7 @@ export class RoleMapper {
    */
   static toPermissionResponse(permission: Permission): PermissionResponse {
     return {
-      id: permission.id.getValue(),
+      id: permission.id,
       name: permission.name.getValue(),
       description: permission.description,
       resource: permission.resourceAction.getResource(),
@@ -21,7 +21,7 @@ export class RoleMapper {
    */
   static toDetailResponse(role: Role): RoleDetailResponse {
     return {
-      id: role.id.getValue(),
+      id: role.id,
       name: role.name,
       description: role.description,
       isDefault: role.isDefault,

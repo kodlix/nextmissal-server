@@ -1,15 +1,15 @@
 import { EntityId } from './entity-id.vo';
 
 export class PermissionId extends EntityId {
-  private constructor(value: string) {
+  private constructor(value: bigint) {
     super(value);
   }
 
-  static create(value?: string): PermissionId {
-    return new PermissionId(value || EntityId.generateId());
+  static create(value?: bigint): PermissionId {
+    return new PermissionId(value);
   }
 
-  static fromString(value: string): PermissionId {
+  static fromString(value: bigint): PermissionId {
     return new PermissionId(value);
   }
 }
