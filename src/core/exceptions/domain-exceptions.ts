@@ -10,7 +10,7 @@ export class DomainException extends HttpException {
 
 // Entity not found
 export class EntityNotFoundException extends DomainException {
-  constructor(entityName: string, id?: bigint | string ) {
+  constructor(entityName: string, id?: bigint | string) {
     const message = id ? `${entityName} with ID ${id} not found` : `${entityName} not found`;
     super(message, HttpStatus.NOT_FOUND);
   }

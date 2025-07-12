@@ -2,7 +2,6 @@ import { Role } from '@modules/role/entities/role.entity';
 import { Email } from '@core/value-objects/email.vo';
 import { FirstName, LastName } from '@core/value-objects/name.vo';
 
-
 import { AggregateRoot } from '@core/events/domain-event.base';
 import {
   UserRegisteredEvent,

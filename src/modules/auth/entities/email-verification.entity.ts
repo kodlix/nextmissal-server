@@ -11,7 +11,7 @@ export class EmailVerification {
   createdAt: Date;
 
   constructor(email: Email, code: VerificationCode, expirationMinutes: number = 5, id?: bigint) {
-    this.id = id
+    this.id = id;
     this.email = email;
     this.code = code;
 

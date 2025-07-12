@@ -1,5 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
-
 export class File {
   id: bigint;
   filename: string;
@@ -24,6 +22,9 @@ export class File {
     isPublic: boolean = false,
     id?: bigint,
   ) {
+    if (id) {
+      this.id = id;
+    }
     this.filename = filename;
     this.originalName = originalName;
     this.path = path;

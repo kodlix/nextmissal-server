@@ -38,12 +38,12 @@ export class Role extends AggregateRoot {
 
   // Factory method for creating new roles
   static create(name: string, description: string, isDefault: boolean = false): Role {
-    return new Role( name, description, isDefault);
+    return new Role(name, description, isDefault);
   }
 
   // Factory method for reconstituting from persistence
   static fromData(data: {
-    id?: bigint
+    id?: bigint;
     name: string;
     description: string;
     permissions: Permission[];
@@ -51,12 +51,7 @@ export class Role extends AggregateRoot {
     createdAt: Date;
     updatedAt: Date;
   }): Role {
-    const role = new Role(
-      data.name,
-      data.description,
-      data.isDefault,
-      data.createdAt,
-    );
+    const role = new Role(data.name, data.description, data.isDefault, data.createdAt);
 
     role._permissions = data.permissions;
     role._updatedAt = data.updatedAt;

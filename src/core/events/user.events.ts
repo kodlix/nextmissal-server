@@ -1,7 +1,5 @@
 import { DomainEvent } from './domain-event.base';
 
-
-
 export class UserRegisteredEvent extends DomainEvent {
   constructor(
     public readonly email: string,

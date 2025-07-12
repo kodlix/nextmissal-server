@@ -33,6 +33,8 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
   }
   countAll(query: GetUsersQuery) {
     throw new Error('Method not implemented.');
+
+    return Promise.resolve(0);
   }
 
   async findById(id: bigint): Promise<User | null> {
@@ -117,7 +119,7 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
     });
   }
 
-  async findUsersByRoleId(roleId: bigint): Promise<User[]> {
+  async findUsersByRoleId(roleId: number): Promise<User[]> {
     return this.executeWithErrorHandling('findUsersByRoleId', async () => {
       const userRecords = await this.prisma.user.findMany({
         where: {

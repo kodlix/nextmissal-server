@@ -6,7 +6,6 @@ import { ConfigService } from '@nestjs/config';
 import { Otp as PrismaOtp } from '@prisma/client';
 import { BaseRepository } from '@core/repositories/base.repository';
 
-
 @Injectable()
 export class OtpRepository extends BaseRepository<Otp> implements IOtpRepository {
   constructor(

@@ -82,7 +82,7 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
         requiresOtp: true,
         userId: user.id,
         message: this.i18n.t('common.auth.2fa.enabled'),
-        email: user.email.getValue()
+        email: user.email.getValue(),
       };
     }
 

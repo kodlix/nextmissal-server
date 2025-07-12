@@ -30,7 +30,7 @@ export class Permission {
 
   // Factory method for creating new permissions
   static create(resourceAction: ResourceAction, description: string): Permission {
-    return new Permission(undefined,resourceAction, description);
+    return new Permission(undefined, resourceAction, description);
   }
 
   // Factory method for reconstituting from persistence
