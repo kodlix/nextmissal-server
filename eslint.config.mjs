@@ -2,6 +2,7 @@ import tseslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import prettierPlugin from 'eslint-plugin-prettier';
 import prettierConfig from 'eslint-config-prettier';
+import { parse } from 'path';
 
 export default [
   {
@@ -29,6 +30,7 @@ export default [
         project: 'tsconfig.json',
         tsconfigRootDir: '.',
         sourceType: 'module',
+        ecmaVersion: 2020,
       },
       ecmaVersion: 2020,
       globals: {

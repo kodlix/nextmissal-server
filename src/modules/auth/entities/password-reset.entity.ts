@@ -1,4 +1,3 @@
-import { v4 as uuid } from 'uuid';
 import { Email } from '@core/value-objects/email.vo';
 import { Token } from '@core/value-objects/token.vo';
 

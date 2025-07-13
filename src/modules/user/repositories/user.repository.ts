@@ -31,7 +31,7 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
   constructor(private readonly prisma: PrismaService) {
     super();
   }
-  countAll(query: GetUsersQuery) {
+  countAll(_query: GetUsersQuery) {
     throw new Error('Method not implemented.');
 
     return Promise.resolve(0);

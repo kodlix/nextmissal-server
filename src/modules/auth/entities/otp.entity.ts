@@ -1,5 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
-
 export class Otp {
   id: bigint;
   userId: bigint;
@@ -8,7 +6,7 @@ export class Otp {
   verifiedAt?: Date;
   createdAt: Date;
 
-  constructor(userId: bigint, secret: string, expirationMinutes: number, id?: bigint) {
+  constructor(userId: bigint, secret: string, expirationMinutes: number) {
     this.userId = userId;
     this.secret = secret;
 

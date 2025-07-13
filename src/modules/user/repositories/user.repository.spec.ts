@@ -159,10 +159,7 @@ describe('UserRepository', () => {
         new LastName('Doe'),
       );
 
-      const mockUpdatedUser = createMockUserRecord(
-        existingUser.id,
-        existingUser.email.getValue(),
-      );
+      const mockUpdatedUser = createMockUserRecord(existingUser.id, existingUser.email.getValue());
       mockPrismaService.userRole.deleteMany.mockResolvedValue({ count: 0 });
       mockPrismaService.user.update.mockResolvedValue(mockUpdatedUser);
 
@@ -207,6 +204,7 @@ describe('UserRepository', () => {
 
 // Helper function to create mock Prisma User records
 function createMockUserRecord(id: bigint, email = 'test@example.com') {
+  console.log('id in createMockUserRecord:', id.toString(), typeof id);
   return {
     id,
     email,

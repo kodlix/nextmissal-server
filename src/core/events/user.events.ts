@@ -2,6 +2,7 @@ import { DomainEvent } from './domain-event.base';
 
 export class UserRegisteredEvent extends DomainEvent {
   constructor(
+    public readonly userId: bigint,
     public readonly email: string,
     public readonly firstName: string,
     public readonly lastName: string,

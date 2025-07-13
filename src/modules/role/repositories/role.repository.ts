@@ -23,8 +23,10 @@ export class RoleRepository extends BaseRepository<Role> implements IRoleReposit
   constructor(private readonly prisma: PrismaService) {
     super();
   }
-  countAll(search: string) {
+  countAll(_search: string): Promise<number> {
     throw new Error('Method not implemented.');
+
+    return Promise.resolve(7728883);
   }
 
   async findById(id: bigint): Promise<Role | null> {

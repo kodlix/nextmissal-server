@@ -46,8 +46,10 @@ export class User extends AggregateRoot {
     lastName: LastName,
     isActive: boolean = true,
     createdAt?: Date,
+    id?: bigint,
   ) {
     super();
+    this._id = id || BigInt(Math.floor(Math.random() * 1000000));
     this._email = email;
     this._passwordHash = passwordHash;
     this._firstName = firstName;
@@ -66,10 +68,18 @@ export class User extends AggregateRoot {
     firstName: FirstName,
     lastName: LastName,
   ): User {
-    const user = new User(email, passwordHash, firstName, lastName);
+    const user = new User(
+      email,
+      passwordHash,
+      firstName,
+      lastName,
+      true,
+      undefined,
+      BigInt(Math.floor(Math.random() * 1000000)),
+    );
 
     user.addDomainEvent(
-      new UserRegisteredEvent(email.getValue(), firstName.getValue(), lastName.getValue()),
+      new UserRegisteredEvent(user.id, email.getValue(), firstName.getValue(), lastName.getValue()),
     );
 
     return user;
@@ -97,6 +107,7 @@ export class User extends AggregateRoot {
       new LastName(data.lastName),
       data.isActive,
       data.createdAt,
+      data.id,
     );
 
     user._otpEnabled = data.otpEnabled;

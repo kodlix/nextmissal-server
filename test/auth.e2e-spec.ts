@@ -3,7 +3,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { JwtService } from '@nestjs/jwt';
-import { ThrottlerService } from '@infrastructure/services/throttler.service';
+import { ThrottlerService } from '@core/throttler/throttler.service';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;

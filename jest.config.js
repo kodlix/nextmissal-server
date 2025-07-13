@@ -33,6 +33,7 @@ module.exports = {
     '^@shared/(.*)$': '<rootDir>/src/shared/$1',
     
   },
-  setupFilesAfterEnv: ['<rootDir>/src/test/jest-setup.ts'],
   testTimeout: 30000,
+  snapshotSerializers: ['<rootDir>/test/jest-bigint-serializer.ts'],
+  setupFilesAfterEnv: ['<rootDir>/test/jest-setup.ts'],
 };

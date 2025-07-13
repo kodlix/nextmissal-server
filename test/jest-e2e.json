@@ -3,20 +3,15 @@
   "preset": "ts-jest",
   "testEnvironment": "node",
   "moduleFileExtensions": ["js", "json", "ts"],
-  "rootDir": ".",
+  "rootDir": "../",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
   "moduleNameMapper": {
-    "^@core/(.*)$": "<rootDir>/../src/core/$1",
-    "^@application/(.*)$": "<rootDir>/../src/application/$1",
-    "^@infrastructure/(.*)$": "<rootDir>/../src/infrastructure/$1",
-    "^@presentation/(.*)$": "<rootDir>/../src/presentation/$1",
-    "^@shared/(.*)$": "<rootDir>/../src/shared/$1"
+    "^@core/(.*)$": "<rootDir>/src/core/$1",
+    "^@modules/(.*)$": "<rootDir>/src/modules/$1",
+    "^@shared/(.*)$": "<rootDir>/src/shared/$1"
   },
-  "testTimeout": 60000,
-  "maxWorkers": 1,
-  "forceExit": true,
-  "detectOpenHandles": true
+  "snapshotSerializers": ["<rootDir>/test/jest-bigint-serializer.ts"]
 }

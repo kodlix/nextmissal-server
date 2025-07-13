@@ -5,7 +5,7 @@
 export const userFixtures = {
   users: {
     validUser: () => ({
-      id: { getValue: () => '550e8400-e29b-41d4-a716-446655440000' },
+      id: BigInt(1),
       email: {
         getValue: () => 'test@example.com',
       },
@@ -19,7 +19,7 @@ export const userFixtures = {
       isActive: true,
       lastLoginAt: new Date(),
       twoFactorEnabled: false,
-      roles: [{ id: '2', name: 'user', description: 'Regular user', permissions: [] }],
+      roles: [{ id: BigInt(2), name: 'user', description: 'Regular user', permissions: [] }],
       getPermissions: () => ['user:read'],
       getRoleNames: () => ['user'],
       hasPermission: () => true,
@@ -34,7 +34,7 @@ export const userFixtures = {
       isEligibleForAdminRole: jest.fn().mockReturnValue(true),
     }),
     adminUser: () => ({
-      id: { getValue: () => '550e8400-e29b-41d4-a716-446655440001' },
+      id: BigInt(1),
       email: {
         getValue: () => 'admin@example.com',
       },
@@ -63,7 +63,7 @@ export const userFixtures = {
       isEligibleForAdminRole: jest.fn().mockReturnValue(true),
     }),
     inactiveUser: () => ({
-      id: { getValue: () => '550e8400-e29b-41d4-a716-446655440002' },
+      id: BigInt('2'),
       email: {
         getValue: () => 'inactive@example.com',
       },
