@@ -29,6 +29,8 @@ model User {
   refreshTokens RefreshToken[]
   passwordResets PasswordReset[]
   files         File[]
+
+  Parish Parish[]
 }
 
 model Role {
@@ -137,4 +139,206 @@ model File {
   user        User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([userId])
+}
+
+
+model Diocese {
+  id             Int      @id @default(autoincrement())
+  name           String   @unique()
+  profile        String
+  cathedral      String?
+  address        String?
+  telephones     String?
+  emails         String?
+  province       String?
+  bishop         String?
+  isArchidiocese Boolean  @default(false)
+  countryId      Int
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  createdBy      Int?
+  updatedBy     Int?
+
+  denaries   Denary[]
+  programmes Programme[]
+  country    Country? @relation(fields: [countryId], references: [id])
+
+}
+
+
+model Denary {
+  id        Int      @id @default(autoincrement())
+  name      String
+  dean      String
+  address   String
+  dioceseId Int
+  profile   String
+  active    Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  createdBy      Int?
+  updatedBy     Int?
+
+  diocese   Diocese?    @relation(fields: [dioceseId], references: [id], onDelete: Restrict)
+  parishes  Parish[]
+  programme Programme[]
+}
+
+model Parish {
+  id                Int       @id @default(autoincrement())
+  name              String
+  profile           String?
+  email             String?
+  telephone         String?
+  slogan            String?
+  address           String
+  town              String
+  lga               String?
+  state             String
+  postOfficeAddress String?
+  website           String?
+  logo              String?
+  vision            String?
+  mission           String?
+  establishedOn     DateTime?
+  active            Boolean   @default(true)
+  isStation         Boolean   @default(false)
+  parentParishId    Int?
+  denaryId          Int?
+
+  //optimise on a table
+  parishPriest     String?
+  assistantPriest1 String?
+  assistantPriest2 String?
+
+  parishPriestPhoneNumber     String?
+  assistantPriest1PhoneNumber String?
+  assistantPriest2PhoneNumber String?
+
+  createdAt DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  createdBy      Int?
+  updatedBy     Int?
+
+  denary          Denary?         @relation(fields: [denaryId], references: [id], onDelete: Restrict)
+  users           User[]
+  parishSocieties ParishSociety[]
+  programmes      Programme[]
+  searchLogs      SearchLog[]
+}
+
+model Society {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  shortName   String?  @unique
+  description String
+  active      Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  createdBy      Int?
+  updatedBy     Int?
+
+  parishSociety ParishSociety[]
+}
+
+model ParishSociety {
+  id          Int      @id @default(autoincrement())
+  parishId    Int
+  societyId   Int
+  description String
+  leader      String?
+  ownerId     Int
+  active      Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  createdBy      Int?
+  updatedBy     Int?
+
+  parish    Parish?      @relation(fields: [parishId], references: [id], onDelete: Restrict)
+  Society   Society?     @relation(fields: [societyId], references: [id], onDelete: Restrict)
+  programme Programme[]
+
+  @@unique([parishId, societyId])
+}
+
+model Programme {
+  id            Int      @id @default(autoincrement())
+  name          String
+  description   String
+  hint          String?
+  active        Boolean  @default(true)
+  programmeType String
+  isGeneral     Boolean  @default(false)
+  venue         String            @default("Church Premise")
+  startTime     DateTime?
+  endTime       DateTime?
+  frequency     ProgrammeFrequency
+  frequencyInfo String?
+
+  parishId      Int?
+  denaryId      Int?
+  dioceseId     Int?
+  societyId     Int?
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  createdBy      Int?
+  updatedBy     Int?
+
+// relationships
+  parish         Parish?         @relation(fields: [parishId], references: [id])
+  parishsociety  ParishSociety?  @relation(fields: [societyId], references: [id])
+  denary         Denary?         @relation(fields: [denaryId], references: [id])
+  diocese        Diocese?        @relation(fields: [dioceseId], references: [id])
+}
+
+model SearchLog {
+  id         Int      @id @default(autoincrement())
+  userId     Int?
+  searchText String
+  searchDate DateTime @default(now())
+  parishId   Int?
+
+  parish Parish? @relation(fields: [parishId], references: [id])
+}
+
+
+model Country {
+  id      Int     @id @default(autoincrement())
+  name    String
+  code    String?
+  capital String?
+
+  states State[]
+  diocee Diocese[]
+}
+
+model State {
+  id        Int    @id @default(autoincrement())
+  name      String
+  countryId Int
+
+  country Country? @relation(fields: [countryId], references: [id])
+  lgas    Lga[]
+}
+
+model Lga {
+  id      Int    @id @default(autoincrement())
+  name    String
+  stateId Int
+
+  state State @relation(fields: [stateId], references: [id])
+}
+
+
+enum ProgrammeFrequency {
+  YEARLY
+  BIMONTHLY
+  MONTHLY
+  WEEKLY
+  QUARTERLY
+  DAILY
+  ONCE
+  OTHERS
 }
