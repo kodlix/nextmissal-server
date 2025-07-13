@@ -29,7 +29,7 @@ export class GetRolesQueryHandler implements IQueryHandler<GetRolesQuery> {
 
   async execute(query: GetRolesQuery): Promise<Paginated<RoleDetailResponse>> {
     const [roles, total] = await Promise.all([
-      this.roleRepository.findAll(),
+      this.roleRepository.findAll(query.page, query.limit, query.search, query.sort),
       this.roleRepository.countAll(query.search),
     ]);
 

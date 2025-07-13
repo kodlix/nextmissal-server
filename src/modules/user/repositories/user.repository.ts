@@ -31,10 +31,20 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
   constructor(private readonly prisma: PrismaService) {
     super();
   }
-  countAll(_query: GetUsersQuery) {
-    throw new Error('Method not implemented.');
+  async countAll(query: GetUsersQuery): Promise<number> {
+    const { search } = query;
 
-    return Promise.resolve(0);
+    return this.prisma.user.count({
+      where: {
+        OR: search
+          ? [
+              { firstName: { contains: search, mode: 'insensitive' } },
+              { lastName: { contains: search, mode: 'insensitive' } },
+              { email: { contains: search, mode: 'insensitive' } },
+            ]
+          : undefined,
+      },
+    });
   }
 
   async findById(id: bigint): Promise<User | null> {
@@ -95,9 +105,31 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
     });
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll(query: GetUsersQuery): Promise<User[]> {
+    const { page, limit, search, sort } = query;
+    const skip = (page - 1) * limit;
+    const take = limit;
+
+    const orderBy = sort
+      ? {
+          [sort.split(':')[0]]: sort.split(':')[1] as 'asc' | 'desc',
+        }
+      : { createdAt: 'desc' as 'asc' | 'desc' };
+
     return this.executeWithErrorHandling('findAll', async () => {
       const userRecords = await this.prisma.user.findMany({
+        skip,
+        take,
+        where: {
+          OR: search
+            ? [
+                { firstName: { contains: search, mode: 'insensitive' } },
+                { lastName: { contains: search, mode: 'insensitive' } },
+                { email: { contains: search, mode: 'insensitive' } },
+              ]
+            : undefined,
+        },
+        orderBy,
         include: {
           roles: {
             include: {

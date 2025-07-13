@@ -23,10 +23,17 @@ export class RoleRepository extends BaseRepository<Role> implements IRoleReposit
   constructor(private readonly prisma: PrismaService) {
     super();
   }
-  countAll(_search: string): Promise<number> {
-    throw new Error('Method not implemented.');
-
-    return Promise.resolve(7728883);
+  async countAll(search?: string): Promise<number> {
+    return this.prisma.role.count({
+      where: {
+        OR: search
+          ? [
+              { name: { contains: search, mode: 'insensitive' } },
+              { description: { contains: search, mode: 'insensitive' } },
+            ]
+          : undefined,
+      },
+    });
   }
 
   async findById(id: bigint): Promise<Role | null> {
@@ -67,8 +74,28 @@ export class RoleRepository extends BaseRepository<Role> implements IRoleReposit
     return this.mapToModel(roleRecord as RoleWithPermissions);
   }
 
-  async findAll(): Promise<Role[]> {
+  async findAll(page: number, limit: number, search?: string, sort?: string): Promise<Role[]> {
+    const skip = (page - 1) * limit;
+    const take = limit;
+
+    const orderBy = sort
+      ? {
+          [sort.split(':')[0]]: sort.split(':')[1] as 'asc' | 'desc',
+        }
+      : { createdAt: 'desc' as 'asc' | 'desc' };
+
     const roleRecords = await this.prisma.role.findMany({
+      skip,
+      take,
+      where: {
+        OR: search
+          ? [
+              { name: { contains: search, mode: 'insensitive' } },
+              { description: { contains: search, mode: 'insensitive' } },
+            ]
+          : undefined,
+      },
+      orderBy,
       include: {
         permissions: {
           include: {

@@ -35,13 +35,24 @@ export class FileRepository extends BaseRepository<File> implements IFileReposit
     return fileData ? this.mapToEntity(fileData) : null;
   }
 
-  async findByUserId(userId: bigint): Promise<File[]> {
+  async findByUserId(userId: bigint, page: number, limit: number): Promise<File[]> {
+    const skip = (page - 1) * limit;
+    const take = limit;
+
     const files = await this.prisma.file.findMany({
       where: { userId },
+      skip,
+      take,
       orderBy: { createdAt: 'desc' },
     });
 
     return files.map(file => this.mapToEntity(file));
+  }
+
+  async countByUserId(userId: bigint): Promise<number> {
+    return this.prisma.file.count({
+      where: { userId },
+    });
   }
 
   async findByPath(path: string): Promise<File | null> {

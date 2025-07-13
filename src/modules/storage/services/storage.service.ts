@@ -38,8 +38,12 @@ export class StorageService {
     return this.fileRepository.findById(id);
   }
 
-  async getFilesByUserId(userId: bigint): Promise<File[]> {
-    return this.fileRepository.findByUserId(userId);
+  async getFilesByUserId(userId: bigint, page: number, limit: number): Promise<File[]> {
+    return this.fileRepository.findByUserId(userId, page, limit);
+  }
+
+  async countFilesByUserId(userId: bigint): Promise<number> {
+    return this.fileRepository.countByUserId(userId);
   }
 
   async deleteFile(id: bigint): Promise<void> {

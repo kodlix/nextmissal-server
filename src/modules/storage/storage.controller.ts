@@ -11,6 +11,7 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
+  Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -21,6 +22,7 @@ import {
   ApiOperation,
   ApiParam,
   ApiBearerAuth,
+  ApiQuery,
 } from '@nestjs/swagger';
 
 import { CurrentUser } from '@shared/decorators/current-user.decorator';
@@ -33,6 +35,8 @@ import { GetUserFilesQuery } from '@modules/storage/queries/get-user-files.query
 import { UpdateFileAccessDto } from '@modules/storage/dtos/update-file-access.dto';
 import { FileResponseDto } from '@modules/storage/file.response';
 import { IJwtPayload } from '@modules/user/user.response';
+import { PaginationDto } from '@shared/dtos/pagination.dto';
+import { Paginated } from '@shared/dtos/paginated.dto';
 
 @ApiTags('Storage')
 @Controller('storage')
@@ -96,8 +100,21 @@ export class StorageController {
   @Get('user/files')
   @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Get all files for the current user' })
-  async getUserFiles(@CurrentUser() user: IJwtPayload): Promise<FileResponseDto[]> {
-    return this.queryBus.execute(new GetUserFilesQuery(user.sub));
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Items per page',
+    example: 10,
+  })
+  async getUserFiles(
+    @CurrentUser() user: IJwtPayload,
+    @Query() pagination: PaginationDto,
+  ): Promise<Paginated<FileResponseDto>> {
+    return this.queryBus.execute(
+      new GetUserFilesQuery(user.sub, pagination.page, pagination.limit),
+    );
   }
 
   @Delete(':id')
