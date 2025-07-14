@@ -35,8 +35,16 @@ export class CountryRepository {
   async findStateWithLgas(countryId: number, id: number) {
     return this.prisma.state.findUnique({
       where: { id: id, countryId: countryId },
-      include: {
-        lgas: true,
+      select: {
+        id: true,
+        name: true,
+        countryId: true,
+        lgas: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
   }

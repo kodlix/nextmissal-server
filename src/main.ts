@@ -62,10 +62,9 @@ async function bootstrap() {
 
   // Swagger setup
   const config = new DocumentBuilder()
-    .setTitle('NestJS Clean Architecture API')
-    .setDescription('The API documentation for the NestJS Clean Architecture template')
+    .setTitle('NextMissal Server API Docs')
+    .setDescription('The API documentation for the NextMissal Server')
     .setVersion('1.0')
-    .addTag('Auth', 'Authentication endpoints')
     .addTag('Users', 'User management endpoints')
     .addTag('Roles', 'Role management endpoints')
     .addTag('Country', 'Country, state and LGA management endpoints')
@@ -124,7 +123,7 @@ async function bootstrap() {
       showRequestHeaders: true,
       tryItOutEnabled: true,
     },
-    customSiteTitle: 'NestJS Clean Architecture API',
+    customSiteTitle: 'NextMissal Server API Docs',
   });
 
   // Start server

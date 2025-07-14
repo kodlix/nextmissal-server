@@ -18,13 +18,20 @@ export class CountryController {
   @Get()
   @ApiOperation({ summary: 'Get all countries with pagination' })
   @ApiOkResponse({ description: 'Successfully retrieved countries', type: [CountryDto] })
-  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number' })
-  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Items per page' })
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Items per page',
+    example: 50,
+  })
   @ApiQuery({
     name: 'search',
     required: false,
     type: String,
     description: 'Search term for country name',
+    example: 'Nig',
   })
   findAll(@Query() paginationDto: PaginationDto) {
     return this.queryBus.execute(
@@ -39,7 +46,7 @@ export class CountryController {
   @ApiQuery({
     name: 'includeLgas',
     required: false,
-    type: Boolean,
+    type: 'boolean',
     description: 'Include LGAs in the response',
   })
   findAllWithStates(@Param('countryId') countryId: number, @Query() query: GetCountriesStatesDto) {
