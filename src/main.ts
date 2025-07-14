@@ -68,6 +68,7 @@ async function bootstrap() {
     .addTag('Auth', 'Authentication endpoints')
     .addTag('Users', 'User management endpoints')
     .addTag('Roles', 'Role management endpoints')
+    .addTag('Country', 'Country, state and LGA management endpoints')
     .addTag('Admin', 'Admin endpoints')
     .addTag('Storage', 'File storage endpoints')
     .addTag('Health', 'Application health endpoints')

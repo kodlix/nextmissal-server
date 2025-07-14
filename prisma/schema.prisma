@@ -305,10 +305,13 @@ model SearchLog {
 
 
 model Country {
-  id      Int     @id @default(autoincrement())
-  name    String
-  code    String?
-  capital String?
+  id        Int     @id @default(autoincrement())
+  name      String   @unique()
+  code2     String?
+  code3     String?
+  capital   String?
+  region    String?
+  subregion String?
 
   states State[]
   diocee Diocese[]
@@ -316,19 +319,23 @@ model Country {
 
 model State {
   id        Int    @id @default(autoincrement())
-  name      String
+  name      String 
   countryId Int
 
   country Country? @relation(fields: [countryId], references: [id])
   lgas    Lga[]
+
+  @@unique([name, countryId])
 }
 
 model Lga {
   id      Int    @id @default(autoincrement())
-  name    String
+  name    String 
   stateId Int
 
   state State @relation(fields: [stateId], references: [id])
+
+  @@unique([name, stateId])
 }
 
 

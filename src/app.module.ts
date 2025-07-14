@@ -10,10 +10,12 @@ import { I18nModule } from '@core/i18n/i18n.module';
 import { LoggerModule } from '@core/logger/logger.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { UserModule } from '@modules/user/user.module';
+import { CountryModule } from '@modules/country/country.module';
 import { RoleModule } from '@modules/role/role.module';
 import { AdminModule } from '@modules/admin/admin.module';
 import { StorageModule } from '@modules/storage/storage.module';
 import { HealthModule } from '@modules/health/health.module';
+
 import { CoreModule } from '@core/core.module';
 
 // Global providers
@@ -57,6 +59,7 @@ import configuration from '@core/config/configuration';
     AuthModule,
     UserModule,
     RoleModule,
+    CountryModule,
     AdminModule,
     StorageModule,
     HealthModule,

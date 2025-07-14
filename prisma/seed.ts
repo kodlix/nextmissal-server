@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { seedCountryStateLga } from './seed_country_state_lga';
 
 // Roles
 const roles = [
@@ -211,6 +212,8 @@ async function main() {
   }
 
   console.log('Seeding completed successfully!');
+
+  await seedCountryStateLga(prisma);
 }
 
 main()
