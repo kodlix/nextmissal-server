@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Country as PrismaCountry } from '@prisma/client';
 
-export class Country implements PrismaCountry {
+export class CountryDto implements PrismaCountry {
   @ApiProperty()
   id: number;
 

@@ -1,13 +1,21 @@
 import { Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
 import { CountryController } from './country.controller';
-import { CountryService } from './country.service';
 import { CountryRepository } from './country.repository';
 import { PrismaModule } from '../../core/database/prisma/prisma.module';
+import { GetCountriesQueryHandler } from './queries/get-countries.query';
+import { GetCountryWithStatesQueryHandler } from './queries/get-country-with-states.query';
+import { GetStateWithLgasQueryHandler } from './queries/get-state-with-lgas.query';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [CqrsModule, PrismaModule],
   controllers: [CountryController],
-  providers: [CountryService, CountryRepository],
-  exports: [CountryService, CountryRepository],
+  providers: [
+    CountryRepository,
+    GetCountriesQueryHandler,
+    GetCountryWithStatesQueryHandler,
+    GetStateWithLgasQueryHandler,
+  ],
+  exports: [CountryRepository],
 })
 export class CountryModule {}

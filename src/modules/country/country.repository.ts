@@ -5,15 +5,18 @@ import { PrismaService } from '../../core/database/prisma/prisma.service';
 export class CountryRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(skip?: number, take?: number) {
+  async findAll(skip?: number, take?: number, search?: string) {
     return this.prisma.country.findMany({
       skip,
       take,
+      where: search ? { name: { contains: search, mode: 'insensitive' } } : undefined,
     });
   }
 
-  async countAllCountries() {
-    return this.prisma.country.count();
+  async countAllCountries(search?: string) {
+    return this.prisma.country.count({
+      where: search ? { name: { contains: search, mode: 'insensitive' } } : undefined,
+    });
   }
 
   async findAllWithStates(countryId: number, includeLgas: boolean) {
