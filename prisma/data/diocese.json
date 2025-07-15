@@ -1,0 +1,211 @@
+[
+  {
+    "name": "Archdiocese of Lagos",
+    "profile": "The Metropolitan See of the Ecclesiastical Province of Lagos.",
+    "cathedral": "Cathedral of the Holy Cross, Lagos",
+    "address": "19 Catholic Mission Street, P.O. Box 8, Marina, Lagos",
+    "telephones": ["+2348060572439"],
+    "emails": [
+      "info@lagosarchdiocese.org",
+      "archbishop@lagosarchdiocese.org",
+      "arclagos@yahoo.com"
+    ],
+    "province": "Lagos",
+    "bishop": "Alfred Adewale Martins",
+    "isArchidiocese": true,
+    "denaries": [
+      {
+        "name": "Denary of Lagos",
+        "parishes": ["Holy Cross Parish, Lagos", "St. Mary's Parish, Lagos"]
+      },
+      {
+        "name": "Denary of Ikeja",
+        "parishes": ["St. Joseph's Parish, Ikeja", "Our Lady of Perpetual Help Parish, Ikeja"]
+      },
+      {
+        "name": "Denary of Epe",
+        "parishes": ["St. Michael's Parish, Epe", "St. Anne's Parish, Epe"]
+      },
+      {
+        "name": "Denary of Badagry",
+        "parishes": ["St. Augustine's Parish, Badagry", "St. Peter's Parish, Badagry"]
+      }
+    ]
+  },
+  {
+    "name": "Diocese of Ijebu-Ode",
+    "profile": "Latin‑rite Diocese in Ogun State under Lagos province.",
+    "cathedral": "Saint Sebastian Cathedral, Ijebu‑Ode",
+    "address": null,
+    "telephones": null,
+    "emails": null,
+    "province": "Lagos",
+    "bishop": "Francis Obafemi Adesina",
+    "isArchidiocese": false
+  },
+  {
+    "name": "Diocese of Umuahia",
+    "profile": "Latin‑rite Diocese within the Owerri province.",
+    "cathedral": null,
+    "address": "Diocesan Secretariat, 57 Azikwe Road, P.O. Box 99, Umuahia, Abia State",
+    "telephones": ["088‑220364", "222259", "08131852984", "08035080682"],
+    "emails": ["umuahiabishopsec@gmail.com", "vicargeneral@umuahiadiocese.org"],
+    "province": "Owerri",
+    "bishop": null,
+    "isArchidiocese": false
+  },
+  {
+    "name": "Archdiocese of Onitsha",
+    "profile": "Metropolitan See for the Ecclesiastical Province of Onitsha, covering Anambra State.",
+    "cathedral": "Cathedral Basilica of the Most Holy Trinity, Onitsha",
+    "address": "1 Mission Road, Basilica of the Holy Trinity, Onitsha, Anambra State, P.O. Box 411, 434243, Nigeria",
+    "telephones": ["+2348021818008", "+2348176804048"],
+    "emails": ["secretariat@onitsha-archdiocese.org", "contact@archbishopvalokeke.org"],
+    "province": "Onitsha",
+    "bishop": "Valerian Maduka Okeke",
+    "isArchidiocese": true
+  },
+  {
+    "name": "Diocese of Nsukka",
+    "profile": "Latin‑rite Diocese in Enugu State, part of the Onitsha province.",
+    "cathedral": "Saint Theresa Cathedral, Nsukka",
+    "address": "P.O. Box 1, Nsukka, Enugu State",
+    "telephones": ["+2348033060000", "+2348033060001"],
+    "emails": ["nsukkabishopsec@gmail.com", "vicargeneral@nsukkadiocese.org"],
+    "province": "Onitsha",
+    "bishop": "Godfrey Igwebuike Onah",
+    "isArchidiocese": false
+  },
+  {
+    "name": "Diocese of Sokoto",
+    "profile": "Latin‑rite Diocese in the northwestern region of Nigeria.",
+    "cathedral": "Saint Louis Cathedral, Sokoto",
+    "address": "P.M.B. 2124, Sokoto, Nigeria",
+    "telephones": ["+2348037000000"],
+    "emails": ["sokotobishopsec@gmail.com", "vicargeneral@sokotodiocese.org"],
+    "province": "Sokoto",
+    "bishop": "Matthew Hassan Kukah",
+    "isArchidiocese": false
+  },
+  {
+    "name": "Diocese of Maiduguri",
+    "profile": "Latin‑rite Diocese in northeastern Nigeria.",
+    "cathedral": "Saint Joseph Cathedral, Maiduguri",
+    "address": "P.O. Box 100, Maiduguri, Borno State",
+    "telephones": ["+2348037000001"],
+    "emails": ["maiduguribishopsec@gmail.com", "vicargeneral@maiduguridiocese.org"],
+    "province": "Maiduguri",
+    "bishop": "Oliver Dashe Doeme",
+    "isArchidiocese": false
+  },
+  {
+    "name": "Diocese of Abeokuta",
+    "profile": "Latin‑rite Diocese in Ogun State, part of the Lagos province.",
+    "cathedral": "Saint Peter Cathedral, Ake, Abeokuta",
+    "address": "P.O. Box 100, Abeokuta, Ogun State",
+    "telephones": ["+2348037000004"],
+    "emails": ["abeokutabishopsec@gmail.com", "vicargeneral@abeokutadiocese.org"],
+    "province": "Lagos",
+    "bishop": "Peter Kayode Odetoyinbo",
+    "isArchidiocese": false
+  },
+  {
+    "name": "Diocese of Lafia",
+    "profile": "Latin‑rite Diocese in Nasarawa State, part of the Abuja province.",
+    "cathedral": "Saint William Cathedral, Lafia",
+    "address": "P.O. Box 100, Lafia, Nasarawa State",
+    "telephones": ["+2348037000003"],
+    "emails": ["lafiabishopsec@gmail.com", "vicargeneral@lafiadiocese.org"],
+    "province": "Abuja",
+    "bishop": "Matthew Hassan Kukah",
+    "isArchidiocese": false
+  },
+  {
+    "name": "Diocese of Yola",
+    "profile": "Latin‑rite Diocese in Adamawa State, part of the Maiduguri province.",
+    "cathedral": "Saint Theresa Cathedral, Yola",
+    "address": "P.O. Box 100, Yola, Adamawa State",
+    "telephones": ["+2348037000002"],
+    "emails": ["yolabishopsec@gmail.com", "vicargeneral@yoladiocese.org"],
+    "province": "Maiduguri",
+    "bishop": "Oliver Dashe Doeme",
+    "isArchidiocese": false
+  },
+  {
+    "name": "Diocese of Port Harcourt",
+    "profile": "Latin‑rite Diocese in Rivers State, part of the Calabar province.",
+    "cathedral": "Saint Paul's Cathedral, Port Harcourt",
+    "address": "P.O. Box 100, Port Harcourt, Rivers State",
+    "telephones": ["+2348037000005"],
+    "emails": ["portharcourtbishopsec@gmail.com", "vicargeneral@portharcourtdiocese.org"],
+    "province": "Calabar",
+    "bishop": "Camillus Raymond Umoh",
+    "isArchidiocese": false
+  },
+  {
+    "name": "Diocese of Calabar",
+    "profile": "Latin‑rite Diocese in Cross River State, part of the Calabar province.",
+    "cathedral": "Saint Joseph Cathedral, Calabar",
+    "address": "P.O. Box 100, Calabar, Cross River State",
+    "telephones": ["+2348037000006"],
+    "emails": ["calabarbishopsec@gmail.com", "vicargeneral@calabardiocese.org"],
+    "province": "Calabar",
+    "bishop": "Joseph Effiong Ekuwem",
+    "isArchidiocese": false
+  },
+  {
+    "name": "Diocese of Awka",
+    "profile": "Latin‑rite Diocese in Anambra State, part of the Onitsha province.",
+    "cathedral": "Saint Patrick's Cathedral, Awka",
+    "address": "P.O. Box 100, Awka, Anambra State",
+    "telephones": ["+2348037000007"],
+    "emails": ["awkabishopsec@gmail.com", "vicargeneral@awkadiocese.org"],
+    "province": "Onitsha",
+    "bishop": "Paulinus Ezeokafor",
+    "isArchidiocese": false
+  },
+  {
+    "name": "Diocese of Enugu",
+    "profile": "Latin‑rite Diocese in Enugu State, part of the Onitsha province.",
+    "cathedral": "Saint Joseph Cathedral, Enugu",
+    "address": "P.O. Box 100, Enugu, Enugu State",
+    "telephones": ["+2348037000008"],
+    "emails": ["enugubishopsec@gmail.com", "vicargeneral@enugudiocese.org"],
+    "province": "Onitsha",
+    "bishop": "Callistus Onaga",
+    "isArchidiocese": false
+  },
+  {
+    "name": "Diocese of Awgu",
+    "profile": "Latin‑rite Diocese in Enugu State, part of the Onitsha province.",
+    "cathedral": "Saint James Cathedral, Awgu",
+    "address": "P.O. Box 100, Awgu, Enugu State",
+    "telephones": ["+2348037000009"],
+    "emails": ["awgubishopsec@gmail.com", "vicargeneral@awgudiocese.org"],
+    "province": "Onitsha",
+    "bishop": "Paulinus Ezeokafor",
+    "isArchidiocese": false
+  },
+  {
+    "name": "Diocese of Abuja",
+    "profile": "Latin‑rite Diocese in the Federal Capital Territory, part of the Abuja province.",
+    "cathedral": "Holy Trinity Cathedral, Abuja",
+    "address": "P.O. Box 100, Abuja, Federal Capital Territory",
+    "telephones": ["+2348037000010"],
+    "emails": ["abujabishopsec@gmail.com", "vicargeneral@abujadiocese.org"],
+    "province": "Abuja",
+    "bishop": "Ignatius Kaigama",
+    "isArchidiocese": false
+  },
+  {
+    "name": "Diocese of Ilorin",
+    "profile": "Latin‑rite Diocese in Kwara State, part of the Lagos province.",
+    "cathedral": "Saint Barnabas Cathedral, Ilorin",
+    "address": "P.O. Box 100, Ilorin, Kwara State",
+    "telephones": ["+2348037000011"],
+    "emails": ["ilorinbishopsec@gmail.com", "vicargeneral@ilorindiocese.org"],
+    "province": "Lagos",
+    "bishop": "Matthew Hassan Kukah",
+    "isArchidiocese": false
+  }
+]
