@@ -14,10 +14,17 @@ export class DioceseRepository extends BaseRepository<Diocese> implements IDioce
   async countAll(search?: string): Promise<number> {
     return this.prisma.diocese.count({
       where: {
+        active: true,
         OR: search
           ? [
               { name: { contains: search, mode: 'insensitive' } },
               { profile: { contains: search, mode: 'insensitive' } },
+              { cathedral: { contains: search, mode: 'insensitive' } },
+              { address: { contains: search, mode: 'insensitive' } },
+              { telephones: { contains: search, mode: 'insensitive' } },
+              { emails: { contains: search, mode: 'insensitive' } },
+              { province: { contains: search, mode: 'insensitive' } },
+              { bishop: { contains: search, mode: 'insensitive' } },
             ]
           : undefined,
       },
@@ -62,10 +69,17 @@ export class DioceseRepository extends BaseRepository<Diocese> implements IDioce
       skip,
       take,
       where: {
+        active: true,
         OR: search
           ? [
               { name: { contains: search, mode: 'insensitive' } },
               { profile: { contains: search, mode: 'insensitive' } },
+              { cathedral: { contains: search, mode: 'insensitive' } },
+              { address: { contains: search, mode: 'insensitive' } },
+              { telephones: { contains: search, mode: 'insensitive' } },
+              { emails: { contains: search, mode: 'insensitive' } },
+              { province: { contains: search, mode: 'insensitive' } },
+              { bishop: { contains: search, mode: 'insensitive' } },
             ]
           : undefined,
       },

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Denary } from '@modules/deanery/entities/denary.entity';
-import { IDenaryRepository } from '@modules/deanery/repositories/denary.repository.interface';
+import { Denary } from '@modules/denary/entities/denary.entity';
+import { IDenaryRepository } from '@modules/denary/repositories/denary.repository.interface';
 import { PrismaService } from '@core/database/prisma/prisma.service';
 import { Denary as PrismaDenary } from '@prisma/client';
 import { BaseRepository } from '@core/repositories/base.repository';
@@ -14,9 +14,12 @@ export class DenaryRepository extends BaseRepository<Denary> implements IDenaryR
   async countAll(search?: string): Promise<number> {
     return this.prisma.denary.count({
       where: {
+        active: true,
         OR: search
           ? [
               { name: { contains: search, mode: 'insensitive' } },
+              { dean: { contains: search, mode: 'insensitive' } },
+              { address: { contains: search, mode: 'insensitive' } },
               { profile: { contains: search, mode: 'insensitive' } },
             ]
           : undefined,
@@ -36,7 +39,13 @@ export class DenaryRepository extends BaseRepository<Denary> implements IDenaryR
     return this.mapToModel(denaryRecord);
   }
 
-  async findAll(page: number, limit: number, search?: string, sort?: string): Promise<Denary[]> {
+  async findAll(
+    page: number,
+    limit: number,
+    search?: string,
+    sort?: string,
+    dioceseId?: number,
+  ): Promise<Denary[]> {
     const skip = (page - 1) * limit;
     const take = limit;
 
@@ -50,12 +59,16 @@ export class DenaryRepository extends BaseRepository<Denary> implements IDenaryR
       skip,
       take,
       where: {
+        active: true,
         OR: search
           ? [
               { name: { contains: search, mode: 'insensitive' } },
               { profile: { contains: search, mode: 'insensitive' } },
+              { dean: { contains: search, mode: 'insensitive' } },
+              { address: { contains: search, mode: 'insensitive' } },
             ]
           : undefined,
+        ...(dioceseId && { dioceseId }),
       },
       orderBy,
     });

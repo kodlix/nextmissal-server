@@ -99,7 +99,7 @@ export class CreateParishDto {
   parentParishId?: number;
 
   @ApiProperty({ description: 'The ID of the denary this parish belongs to', required: false })
-  @IsOptional()
+  @IsNotEmpty({ message: 'Specify the denary of this parish.' })
   @IsNumber()
   denaryId?: number;
 

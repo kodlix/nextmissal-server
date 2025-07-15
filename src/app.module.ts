@@ -11,6 +11,8 @@ import { LoggerModule } from '@core/logger/logger.module';
 import { AuthModule } from '@modules/auth/auth.module';
 import { UserModule } from '@modules/user/user.module';
 import { CountryModule } from '@modules/country/country.module';
+import { DioceseModule } from '@modules/diocese/diocese.module';
+import { ParishModule } from '@modules/parish/parish.module';
 import { RoleModule } from '@modules/role/role.module';
 import { AdminModule } from '@modules/admin/admin.module';
 import { StorageModule } from '@modules/storage/storage.module';
@@ -27,6 +29,7 @@ import { JwtAuthGuard } from '@shared/guards/jwt-auth.guard';
 
 // Config
 import configuration from '@core/config/configuration';
+import { DenaryModule } from '@modules/denary/denary.module';
 
 @Module({
   imports: [
@@ -63,6 +66,9 @@ import configuration from '@core/config/configuration';
     AdminModule,
     StorageModule,
     HealthModule,
+    ParishModule,
+    DioceseModule,
+    DenaryModule,
   ],
   controllers: [],
   providers: [

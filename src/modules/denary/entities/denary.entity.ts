@@ -19,7 +19,7 @@ export class Denary extends AggregateRoot {
     super();
   }
 
-  static create(props: Omit<DenaryProps, 'id' | 'createdAt' | 'updatedAt'>, id?: number): Denary {
+  static create(props: Omit<IDenaryProps, 'id' | 'createdAt' | 'updatedAt'>, id?: number): Denary {
     return new Denary({
       id: id || 0, // ID will be set by the database on creation
       createdAt: new Date(),
@@ -28,7 +28,7 @@ export class Denary extends AggregateRoot {
     });
   }
 
-  static fromData(props: DenaryProps): Denary {
+  static fromData(props: IDenaryProps): Denary {
     return new Denary(props);
   }
 

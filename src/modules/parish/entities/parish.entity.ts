@@ -38,7 +38,7 @@ export class Parish extends AggregateRoot {
     super();
   }
 
-  static create(props: Omit<ParishProps, 'id' | 'createdAt' | 'updatedAt'>, id?: number): Parish {
+  static create(props: Omit<IParishProps, 'id' | 'createdAt' | 'updatedAt'>, id?: number): Parish {
     return new Parish({
       id: id || 0, // ID will be set by the database on creation
       createdAt: new Date(),
@@ -47,7 +47,7 @@ export class Parish extends AggregateRoot {
     });
   }
 
-  static fromData(props: ParishProps): Parish {
+  static fromData(props: IParishProps): Parish {
     return new Parish(props);
   }
 

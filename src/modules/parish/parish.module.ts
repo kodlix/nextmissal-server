@@ -2,20 +2,29 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ParishController } from './parish.controller';
 import { ParishRepository } from './repositories/parish.repository';
-import { CreateParishHandler } from './commands/handlers/create-parish.handler';
-import { UpdateParishHandler } from './commands/handlers/update-parish.handler';
-import { DeleteParishHandler } from './commands/handlers/delete-parish.handler';
-import { GetParishByIdHandler } from './queries/handlers/get-parish-by-id.handler';
-import { GetParishesHandler } from './queries/handlers/get-parishes.handler';
 import { PrismaModule } from '@core/database/prisma/prisma.module';
-
-const commandHandlers = [CreateParishHandler, UpdateParishHandler, DeleteParishHandler];
-const queryHandlers = [GetParishByIdHandler, GetParishesHandler];
+import { CreateParishCommand, CreateParishHandler } from './commands/create-parish.command';
+import { UpdateParishCommand, UpdateParishHandler } from './commands/update-parish.command';
+import { DeleteParishCommand, DeleteParishHandler } from './commands/delete-parish.command';
+import { GetParishByIdQuery, GetParishByIdHandler } from './queries/get-parish-by-id.query';
+import { GetParishesQuery, GetParishesHandler } from './queries/get-parishes.query';
 
 @Module({
   imports: [CqrsModule, PrismaModule],
   controllers: [ParishController],
-  providers: [...commandHandlers, ...queryHandlers, ParishRepository],
+  providers: [
+    ParishRepository,
+    CreateParishCommand,
+    CreateParishHandler,
+    UpdateParishCommand,
+    UpdateParishHandler,
+    DeleteParishCommand,
+    DeleteParishHandler,
+    GetParishByIdQuery,
+    GetParishByIdHandler,
+    GetParishesQuery,
+    GetParishesHandler,
+  ],
   exports: [ParishRepository],
 })
 export class ParishModule {}

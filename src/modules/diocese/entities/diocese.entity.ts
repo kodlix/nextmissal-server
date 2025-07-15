@@ -24,7 +24,10 @@ export class Diocese extends AggregateRoot {
     super();
   }
 
-  static create(props: Omit<DioceseProps, 'id' | 'createdAt' | 'updatedAt'>, id?: number): Diocese {
+  static create(
+    props: Omit<IDioceseProps, 'id' | 'createdAt' | 'updatedAt'>,
+    id?: number,
+  ): Diocese {
     return new Diocese({
       id: id || 0, // ID will be set by the database on creation
       createdAt: new Date(),
@@ -33,7 +36,7 @@ export class Diocese extends AggregateRoot {
     });
   }
 
-  static fromData(props: DioceseProps): Diocese {
+  static fromData(props: IDioceseProps): Diocese {
     return new Diocese(props);
   }
 
