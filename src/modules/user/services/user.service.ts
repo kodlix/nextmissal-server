@@ -113,12 +113,9 @@ export class UserService {
     userId: bigint,
     firstName?: string,
     lastName?: string,
-    emailStr?: string,
     gender?: string,
     phoneNumber?: string,
     profileImage?: string,
-    emailVerified?: boolean,
-    isFirstLogin?: boolean,
     dateOfBirth?: Date,
     parishId?: number,
   ): Promise<User> {
@@ -135,25 +132,9 @@ export class UserService {
       gender,
       phoneNumber,
       profileImage,
-      emailVerified,
-      isFirstLogin,
       dateOfBirth,
       parishId,
     );
-
-    if (emailStr) {
-      // Validate email using value object
-      const email = new Email(emailStr);
-
-      // Check if email is already in use by another user
-      const existingUser = await this.userRepository.findByEmail(email.getValue());
-      // If the email is already in use, check if it's the same user
-      if (existingUser && existingUser.id !== userId) {
-        throw new EntityAlreadyExistsException('User', 'email');
-      }
-
-      user.changeEmail(email);
-    }
 
     // Entity handles updating timestamps
 

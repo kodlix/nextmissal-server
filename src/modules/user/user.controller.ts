@@ -143,38 +143,9 @@ export class UserController {
         id,
         updateUserDto.firstName,
         updateUserDto.lastName,
-        updateUserDto.email,
         updateUserDto.gender,
         updateUserDto.phoneNumber,
         updateUserDto.profileImage,
-        updateUserDto.emailVerified,
-        updateUserDto.isFirstLogin,
-        updateUserDto.dateOfBirth,
-        updateUserDto.parishId,
-      ),
-    );
-  }
-
-  @Put('/profile')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Update current user profile' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Profile updated successfully' })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input data' })
-  async updateCurrentUserProfile(
-    @CurrentUser() user: IJwtPayload,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
-    return this.commandBus.execute(
-      new UpdateUserCommand(
-        user.sub,
-        updateUserDto.firstName,
-        updateUserDto.lastName,
-        updateUserDto.email,
-        updateUserDto.gender,
-        updateUserDto.phoneNumber,
-        updateUserDto.profileImage,
-        updateUserDto.emailVerified,
-        updateUserDto.isFirstLogin,
         updateUserDto.dateOfBirth,
         updateUserDto.parishId,
       ),

@@ -51,6 +51,11 @@ export class LoginCommandHandler implements ICommandHandler<LoginCommand> {
     // Update last login
     await this.authService.updateLastLogin(user.id);
 
+    if (!user.isFirstLogin) {
+      // Update first login
+      await this.authService.updateFirstLogin(user.id);
+    }
+
     // Check if email is verified
     const isEmailVerified = await this.authService.isEmailVerified(email);
 

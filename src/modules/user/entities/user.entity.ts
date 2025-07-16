@@ -220,6 +220,10 @@ export class User extends AggregateRoot {
     return this._isFirstLogin;
   }
 
+  set isFirstLogin(_firstLogin: boolean) {
+    this.isFirstLogin = _firstLogin;
+  }
+
   get dateOfBirth(): Date | undefined {
     return this._dateOfBirth;
   }
@@ -396,8 +400,6 @@ export class User extends AggregateRoot {
     gender?: string,
     phoneNumber?: string,
     profileImage?: string,
-    emailVerified?: boolean,
-    isFirstLogin?: boolean,
     dateOfBirth?: Date,
     parishId?: number,
   ): void {
@@ -429,16 +431,6 @@ export class User extends AggregateRoot {
 
     if (profileImage !== undefined) {
       this._profileImage = profileImage;
-      hasChanges = true;
-    }
-
-    if (emailVerified !== undefined) {
-      this._emailVerified = emailVerified;
-      hasChanges = true;
-    }
-
-    if (isFirstLogin !== undefined) {
-      this._isFirstLogin = isFirstLogin;
       hasChanges = true;
     }
 

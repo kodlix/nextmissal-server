@@ -39,7 +39,7 @@ export class UpdateUserDto {
     example: 'male',
     enum: ['male', 'female'],
   })
-  @IsEnum(['male', 'female'])
+  @IsEnum(['male', 'female'], { message: 'Invalid gender selected' })
   @IsOptional()
   gender?: string;
 

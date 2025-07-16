@@ -285,6 +285,17 @@ export class AuthService {
     return this.userRepository.update(user);
   }
 
+  async updateFirstLogin(userId: bigint): Promise<User> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new EntityNotFoundException('User', userId);
+    }
+
+    user.isFirstLogin = true;
+
+    return this.userRepository.update(user);
+  }
+
   /**
    * Generate a verification code for email verification
    * @param email The email to send verification to
