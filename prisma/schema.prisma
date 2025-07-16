@@ -24,7 +24,7 @@ model User {
   otpSecret     String?
   lastLoginAt   DateTime?
   phoneNumber   String?   @unique
-  role          RoleType?  @default(USER)
+  userType      UserType?  @default(USER)
   profileImage  String?
   emailVerified Boolean   @default(false)
   isFirstLogin  Boolean   @default(false)
@@ -348,10 +348,10 @@ model Lga {
   @@unique([name, stateId])
 }
 
-enum RoleType {
+enum UserType {
   USER
   BACKOFFICE
-  SUPPERHERO
+  SUPERHERO
 }
 
 

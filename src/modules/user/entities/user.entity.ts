@@ -29,8 +29,16 @@ export class User extends AggregateRoot {
   private readonly _id: bigint;
   private _email: Email;
   private _passwordHash: string;
+  private _username: string;
   private _firstName: FirstName;
   private _lastName: LastName;
+  private _gender?: string;
+  private _phoneNumber?: string;
+  private _profileImage?: string;
+  private _emailVerified: boolean;
+  private _isFirstLogin: boolean;
+  private _dateOfBirth?: Date;
+  private _parishId?: number;
   private _isActive: boolean;
   private _otpEnabled: boolean;
   private _otpSecret?: string;
@@ -42,8 +50,16 @@ export class User extends AggregateRoot {
   private constructor(
     email: Email,
     passwordHash: string,
+    username: string,
     firstName: FirstName,
     lastName: LastName,
+    gender?: string,
+    phoneNumber?: string,
+    profileImage?: string,
+    emailVerified: boolean = false,
+    isFirstLogin: boolean = true,
+    dateOfBirth?: Date,
+    parishId?: number,
     isActive: boolean = true,
     createdAt?: Date,
     id?: bigint,
@@ -52,8 +68,16 @@ export class User extends AggregateRoot {
     this._id = id || BigInt(Math.floor(Math.random() * 1000000));
     this._email = email;
     this._passwordHash = passwordHash;
+    this._username = username;
     this._firstName = firstName;
     this._lastName = lastName;
+    this._gender = gender;
+    this._phoneNumber = phoneNumber;
+    this._profileImage = profileImage;
+    this._emailVerified = emailVerified;
+    this._isFirstLogin = isFirstLogin;
+    this._dateOfBirth = dateOfBirth;
+    this._parishId = parishId;
     this._isActive = isActive;
     this._otpEnabled = false;
     this._roles = [];
@@ -65,14 +89,30 @@ export class User extends AggregateRoot {
   static create(
     email: Email,
     passwordHash: string,
+    username: string,
     firstName: FirstName,
     lastName: LastName,
+    gender?: string,
+    phoneNumber?: string,
+    profileImage?: string,
+    emailVerified: boolean = false,
+    isFirstLogin: boolean = true,
+    dateOfBirth?: Date,
+    parishId?: number,
   ): User {
     const user = new User(
       email,
       passwordHash,
+      username,
       firstName,
       lastName,
+      gender,
+      phoneNumber,
+      profileImage,
+      emailVerified,
+      isFirstLogin,
+      dateOfBirth,
+      parishId,
       true,
       undefined,
       BigInt(Math.floor(Math.random() * 1000000)),
@@ -90,21 +130,37 @@ export class User extends AggregateRoot {
     id: bigint;
     email: string;
     passwordHash: string;
+    username: string;
     firstName: string;
     lastName: string;
+    gender: string;
     isActive: boolean;
     otpEnabled: boolean;
     otpSecret?: string;
-    roles: Role[];
     lastLoginAt?: Date;
+    phoneNumber?: string;
+    roles: Role[];
+    profileImage?: string;
+    emailVerified: boolean;
+    isFirstLogin: boolean;
+    dateOfBirth?: Date;
+    parishId?: number;
     createdAt: Date;
     updatedAt: Date;
   }): User {
     const user = new User(
       new Email(data.email),
       data.passwordHash,
+      data.username,
       new FirstName(data.firstName),
       new LastName(data.lastName),
+      data.gender,
+      data.phoneNumber,
+      data.profileImage,
+      data.emailVerified,
+      data.isFirstLogin,
+      data.dateOfBirth,
+      data.parishId,
       data.isActive,
       data.createdAt,
       data.id,
@@ -138,6 +194,38 @@ export class User extends AggregateRoot {
 
   get lastName(): LastName {
     return this._lastName;
+  }
+
+  get username(): string {
+    return this._username;
+  }
+
+  get gender(): string | undefined {
+    return this._gender;
+  }
+
+  get phoneNumber(): string | undefined {
+    return this._phoneNumber;
+  }
+
+  get profileImage(): string | undefined {
+    return this._profileImage;
+  }
+
+  get emailVerified(): boolean {
+    return this._emailVerified;
+  }
+
+  get isFirstLogin(): boolean {
+    return this._isFirstLogin;
+  }
+
+  get dateOfBirth(): Date | undefined {
+    return this._dateOfBirth;
+  }
+
+  get parishId(): number | undefined {
+    return this._parishId;
   }
 
   get isActive(): boolean {
@@ -302,7 +390,17 @@ export class User extends AggregateRoot {
     this.addDomainEvent(new UserLastLoginUpdatedEvent(this._id, now));
   }
 
-  updateProfile(firstName?: FirstName, lastName?: LastName): void {
+  updateProfile(
+    firstName?: FirstName,
+    lastName?: LastName,
+    gender?: string,
+    phoneNumber?: string,
+    profileImage?: string,
+    emailVerified?: boolean,
+    isFirstLogin?: boolean,
+    dateOfBirth?: Date,
+    parishId?: number,
+  ): void {
     if (!this._isActive) {
       throw new InactiveUserException('update profile');
     }
@@ -316,6 +414,41 @@ export class User extends AggregateRoot {
 
     if (lastName && !this._lastName.equals(lastName)) {
       this._lastName = lastName;
+      hasChanges = true;
+    }
+
+    if (gender !== undefined) {
+      this._gender = gender;
+      hasChanges = true;
+    }
+
+    if (phoneNumber !== undefined) {
+      this._phoneNumber = phoneNumber;
+      hasChanges = true;
+    }
+
+    if (profileImage !== undefined) {
+      this._profileImage = profileImage;
+      hasChanges = true;
+    }
+
+    if (emailVerified !== undefined) {
+      this._emailVerified = emailVerified;
+      hasChanges = true;
+    }
+
+    if (isFirstLogin !== undefined) {
+      this._isFirstLogin = isFirstLogin;
+      hasChanges = true;
+    }
+
+    if (dateOfBirth !== undefined) {
+      this._dateOfBirth = dateOfBirth;
+      hasChanges = true;
+    }
+
+    if (parishId !== undefined) {
+      this._parishId = parishId;
       hasChanges = true;
     }
 

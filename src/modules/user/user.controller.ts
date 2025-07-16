@@ -11,7 +11,11 @@ import {
   HttpStatus,
   UseGuards,
   Query,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Express } from 'express';
 import { QueryBus, CommandBus } from '@nestjs/cqrs';
 import {
   ApiTags,
@@ -49,6 +53,8 @@ import { RemoveRoleCommand } from '@modules/user/commands/remove-role.command';
 import { VerifyPasswordCommand } from '@modules/user/commands/verify-password.command';
 import { IJwtPayload, IUserDetailResponse } from '@modules/user/user.response';
 import { Paginated } from '@shared/dtos/paginated.dto';
+import { UploadFileCommand } from '@modules/storage/commands/upload-file.command';
+import { FileResponseDto } from '@modules/storage/file.response';
 
 @ApiTags('Users')
 @Controller('users')
@@ -138,6 +144,13 @@ export class UserController {
         updateUserDto.firstName,
         updateUserDto.lastName,
         updateUserDto.email,
+        updateUserDto.gender,
+        updateUserDto.phoneNumber,
+        updateUserDto.profileImage,
+        updateUserDto.emailVerified,
+        updateUserDto.isFirstLogin,
+        updateUserDto.dateOfBirth,
+        updateUserDto.parishId,
       ),
     );
   }
@@ -157,6 +170,13 @@ export class UserController {
         updateUserDto.firstName,
         updateUserDto.lastName,
         updateUserDto.email,
+        updateUserDto.gender,
+        updateUserDto.phoneNumber,
+        updateUserDto.profileImage,
+        updateUserDto.emailVerified,
+        updateUserDto.isFirstLogin,
+        updateUserDto.dateOfBirth,
+        updateUserDto.parishId,
       ),
     );
   }
@@ -228,6 +248,44 @@ export class UserController {
     const isValid = await this.commandBus.execute(new VerifyPasswordCommand(user.sub, password));
 
     return { valid: isValid };
+  }
+
+  @Post('/profile/picture')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Upload user profile picture' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Profile picture uploaded successfully' })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid file or upload error' })
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadProfilePicture(
+    @CurrentUser() user: IJwtPayload,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<FileResponseDto> {
+    const uploadedFile = await this.commandBus.execute(
+      new UploadFileCommand(
+        {
+          buffer: file.buffer,
+          originalname: file.originalname,
+          mimetype: file.mimetype,
+          size: file.size,
+        },
+        user.sub,
+      ),
+    );
+
+    // Update user's profileImage field with the uploaded file's path
+    await this.commandBus.execute(
+      new UpdateUserCommand(
+        user.sub,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        uploadedFile.path,
+      ),
+    );
+
+    return uploadedFile;
   }
 
   @Patch(':id/activate')

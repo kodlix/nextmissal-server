@@ -9,6 +9,13 @@ export class UpdateUserCommand {
     public readonly firstName?: string,
     public readonly lastName?: string,
     public readonly email?: string,
+    public readonly gender?: string,
+    public readonly phoneNumber?: string,
+    public readonly profileImage?: string,
+    public readonly emailVerified?: boolean,
+    public readonly isFirstLogin?: boolean,
+    public readonly dateOfBirth?: Date,
+    public readonly parishId?: number,
   ) {}
 }
 
@@ -19,9 +26,33 @@ export class UpdateUserCommandHandler
   constructor(private readonly userService: UserService) {}
 
   async execute(command: UpdateUserCommand): Promise<IUserBaseResponse> {
-    const { userId, firstName, lastName, email } = command;
+    const {
+      userId,
+      firstName,
+      lastName,
+      email,
+      gender,
+      phoneNumber,
+      profileImage,
+      emailVerified,
+      isFirstLogin,
+      dateOfBirth,
+      parishId,
+    } = command;
 
-    const user = await this.userService.updateUserDetails(userId, firstName, lastName, email);
+    const user = await this.userService.updateUserDetails(
+      userId,
+      firstName,
+      lastName,
+      email,
+      gender,
+      phoneNumber,
+      profileImage,
+      emailVerified,
+      isFirstLogin,
+      dateOfBirth,
+      parishId,
+    );
 
     // Use the mapper to convert to response DTO
     return UserMapper.toBaseResponse(user);

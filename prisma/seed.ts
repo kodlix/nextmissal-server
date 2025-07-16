@@ -100,8 +100,10 @@ const rolePermissionsMap = {
 // Default admin user
 const adminUser = {
   email: 'admin@yopmail.com',
+  username: 'admin',
   firstName: 'Admin',
   lastName: 'User',
+  gender: 'male',
   password: 'Admin@123', // This will be hashed before saving
 };
 
@@ -183,9 +185,13 @@ async function main() {
     update: {},
     create: {
       email: adminUser.email,
+      username: adminUser.username,
       passwordHash: hashedPassword,
       firstName: adminUser.firstName,
       lastName: adminUser.lastName,
+      gender: adminUser.gender,
+      isActive: true,
+      emailVerified: true,
     },
   });
 

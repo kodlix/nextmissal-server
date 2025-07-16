@@ -17,6 +17,14 @@ import { GetUsersQuery } from '../queries/get-users.query';
 
 // Define a type for User with its relations (roles with nested permissions)
 type UserWithRelations = PrismaUser & {
+  username: string;
+  gender: string;
+  phoneNumber?: string;
+  profileImage?: string;
+  emailVerified: boolean;
+  isFirstLogin: boolean;
+  dateOfBirth?: Date;
+  parishId?: number;
   roles: (PrismaUserRole & {
     role: PrismaRole & {
       permissions: (PrismaRolePermission & {
@@ -189,8 +197,16 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
           id: user.id,
           email: user.email.getValue(),
           passwordHash: user.passwordHash,
+          username: user.username,
           firstName: user.firstName.getValue(),
           lastName: user.lastName.getValue(),
+          gender: user.gender,
+          phoneNumber: user.phoneNumber,
+          profileImage: user.profileImage,
+          emailVerified: user.emailVerified,
+          isFirstLogin: user.isFirstLogin,
+          dateOfBirth: user.dateOfBirth,
+          parishId: user.parishId,
           isActive: user.isActive,
           otpEnabled: user.otpEnabled,
           otpSecret: user.otpSecret,
@@ -241,6 +257,13 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
           passwordHash: user.passwordHash,
           firstName: user.firstName.getValue(),
           lastName: user.lastName.getValue(),
+          gender: user.gender,
+          phoneNumber: user.phoneNumber,
+          profileImage: user.profileImage,
+          emailVerified: user.emailVerified,
+          isFirstLogin: user.isFirstLogin,
+          dateOfBirth: user.dateOfBirth,
+          parishId: user.parishId,
           isActive: user.isActive,
           otpEnabled: user.otpEnabled,
           otpSecret: user.otpSecret,
@@ -328,13 +351,21 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
       id: record.id,
       email: record.email,
       passwordHash: record.passwordHash,
+      username: record.username,
       firstName: record.firstName,
       lastName: record.lastName,
+      gender: record.gender,
       isActive: record.isActive,
       otpEnabled: record.otpEnabled,
       otpSecret: record.otpSecret || undefined,
-      roles,
       lastLoginAt: record.lastLoginAt || undefined,
+      phoneNumber: record.phoneNumber || undefined,
+      profileImage: record.profileImage || undefined,
+      emailVerified: record.emailVerified,
+      isFirstLogin: record.isFirstLogin,
+      dateOfBirth: record.dateOfBirth || undefined,
+      parishId: record.parishId || undefined,
+      roles,
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
     });

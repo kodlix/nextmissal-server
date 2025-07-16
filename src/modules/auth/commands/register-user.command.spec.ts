@@ -69,8 +69,16 @@ describe('RegisterUserCommandHandler', () => {
     const createdUser = User.create(
       new Email('new@example.com'),
       'hashedPassword',
+      'newuser',
       new FirstName('New'),
       new LastName('User'),
+      'male',
+      undefined,
+      undefined,
+      true,
+      false,
+      undefined,
+      undefined,
     );
 
     mockUserService.createUser.mockResolvedValue(createdUser);

@@ -123,8 +123,16 @@ describe('UserRepository', () => {
       const newUser = User.create(
         new Email('test@example.com'),
         'hashedPassword',
+        'testuser',
         new FirstName('John'),
         new LastName('Doe'),
+        'male',
+        undefined,
+        undefined,
+        true,
+        false,
+        undefined,
+        undefined,
       );
 
       const mockCreatedUser = createMockUserRecord(newUser.id, newUser.email.getValue());
@@ -155,8 +163,16 @@ describe('UserRepository', () => {
       const existingUser = User.create(
         new Email('test@example.com'),
         'hashedPassword',
+        'testuser',
         new FirstName('John'),
         new LastName('Doe'),
+        'male',
+        undefined,
+        undefined,
+        true,
+        false,
+        undefined,
+        undefined,
       );
 
       const mockUpdatedUser = createMockUserRecord(existingUser.id, existingUser.email.getValue());
@@ -209,12 +225,20 @@ function createMockUserRecord(id: bigint, email = 'test@example.com') {
     id,
     email,
     passwordHash: 'hashedPassword',
+    username: 'testuser',
     firstName: 'John',
     lastName: 'Doe',
+    gender: 'male',
     isActive: true,
     otpEnabled: false,
     otpSecret: null,
     lastLoginAt: null,
+    phoneNumber: null,
+    profileImage: null,
+    emailVerified: true,
+    isFirstLogin: false,
+    dateOfBirth: null,
+    parishId: null,
     createdAt: new Date(),
     updatedAt: new Date(),
     roles: [],

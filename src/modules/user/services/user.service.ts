@@ -50,7 +50,20 @@ export class UserService {
     const passwordHash = await this.hashPassword(password.getValue());
 
     // Create a new user with value objects for name
-    const user = User.create(email, passwordHash, new FirstName(firstName), new LastName(lastName));
+    const user = User.create(
+      email,
+      passwordHash,
+      email.getValue(), // Using email as username for now
+      new FirstName(firstName),
+      new LastName(lastName),
+      undefined, // gender
+      undefined, // phoneNumber
+      undefined, // profileImage
+      false, // emailVerified
+      true, // isFirstLogin
+      undefined, // dateOfBirth
+      undefined, // parishId
+    );
 
     // Assign default role
     const defaultRole = await this.roleRepository.findDefaultRole();
@@ -101,6 +114,13 @@ export class UserService {
     firstName?: string,
     lastName?: string,
     emailStr?: string,
+    gender?: string,
+    phoneNumber?: string,
+    profileImage?: string,
+    emailVerified?: boolean,
+    isFirstLogin?: boolean,
+    dateOfBirth?: Date,
+    parishId?: number,
   ): Promise<User> {
     const user = await this.userRepository.findById(userId);
 
@@ -112,6 +132,13 @@ export class UserService {
     user.updateProfile(
       firstName ? new FirstName(firstName) : undefined,
       lastName ? new LastName(lastName) : undefined,
+      gender,
+      phoneNumber,
+      profileImage,
+      emailVerified,
+      isFirstLogin,
+      dateOfBirth,
+      parishId,
     );
 
     if (emailStr) {
