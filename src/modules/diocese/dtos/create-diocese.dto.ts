@@ -60,11 +60,6 @@ export class CreateDioceseDto {
   @IsNumber()
   countryId: number;
 
-  @ApiProperty({ description: 'Is the diocese active?', example: true })
-  @IsNotEmpty()
-  active: boolean;
-
-  @ApiProperty({ description: 'The ID of the user who created this record', required: false })
   @IsOptional()
   @IsNumber()
   createdBy?: number;

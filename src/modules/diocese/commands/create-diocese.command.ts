@@ -25,8 +25,6 @@ export class CreateDioceseHandler implements ICommandHandler<CreateDioceseComman
       province,
       bishop,
       isArchidiocese,
-      countryId,
-      active,
     } = command.createDioceseDto;
 
     const diocese = Diocese.create({
@@ -39,8 +37,6 @@ export class CreateDioceseHandler implements ICommandHandler<CreateDioceseComman
       province,
       bishop,
       isArchidiocese,
-      countryId,
-      active,
       createdBy: command.userId,
     });
 

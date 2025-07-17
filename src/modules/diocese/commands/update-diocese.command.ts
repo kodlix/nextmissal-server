@@ -51,12 +51,7 @@ export class UpdateDioceseHandler implements ICommandHandler<UpdateDioceseComman
     if (updateDioceseDto.isArchidiocese !== undefined) {
       diocese.updateIsArchidiocese(updateDioceseDto.isArchidiocese);
     }
-    if (updateDioceseDto.countryId) {
-      diocese.updateCountryId(updateDioceseDto.countryId);
-    }
-    if (updateDioceseDto.active !== undefined) {
-      diocese.updateActive(updateDioceseDto.active);
-    }
+
     if (updateDioceseDto.updatedBy) {
       diocese.updateUpdatedBy(command.userId);
     }

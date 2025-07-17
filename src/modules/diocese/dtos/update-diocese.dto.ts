@@ -46,17 +46,6 @@ export class UpdateDioceseDto {
   @IsOptional()
   isArchidiocese?: boolean;
 
-  @ApiPropertyOptional({ description: 'The ID of the country the diocese belongs to' })
-  @IsOptional()
-  @IsNumber()
-  countryId?: number;
-
-  @ApiPropertyOptional({ description: 'Is the diocese active?' })
-  @IsOptional()
-  active?: boolean;
-
-  @ApiPropertyOptional({ description: 'The ID of the user who updated this record' })
-  @IsOptional()
   @IsNumber()
   updatedBy?: number;
 }

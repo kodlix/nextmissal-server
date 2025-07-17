@@ -11,8 +11,8 @@ export interface IDioceseProps {
   province?: string;
   bishop?: string;
   isArchidiocese: boolean;
-  countryId: number;
-  active: boolean;
+  countryId?: number;
+  active?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
   createdBy?: number;
@@ -146,16 +146,6 @@ export class Diocese extends AggregateRoot {
 
   updateIsArchidiocese(isArchidiocese: boolean): void {
     this.props.isArchidiocese = isArchidiocese;
-    this.props.updatedAt = new Date();
-  }
-
-  updateCountryId(countryId: number): void {
-    this.props.countryId = countryId;
-    this.props.updatedAt = new Date();
-  }
-
-  updateActive(active: boolean): void {
-    this.props.active = active;
     this.props.updatedAt = new Date();
   }
 
