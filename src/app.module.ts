@@ -71,6 +71,8 @@ import { DenaryModule } from '@modules/denary/denary.module';
     DioceseModule,
     DenaryModule,
     SocietyModule,
+    ProgrammeModule,
+    EventModule,
   ],
   controllers: [],
   providers: [

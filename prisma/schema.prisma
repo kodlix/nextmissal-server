@@ -316,6 +316,7 @@ model event {
   startDate   DateTime
   endDate     DateTime
   location    String?
+  isPublic    Boolean? @default(false)
   parishId    Int?
   denaryId    Int?
   dioceseId   Int?
