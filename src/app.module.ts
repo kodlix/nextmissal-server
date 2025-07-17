@@ -17,6 +17,7 @@ import { RoleModule } from '@modules/role/role.module';
 import { AdminModule } from '@modules/admin/admin.module';
 import { StorageModule } from '@modules/storage/storage.module';
 import { HealthModule } from '@modules/health/health.module';
+import { SocietyModule } from '@modules/society/society.module';
 
 import { CoreModule } from '@core/core.module';
 
@@ -69,6 +70,7 @@ import { DenaryModule } from '@modules/denary/denary.module';
     ParishModule,
     DioceseModule,
     DenaryModule,
+    SocietyModule,
   ],
   controllers: [],
   providers: [
