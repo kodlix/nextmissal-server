@@ -31,6 +31,8 @@ import { JwtAuthGuard } from '@shared/guards/jwt-auth.guard';
 // Config
 import configuration from '@core/config/configuration';
 import { DenaryModule } from '@modules/denary/denary.module';
+import { ProgrammeModule } from '@modules/programme/programme.module';
+import { EventModule } from '@modules/event/event.module';
 
 @Module({
   imports: [

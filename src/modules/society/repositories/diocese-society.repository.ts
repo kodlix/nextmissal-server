@@ -11,7 +11,7 @@ export class DioceseSocietyRepository {
     societyId: number,
     data: Prisma.DioceseSocietyCreateInput,
   ): Promise<DioceseSociety> {
-    return this.prisma.diocesesociety.upsert({
+    return this.prisma.dioceseSociety.upsert({
       where: {
         dioceseId_societyId: {
           dioceseId,
@@ -40,7 +40,7 @@ export class DioceseSocietyRepository {
       orderBy[field] = order;
     }
 
-    return this.prisma.diocesesociety.findMany({
+    return this.prisma.dioceseSociety.findMany({
       skip,
       take,
       where: {
