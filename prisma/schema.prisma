@@ -41,6 +41,14 @@ model User {
   files         File[]
 
   Parish Parish[]
+
+  EventAttendee EventAttendee[]
+
+  Post Post[]
+
+  Like Like[]
+
+  Comment Comment[]
 }
 
 model Role {
@@ -177,7 +185,7 @@ model Diocese {
 
   DioceseSociety DioceseSociety[]
 
-  event event[]
+  event Event[]
 }
 
 
@@ -198,7 +206,7 @@ model Denary {
   parishes  Parish[]
   programme Programme[]
 
-  event event[]
+  event Event[]
 }
 
 model Parish {
@@ -243,7 +251,7 @@ model Parish {
   programmes      Programme[]
   searchLogs      SearchLog[]
 
-  event event[]
+  event Event[]
 }
 
 model Society {
@@ -258,7 +266,7 @@ model Society {
   updatedBy     Int?
 
   DioceseSociety DioceseSociety[]
-  event event[]
+  event Event[]
 }
 
 model DioceseSociety {
@@ -309,14 +317,24 @@ model Programme {
   diocese        Diocese?        @relation(fields: [dioceseId], references: [id])
 }
 
-model event {
+model Event {
   id          Int      @id @default(autoincrement())
   name        String   
   description String
   startDate   DateTime
   endDate     DateTime
   location    String?
-  isPublic    Boolean? @default(false)
+  isPublic    Boolean? @default(true)
+
+  isPaid      Boolean? @default(false) // If the event requires payment
+  onlineLink  String?    // Zoom/Google Meet URL
+  coverImage  String?    // S3/Cloudinary URL
+  category    String     // Concert, Workshop, etc.
+  tags        String[]   // #Tech, #Music
+  maxAttendees Int?
+  price       Decimal?   // For paid events
+  status      EventStatus @default(UPCOMING) // UPCOMING, LIVE, CANCELLED, ENDED
+
   parishId    Int?
   denaryId    Int?
   dioceseId   Int?
@@ -338,7 +356,76 @@ model event {
   @@index([ description])
   @@index([ location])
   @@index([ startDate, endDate])
+  EventAttendee EventAttendee[]
 }
+
+model EventAttendee {
+  Id        Int      @id @default(autoincrement())
+  userId    BigInt
+  eventId   Int
+  status    AttendanceStatus @default(REGISTERED)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([userId, eventId])
+}     
+
+
+model Post {
+  id          Int       @id @default(autoincrement())
+  content     String?   // Text content (nullable for media-only posts)
+  media       String[]  // Array of S3/Cloudinary URLs (images/videos)
+  authorId    BigInt
+ 
+  isDeleted   Boolean   @default(false)
+  privacy     Privacy   @default(PUBLIC) // PUBLIC, FRIENDS, PRIVATE
+  hashtags    String // Extracted from content (#example)
+  mentions    String // Extracted from content (@user)
+
+  //for anoouncements
+  isAnnouncement Boolean @default(false) // For important posts
+  priority    Priority?   @default(NORMAL) // NORMAL, IMPORTANT, CRITICAL
+  isPinned    Boolean     @default(false)
+  attachments String    // S3 URLs (PDFs, images)
+  startsAt    DateTime?   // For scheduled posts
+  expiresAt   DateTime?   // Auto-archive timing
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  author      User      @relation(fields: [authorId], references: [id])
+  likes       Like[]
+  comments    Comment[]
+
+  @@index([authorId])
+  @@index([createdAt]) // For chronological feeds
+}
+
+
+model Like {
+  userId    BigInt
+  postId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
+  createdAt DateTime @default(now())
+  @@id([userId, postId])
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  authorId  BigInt
+  postId    Int
+  parentId  Int? // For threaded comments
+  content   String
+  author    User     @relation(fields: [authorId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
+  parent    Comment? @relation("Replies", fields: [parentId], references: [id])
+  replies   Comment[] @relation("Replies")
+  createdAt DateTime @default(now())
+}
+
 
 model SearchLog {
   id         Int      @id @default(autoincrement())
@@ -401,4 +488,29 @@ enum ProgrammeFrequency {
   DAILY
   ONCE
   OTHERS
+}
+
+enum AttendanceStatus {
+  REGISTERED
+  CHECKED_IN
+  CANCELLED
+}
+
+enum EventStatus {
+  UPCOMING
+  LIVE
+  CANCELLED
+  ENDED
+}
+
+enum Priority {
+  NORMAL
+  IMPORTANT  // Highlights in yellow
+  CRITICAL   // Highlights in red + push notification
+}
+
+enum Privacy {
+  PUBLIC
+  FRIENDS
+  PRIVATE
 }
