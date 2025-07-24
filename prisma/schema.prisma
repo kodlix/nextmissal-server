@@ -375,20 +375,21 @@ model EventAttendee {
 
 model Post {
   id          Int       @id @default(autoincrement())
+  title       String
   content     String?   // Text content (nullable for media-only posts)
   media       String[]  // Array of S3/Cloudinary URLs (images/videos)
   authorId    BigInt
  
   isDeleted   Boolean   @default(false)
   privacy     Privacy   @default(PUBLIC) // PUBLIC, FRIENDS, PRIVATE
-  hashtags    String // Extracted from content (#example)
-  mentions    String // Extracted from content (@user)
+  hashtags    String? // Extracted from content (#example)
+  mentions    String? // Extracted from content (@user)
 
   //for anoouncements
   isAnnouncement Boolean @default(false) // For important posts
   priority    Priority?   @default(NORMAL) // NORMAL, IMPORTANT, CRITICAL
   isPinned    Boolean     @default(false)
-  attachments String    // S3 URLs (PDFs, images)
+  attachments String?    // S3 URLs (PDFs, images)
   startsAt    DateTime?   // For scheduled posts
   expiresAt   DateTime?   // Auto-archive timing
 
@@ -404,15 +405,6 @@ model Post {
 }
 
 
-model Like {
-  userId    BigInt
-  postId    Int
-  user      User     @relation(fields: [userId], references: [id])
-  post      Post     @relation(fields: [postId], references: [id])
-  createdAt DateTime @default(now())
-  @@id([userId, postId])
-}
-
 model Comment {
   id        Int      @id @default(autoincrement())
   authorId  BigInt
@@ -424,6 +416,15 @@ model Comment {
   parent    Comment? @relation("Replies", fields: [parentId], references: [id])
   replies   Comment[] @relation("Replies")
   createdAt DateTime @default(now())
+}
+
+model Like {
+  userId    BigInt
+  postId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
+  createdAt DateTime @default(now())
+  @@id([userId, postId])
 }
 
 
