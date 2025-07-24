@@ -46,7 +46,8 @@ model User {
 
   Post Post[]
 
-  Like Like[]
+  PostLike PostLike[]
+  CommentLike CommentLike[]
 
   Comment Comment[]
 }
@@ -397,8 +398,9 @@ model Post {
   updatedAt   DateTime  @updatedAt
 
   author      User      @relation(fields: [authorId], references: [id])
-  likes       Like[]
+  postLikes   PostLike[] // Renamed from 'likes'
   comments    Comment[]
+  likesCount  Int       @default(0) // Add this
 
   @@index([authorId])
   @@index([createdAt]) // For chronological feeds
@@ -415,16 +417,27 @@ model Comment {
   post      Post     @relation(fields: [postId], references: [id])
   parent    Comment? @relation("Replies", fields: [parentId], references: [id])
   replies   Comment[] @relation("Replies")
+  commentLikes CommentLike[] // Add this
+  likesCount Int      @default(0) // Add this
   createdAt DateTime @default(now())
 }
 
-model Like {
+model PostLike { // Renamed from 'Like'
   userId    BigInt
   postId    Int
   user      User     @relation(fields: [userId], references: [id])
   post      Post     @relation(fields: [postId], references: [id])
   createdAt DateTime @default(now())
   @@id([userId, postId])
+}
+
+model CommentLike { // New model for comment likes
+  userId    BigInt
+  commentId Int
+  user      User     @relation(fields: [userId], references: [id])
+  comment   Comment  @relation(fields: [commentId], references: [id])
+  createdAt DateTime @default(now())
+  @@id([userId, commentId])
 }
 
 

@@ -14,6 +14,10 @@ import { UpdateCommentHandler } from './commands/update-comment.command';
 import { DeleteCommentHandler } from './commands/delete-comment.command';
 import { GetCommentByIdHandler } from './queries/get-comment-by-id.query';
 import { GetCommentsHandler } from './queries/get-comments.query';
+import { LikePostHandler } from './commands/like-post.handler';
+import { UnlikePostHandler } from './commands/unlike-post.handler';
+import { LikeCommentHandler } from './commands/like-comment.handler';
+import { UnlikeCommentHandler } from './commands/unlike-comment.handler';
 
 const commandHandlers = [
   CreatePostHandler,
@@ -22,6 +26,10 @@ const commandHandlers = [
   CreateCommentHandler,
   UpdateCommentHandler,
   DeleteCommentHandler,
+  LikePostHandler,
+  UnlikePostHandler,
+  LikeCommentHandler,
+  UnlikeCommentHandler,
 ];
 const queryHandlers = [
   GetPostByIdHandler,

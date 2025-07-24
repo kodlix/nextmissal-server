@@ -33,5 +33,8 @@ export class CommentDto implements Comment {
   replies?: CommentDto[];
 
   @ApiProperty({ example: '2024-07-24T12:00:00Z', description: 'The creation date of the comment' })
+  @ApiProperty({ example: 0, description: 'The number of likes for the comment' })
+  likesCount: number;
+
   createdAt: Date;
 }

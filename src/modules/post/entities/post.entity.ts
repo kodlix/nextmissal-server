@@ -18,6 +18,7 @@ export class PostEntity extends AggregateRoot implements Post {
   startsAt: Date;
   expiresAt: Date;
   createdAt: Date;
+  likesCount: number;
   updatedAt: Date;
 
   constructor(properties: Partial<PostEntity>) {
@@ -44,6 +45,7 @@ export class PostEntity extends AggregateRoot implements Post {
       expiresAt: this.expiresAt,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
+      likesCount: this.likesCount,
     };
   }
 }

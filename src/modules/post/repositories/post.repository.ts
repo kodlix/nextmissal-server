@@ -91,4 +91,46 @@ export class PostRepository {
   async delete(id: number): Promise<Post> {
     return this.prisma.post.delete({ where: { id } });
   }
+
+  async likePost(postId: number, userId: bigint): Promise<void> {
+    await this.prisma.$transaction(async prisma => {
+      await prisma.postLike.create({
+        data: {
+          postId,
+          userId,
+        },
+      });
+
+      await prisma.post.update({
+        where: { id: postId },
+        data: {
+          likesCount: {
+            increment: 1,
+          },
+        },
+      });
+    });
+  }
+
+  async unlikePost(postId: number, userId: bigint): Promise<void> {
+    await this.prisma.$transaction(async prisma => {
+      await prisma.postLike.delete({
+        where: {
+          userId_postId: {
+            postId,
+            userId,
+          },
+        },
+      });
+
+      await prisma.post.update({
+        where: { id: postId },
+        data: {
+          likesCount: {
+            decrement: 1,
+          },
+        },
+      });
+    });
+  }
 }

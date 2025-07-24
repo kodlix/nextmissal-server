@@ -79,4 +79,46 @@ export class CommentRepository {
   async delete(id: number): Promise<Comment> {
     return this.prisma.comment.delete({ where: { id } });
   }
+
+  async likeComment(commentId: number, userId: bigint): Promise<void> {
+    await this.prisma.$transaction(async prisma => {
+      await prisma.commentLike.create({
+        data: {
+          commentId,
+          userId,
+        },
+      });
+
+      await prisma.comment.update({
+        where: { id: commentId },
+        data: {
+          likesCount: {
+            increment: 1,
+          },
+        },
+      });
+    });
+  }
+
+  async unlikeComment(commentId: number, userId: bigint): Promise<void> {
+    await this.prisma.$transaction(async prisma => {
+      await prisma.commentLike.delete({
+        where: {
+          userId_commentId: {
+            commentId,
+            userId,
+          },
+        },
+      });
+
+      await prisma.comment.update({
+        where: { id: commentId },
+        data: {
+          likesCount: {
+            decrement: 1,
+          },
+        },
+      });
+    });
+  }
 }

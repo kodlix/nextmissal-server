@@ -66,5 +66,8 @@ export class PostDto implements Post {
   updatedAt: Date;
 
   @ApiProperty({ type: [CommentDto], description: 'Comments on the post', required: false })
+  @ApiProperty({ example: 0, description: 'The number of likes for the post' })
+  likesCount: number;
+
   comments?: CommentDto[];
 }

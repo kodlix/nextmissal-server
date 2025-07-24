@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { PrismaService } from 'src/core/database/prisma/prisma.service';
 import { SocietyController } from './society.controller';
 import { SocietyRepository } from './repositories/society.repository';
 import { DioceseSocietyRepository } from './repositories/diocese-society.repository';
@@ -24,12 +23,6 @@ const queryHandlers = [GetAllSocietiesHandler, GetSocietyByIdHandler, GetMappedS
 @Module({
   imports: [CqrsModule],
   controllers: [SocietyController],
-  providers: [
-    PrismaService,
-    SocietyRepository,
-    DioceseSocietyRepository,
-    ...commandHandlers,
-    ...queryHandlers,
-  ],
+  providers: [SocietyRepository, DioceseSocietyRepository, ...commandHandlers, ...queryHandlers],
 })
 export class SocietyModule {}

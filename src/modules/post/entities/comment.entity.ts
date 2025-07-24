@@ -7,6 +7,7 @@ export class CommentEntity extends AggregateRoot implements Comment {
   postId: number;
   parentId: number | null;
   content: string;
+  likesCount: number;
   createdAt: Date;
 
   constructor(properties: Partial<CommentEntity>) {
@@ -21,6 +22,7 @@ export class CommentEntity extends AggregateRoot implements Comment {
       postId: this.postId,
       parentId: this.parentId,
       content: this.content,
+      likesCount: this.likesCount,
       createdAt: this.createdAt,
     };
   }
