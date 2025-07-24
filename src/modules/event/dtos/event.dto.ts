@@ -1,7 +1,44 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { event } from '@prisma/client';
+import { $Enums, Event } from '@prisma/client';
+import { Decimal } from '@prisma/client/runtime/library';
 
-export class EventDto implements event {
+export class EventDto implements Event {
+  @ApiProperty({ description: 'The type of the event', example: $Enums.EventType.OTHER })
+  type: $Enums.EventType;
+
+  @ApiProperty({ description: 'Indicates if the event is paid', example: false })
+  isPaid: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Online link for the event',
+    example: 'https://zoom.us/j/123456789',
+    nullable: true,
+  })
+  onlineLink: string;
+
+  @ApiPropertyOptional({
+    description: 'Cover image URL',
+    example: 'https://example.com/image.jpg',
+    nullable: true,
+  })
+  coverImage: string;
+
+  @ApiPropertyOptional({
+    description: 'Tags for the event',
+    example: 'harvest,thanksgiving',
+    nullable: true,
+  })
+  tags: string;
+
+  @ApiPropertyOptional({ description: 'Maximum number of attendees', example: 100, nullable: true })
+  maxAttendees: number;
+
+  @ApiPropertyOptional({ description: 'Price of the event', example: '20.00', nullable: true })
+  price: Decimal;
+
+  @ApiProperty({ description: 'Status of the event', example: $Enums.EventStatus.UPCOMING })
+  status: $Enums.EventStatus;
+
   @ApiProperty({ description: 'The unique identifier of the event', example: 1 })
   id: number;
 

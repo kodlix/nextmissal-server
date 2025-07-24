@@ -75,6 +75,9 @@ async function bootstrap() {
     .addTag('Admin', 'Admin endpoints')
     .addTag('Storage', 'File storage endpoints')
     .addTag('Health', 'Application health endpoints')
+    .addTag('Society', 'Society management endpoints')
+    .addTag('Programme', 'Programme management endpoints')
+    .addTag('Event', 'Event management endpoints')
     .addGlobalParameters({
       name: 'Accept-Language',
       in: 'header',

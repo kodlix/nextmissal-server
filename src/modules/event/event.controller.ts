@@ -17,10 +17,15 @@ import { UpdateEventCommand } from './commands/update-event.command';
 import { DeleteEventCommand } from './commands/delete-event.command';
 import { GetEventByIdQuery } from './queries/get-event-by-id.query';
 import { GetEventsQuery } from './queries/get-events.query';
+import { RegisterEventAttendeeCommand } from './commands/register-event-attendee.command';
+import { GetEventAttendeesQuery } from './queries/get-event-attendees.query';
 import { CreateEventDto } from './dtos/create-event.dto';
 import { UpdateEventDto } from './dtos/update-event.dto';
 import { EventDto } from './dtos/event.dto';
 import { GetEventsDto } from './dtos/get-events.dto';
+import { RegisterEventAttendeeDto } from './dtos/register-event-attendee.dto';
+import { EventAttendeeDto } from './dtos/event-attendee.dto';
+import { GetEventAttendeesDto } from './dtos/get-event-attendees.dto';
 import { CurrentUser } from '@shared/decorators/current-user.decorator';
 
 @ApiTags('Event')
@@ -169,5 +174,78 @@ export class EventController {
     const events = await this.queryBus.execute(new GetEventsQuery(getEventsDto));
 
     return events.map(event => event.props);
+  }
+
+  @Post(':eventId/register')
+  @ApiOperation({ summary: 'Register a user for an event' })
+  @ApiParam({ name: 'eventId', description: 'The ID of the event to register for', type: Number })
+  @ApiResponse({
+    status: 201,
+    description: 'User successfully registered for the event.',
+    type: EventAttendeeDto,
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  async registerForEvent(
+    @Param('eventId') eventId: number,
+    @Body() registerEventAttendeeDto: RegisterEventAttendeeDto,
+    @CurrentUser() user: { id: number },
+  ): Promise<EventAttendeeDto> {
+    registerEventAttendeeDto.eventId = Number(eventId);
+    const eventAttendee = await this.commandBus.execute(
+      new RegisterEventAttendeeCommand(registerEventAttendeeDto, BigInt(user.id)),
+    );
+
+    return eventAttendee.props;
+  }
+
+  @Get(':eventId/attendees')
+  @ApiOperation({ summary: 'Get all attendees for an event with pagination and search' })
+  @ApiParam({ name: 'eventId', description: 'The ID of the event', type: Number })
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Items per page',
+    example: 10,
+  })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+    description: 'Search term for attendee name or email',
+    example: 'John Doe',
+  })
+  @ApiQuery({
+    name: 'sort',
+    required: false,
+    type: String,
+    description: 'Sort order (e.g., createdAt:desc)',
+    example: 'createdAt:desc',
+  })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    type: String,
+    description: 'Filter by attendance status (REGISTERED, CHECKED_IN, CANCELLED)',
+    example: 'REGISTERED',
+  })
+  @ApiQuery({
+    name: 'userId',
+    required: false,
+    type: Number,
+    description: 'Filter by user ID',
+    example: 1,
+  })
+  @ApiResponse({ status: 200, description: 'A list of event attendees.', type: [EventAttendeeDto] })
+  async getEventAttendees(
+    @Param('eventId') eventId: number,
+    @Query() getEventAttendeesDto: GetEventAttendeesDto,
+  ): Promise<EventAttendeeDto[]> {
+    const attendees = await this.queryBus.execute(
+      new GetEventAttendeesQuery(Number(eventId), getEventAttendeesDto),
+    );
+
+    return attendees.map(attendee => attendee.props);
   }
 }

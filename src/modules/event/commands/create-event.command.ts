@@ -18,6 +18,7 @@ export class CreateEventHandler implements ICommandHandler<CreateEventCommand> {
     const { createEventDto, userId } = command;
     const event = await this.eventRepository.create({
       ...createEventDto,
+      tags: '',
       createdBy: userId,
       updatedBy: userId,
     });

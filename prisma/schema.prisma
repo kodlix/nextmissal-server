@@ -329,8 +329,8 @@ model Event {
   isPaid      Boolean? @default(false) // If the event requires payment
   onlineLink  String?    // Zoom/Google Meet URL
   coverImage  String?    // S3/Cloudinary URL
-  category    String     // Concert, Workshop, etc.
-  tags        String[]   // #Tech, #Music
+  type    EventType  @default(OTHER) // Concert, Workshop, etc.
+  tags        String  // #Tech, #Music
   maxAttendees Int?
   price       Decimal?   // For paid events
   status      EventStatus @default(UPCOMING) // UPCOMING, LIVE, CANCELLED, ENDED
@@ -349,18 +349,17 @@ model Event {
   denary         Denary?         @relation(fields: [denaryId], references: [id])
   diocese        Diocese?        @relation(fields: [dioceseId], references: [id])
   society        Society?        @relation(fields: [societyId], references: [id])
-  //users         User[]          @relation("EventUsers", fields: [id], references: [id], onDelete: Cascade)  
-  //participants  User[]          @relation("EventParticipants", fields: [id], references: [id], onDelete: Cascade)
+
+  EventAttendee EventAttendee[]
+
 
   @@index([ name])
   @@index([ description])
   @@index([ location])
   @@index([ startDate, endDate])
-  EventAttendee EventAttendee[]
 }
 
 model EventAttendee {
-  Id        Int      @id @default(autoincrement())
   userId    BigInt
   eventId   Int
   status    AttendanceStatus @default(REGISTERED)
@@ -369,8 +368,9 @@ model EventAttendee {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
-  @@index([userId, eventId])
-}     
+  @@id([userId, eventId])
+}    
+ 
 
 
 model Post {
@@ -513,4 +513,13 @@ enum Privacy {
   PUBLIC
   FRIENDS
   PRIVATE
+}
+
+enum EventType {
+  CONCERT
+  WORKSHOP
+  SEMINAR
+  RETREAT
+  MEETING
+  OTHER
 }
