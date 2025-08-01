@@ -34,6 +34,7 @@ import { DenaryModule } from '@modules/denary/denary.module';
 import { ProgrammeModule } from '@modules/programme/programme.module';
 import { EventModule } from '@modules/event/event.module';
 import { PostModule } from './modules/post/post.module';
+import { ReadingsModule } from './modules/readings/readings.module';
 
 @Module({
   imports: [
@@ -77,6 +78,7 @@ import { PostModule } from './modules/post/post.module';
     ProgrammeModule,
     EventModule,
     PostModule,
+    ReadingsModule,
   ],
   controllers: [],
   providers: [
