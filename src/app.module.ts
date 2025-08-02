@@ -35,6 +35,7 @@ import { ProgrammeModule } from '@modules/programme/programme.module';
 import { EventModule } from '@modules/event/event.module';
 import { PostModule } from './modules/post/post.module';
 import { ReadingsModule } from './modules/readings/readings.module';
+import { ComplianceModule } from './modules/compliance/compliance.module';
 
 @Module({
   imports: [
@@ -79,6 +80,7 @@ import { ReadingsModule } from './modules/readings/readings.module';
     EventModule,
     PostModule,
     ReadingsModule,
+    ComplianceModule,
   ],
   controllers: [],
   providers: [

@@ -18,27 +18,27 @@ model User {
   username      String    @unique
   firstName     String
   lastName      String
-  gender        String  //can only be male or female
+  gender        String //can only be male or female
   isActive      Boolean   @default(false)
   otpEnabled    Boolean   @default(false)
   otpSecret     String?
   lastLoginAt   DateTime?
   phoneNumber   String?   @unique
-  userType      UserType?  @default(USER)
+  userType      UserType? @default(USER)
   profileImage  String?
   emailVerified Boolean   @default(false)
   isFirstLogin  Boolean   @default(false)
   dateOfBirth   DateTime?
   parishId      Int?
 
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  roles         UserRole[]
-  otps          Otp[]
-  refreshTokens RefreshToken[]
+  roles          UserRole[]
+  otps           Otp[]
+  refreshTokens  RefreshToken[]
   passwordResets PasswordReset[]
-  files         File[]
+  files          File[]
 
   Parish Parish[]
 
@@ -46,10 +46,12 @@ model User {
 
   Post Post[]
 
-  PostLike PostLike[]
+  PostLike    PostLike[]
   CommentLike CommentLike[]
 
   Comment Comment[]
+
+  Complaint Complaint[]
 }
 
 model Role {
@@ -73,7 +75,7 @@ model Permission {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  roles       RolePermission[]
+  roles RolePermission[]
 }
 
 model UserRole {
@@ -136,30 +138,29 @@ model PasswordReset {
   usedAt    DateTime?
   createdAt DateTime  @default(now())
 
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([email])
   @@index([token])
 }
 
 model File {
-  id          BigInt    @id @default(autoincrement())
-  filename    String
+  id           BigInt   @id @default(autoincrement())
+  filename     String
   originalName String
-  path        String
-  mimeType    String
-  size        Int
-  bucket      String
-  userId      BigInt?
-  isPublic    Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  path         String
+  mimeType     String
+  size         Int
+  bucket       String
+  userId       BigInt?
+  isPublic     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  user        User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([userId])
 }
-
 
 model Diocese {
   id             Int      @id @default(autoincrement())
@@ -177,18 +178,16 @@ model Diocese {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   createdBy      Int?
-  updatedBy     Int?
+  updatedBy      Int?
 
   denaries   Denary[]
   programmes Programme[]
-  country    Country? @relation(fields: [countryId], references: [id])
-
+  country    Country?    @relation(fields: [countryId], references: [id])
 
   DioceseSociety DioceseSociety[]
 
   event Event[]
 }
-
 
 model Denary {
   id        Int      @id @default(autoincrement())
@@ -198,10 +197,10 @@ model Denary {
   dioceseId Int
   profile   String
   active    Boolean  @default(true)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  createdBy      Int?
-  updatedBy     Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
 
   diocese   Diocese?    @relation(fields: [dioceseId], references: [id], onDelete: Restrict)
   parishes  Parish[]
@@ -242,15 +241,15 @@ model Parish {
   assistantPriest2PhoneNumber String?
 
   createdAt DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  createdBy      Int?
-  updatedBy     Int?
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
 
-  denary          Denary?         @relation(fields: [denaryId], references: [id], onDelete: Restrict)
-  users           User[]
+  denary           Denary?          @relation(fields: [denaryId], references: [id], onDelete: Restrict)
+  users            User[]
   dioceseSocieties DioceseSociety[]
-  programmes      Programme[]
-  searchLogs      SearchLog[]
+  programmes       Programme[]
+  searchLogs       SearchLog[]
 
   event Event[]
 }
@@ -261,13 +260,13 @@ model Society {
   shortName   String?  @unique
   description String
   active      Boolean  @default(true)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  createdBy      Int?
-  updatedBy     Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   Int?
+  updatedBy   Int?
 
   DioceseSociety DioceseSociety[]
-  event Event[]
+  event          Event[]
 }
 
 model DioceseSociety {
@@ -276,170 +275,167 @@ model DioceseSociety {
   societyId   Int
   description String
   active      Boolean  @default(true)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  createdBy      Int?
-  updatedBy     Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   Int?
+  updatedBy   Int?
 
-  diocese    Diocese?      @relation(fields: [dioceseId], references: [id], onDelete: Restrict)
-  society    Society?     @relation(fields: [societyId], references: [id], onDelete: Restrict)
+  diocese Diocese? @relation(fields: [dioceseId], references: [id], onDelete: Restrict)
+  society Society? @relation(fields: [societyId], references: [id], onDelete: Restrict)
+  Parish  Parish[]
 
   @@unique([dioceseId, societyId])
-  Parish Parish[]
 }
 
 model Programme {
-  id            Int      @id @default(autoincrement())
+  id            Int                @id @default(autoincrement())
   name          String
   description   String
   hint          String?
-  active        Boolean  @default(true)
+  active        Boolean            @default(true)
   programmeType String
-  isGeneral     Boolean  @default(false)
-  venue         String            @default("Church Premise")
+  isGeneral     Boolean            @default(false)
+  venue         String             @default("Church Premise")
   startTime     DateTime?
   endTime       DateTime?
   frequency     ProgrammeFrequency
   frequencyInfo String?
 
-  parishId      Int?
-  denaryId      Int?
-  dioceseId     Int?
-  societyId     Int?
-  
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  createdBy      Int?
-  updatedBy     Int?
+  parishId  Int?
+  denaryId  Int?
+  dioceseId Int?
+  societyId Int?
 
-// relationships
-  parish         Parish?         @relation(fields: [parishId], references: [id])
-  denary         Denary?         @relation(fields: [denaryId], references: [id])
-  diocese        Diocese?        @relation(fields: [dioceseId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
+
+  // relationships
+  parish  Parish?  @relation(fields: [parishId], references: [id])
+  denary  Denary?  @relation(fields: [denaryId], references: [id])
+  diocese Diocese? @relation(fields: [dioceseId], references: [id])
 }
 
 model Event {
   id          Int      @id @default(autoincrement())
-  name        String   
+  name        String
   description String
   startDate   DateTime
   endDate     DateTime
   location    String?
   isPublic    Boolean? @default(true)
 
-  isPaid      Boolean? @default(false) // If the event requires payment
-  onlineLink  String?    // Zoom/Google Meet URL
-  coverImage  String?    // S3/Cloudinary URL
-  type    EventType  @default(OTHER) // Concert, Workshop, etc.
-  tags        String  // #Tech, #Music
+  isPaid       Boolean?    @default(false) // If the event requires payment
+  onlineLink   String? // Zoom/Google Meet URL
+  coverImage   String? // S3/Cloudinary URL
+  type         EventType   @default(OTHER) // Concert, Workshop, etc.
+  tags         String // #Tech, #Music
   maxAttendees Int?
-  price       Decimal?   // For paid events
-  status      EventStatus @default(UPCOMING) // UPCOMING, LIVE, CANCELLED, ENDED
+  price        Decimal? // For paid events
+  status       EventStatus @default(UPCOMING) // UPCOMING, LIVE, CANCELLED, ENDED
 
-  parishId    Int?
-  denaryId    Int?
-  dioceseId   Int?
-  societyId   Int?
+  parishId  Int?
+  denaryId  Int?
+  dioceseId Int?
+  societyId Int?
 
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  createdBy      Int?
-  updatedBy     Int?  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy Int?
+  updatedBy Int?
 
-  parish         Parish?         @relation(fields: [parishId], references: [id])
-  denary         Denary?         @relation(fields: [denaryId], references: [id])
-  diocese        Diocese?        @relation(fields: [dioceseId], references: [id])
-  society        Society?        @relation(fields: [societyId], references: [id])
+  parish  Parish?  @relation(fields: [parishId], references: [id])
+  denary  Denary?  @relation(fields: [denaryId], references: [id])
+  diocese Diocese? @relation(fields: [dioceseId], references: [id])
+  society Society? @relation(fields: [societyId], references: [id])
 
   EventAttendee EventAttendee[]
 
-
-  @@index([ name])
-  @@index([ description])
-  @@index([ location])
-  @@index([ startDate, endDate])
+  @@index([name])
+  @@index([description])
+  @@index([location])
+  @@index([startDate, endDate])
 }
 
 model EventAttendee {
   userId    BigInt
   eventId   Int
   status    AttendanceStatus @default(REGISTERED)
-  createdAt DateTime @default(now())
+  createdAt DateTime         @default(now())
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@id([userId, eventId])
-}    
- 
-
+}
 
 model Post {
-  id          Int       @id @default(autoincrement())
-  title       String
-  content     String?   // Text content (nullable for media-only posts)
-  media       String[]  // Array of S3/Cloudinary URLs (images/videos)
-  authorId    BigInt
- 
-  isDeleted   Boolean   @default(false)
-  privacy     Privacy   @default(PUBLIC) // PUBLIC, FRIENDS, PRIVATE
-  hashtags    String? // Extracted from content (#example)
-  mentions    String? // Extracted from content (@user)
+  id       Int      @id @default(autoincrement())
+  title    String
+  content  String? // Text content (nullable for media-only posts)
+  media    String[] // Array of S3/Cloudinary URLs (images/videos)
+  authorId BigInt
+
+  isDeleted Boolean @default(false)
+  privacy   Privacy @default(PUBLIC) // PUBLIC, FRIENDS, PRIVATE
+  hashtags  String? // Extracted from content (#example)
+  mentions  String? // Extracted from content (@user)
 
   //for anoouncements
-  isAnnouncement Boolean @default(false) // For important posts
-  priority    Priority?   @default(NORMAL) // NORMAL, IMPORTANT, CRITICAL
-  isPinned    Boolean     @default(false)
-  attachments String?    // S3 URLs (PDFs, images)
-  startsAt    DateTime?   // For scheduled posts
-  expiresAt   DateTime?   // Auto-archive timing
+  isAnnouncement Boolean   @default(false) // For important posts
+  priority       Priority? @default(NORMAL) // NORMAL, IMPORTANT, CRITICAL
+  isPinned       Boolean   @default(false)
+  attachments    String? // S3 URLs (PDFs, images)
+  startsAt       DateTime? // For scheduled posts
+  expiresAt      DateTime? // Auto-archive timing
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  author      User      @relation(fields: [authorId], references: [id])
-  postLikes   PostLike[] // Renamed from 'likes'
-  comments    Comment[]
-  likesCount  Int       @default(0) // Add this
+  author     User       @relation(fields: [authorId], references: [id])
+  postLikes  PostLike[] // Renamed from 'likes'
+  comments   Comment[]
+  likesCount Int        @default(0) // Add this
 
   @@index([authorId])
   @@index([createdAt]) // For chronological feeds
 }
 
-
 model Comment {
-  id        Int      @id @default(autoincrement())
-  authorId  BigInt
-  postId    Int
-  parentId  Int? // For threaded comments
-  content   String
-  author    User     @relation(fields: [authorId], references: [id])
-  post      Post     @relation(fields: [postId], references: [id])
-  parent    Comment? @relation("Replies", fields: [parentId], references: [id])
-  replies   Comment[] @relation("Replies")
+  id           Int           @id @default(autoincrement())
+  authorId     BigInt
+  postId       Int
+  parentId     Int? // For threaded comments
+  content      String
+  author       User          @relation(fields: [authorId], references: [id])
+  post         Post          @relation(fields: [postId], references: [id])
+  parent       Comment?      @relation("Replies", fields: [parentId], references: [id])
+  replies      Comment[]     @relation("Replies")
   commentLikes CommentLike[] // Add this
-  likesCount Int      @default(0) // Add this
-  createdAt DateTime @default(now())
+  likesCount   Int           @default(0) // Add this
+  createdAt    DateTime      @default(now())
 }
 
-model PostLike { // Renamed from 'Like'
+model PostLike {
   userId    BigInt
   postId    Int
   user      User     @relation(fields: [userId], references: [id])
   post      Post     @relation(fields: [postId], references: [id])
   createdAt DateTime @default(now())
+
   @@id([userId, postId])
 }
 
-model CommentLike { // New model for comment likes
+model CommentLike {
   userId    BigInt
   commentId Int
   user      User     @relation(fields: [userId], references: [id])
   comment   Comment  @relation(fields: [commentId], references: [id])
   createdAt DateTime @default(now())
+
   @@id([userId, commentId])
 }
-
 
 model SearchLog {
   id         Int      @id @default(autoincrement())
@@ -451,10 +447,9 @@ model SearchLog {
   parish Parish? @relation(fields: [parishId], references: [id])
 }
 
-
 model Country {
   id        Int     @id @default(autoincrement())
-  name      String   @unique()
+  name      String  @unique()
   code2     String?
   code3     String?
   capital   String?
@@ -467,7 +462,7 @@ model Country {
 
 model State {
   id        Int    @id @default(autoincrement())
-  name      String 
+  name      String
   countryId Int
 
   country Country? @relation(fields: [countryId], references: [id])
@@ -478,7 +473,7 @@ model State {
 
 model Lga {
   id      Int    @id @default(autoincrement())
-  name    String 
+  name    String
   stateId Int
 
   state State @relation(fields: [stateId], references: [id])
@@ -491,7 +486,6 @@ enum UserType {
   BACKOFFICE
   SUPERHERO
 }
-
 
 enum ProgrammeFrequency {
   YEARLY
@@ -519,8 +513,8 @@ enum EventStatus {
 
 enum Priority {
   NORMAL
-  IMPORTANT  // Highlights in yellow
-  CRITICAL   // Highlights in red + push notification
+  IMPORTANT // Highlights in yellow
+  CRITICAL // Highlights in red + push notification
 }
 
 enum Privacy {
@@ -535,5 +529,36 @@ enum EventType {
   SEMINAR
   RETREAT
   MEETING
+  OTHER
+}
+
+model Complaint {
+  id          Int          @id @default(autoincrement())
+  contentId   String
+  contentType ContentType
+  reason      String
+  details     String?
+  reporterUserId  BigInt
+  status      ComplaintStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  reporter User @relation(fields: [reporterUserId], references: [id])
+
+  @@index([reporterUserId])
+  @@index([contentId, contentType])
+}
+
+enum ComplaintStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+  DISMISSED
+}
+
+enum ContentType {
+  POST
+  COMMENT
+  USER
   OTHER
 }

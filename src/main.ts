@@ -80,6 +80,7 @@ async function bootstrap() {
     .addTag('Event', 'Event management endpoints')
     .addTag('Post', 'Post management endpoints')
     .addTag('Readings', 'Readings management endpoints')
+    .addTag('Compliance', 'Compliance complaints management endpoints')
     .addGlobalParameters({
       name: 'Accept-Language',
       in: 'header',
