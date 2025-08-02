@@ -2,7 +2,10 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CommentRepository } from '../repositories/comment.repository';
 
 export class DeleteCommentCommand {
-  constructor(public readonly id: number) {}
+  constructor(
+    public readonly userId: bigint,
+    public readonly id: number,
+  ) {}
 }
 
 @CommandHandler(DeleteCommentCommand)
