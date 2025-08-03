@@ -28,6 +28,11 @@ import { VerifyPasswordCommandHandler } from '@modules/user/commands/verify-pass
 
 const queryHandlers = [GetUserQueryHandler, GetUsersQueryHandler];
 
+import { UserRegisteredEventHandler } from './events/user-registered.event-handler';
+import { UserActivatedEventHandler } from './events/user-activated.event-handler';
+import { UserRoleAssignedEventHandler } from './events/user-role-assigned.event-handler';
+import { UserTwoFactorEnabledEventHandler } from './events/user-two-factor-enabled.event-handler';
+
 const commandHandlers = [
   UpdateUserCommandHandler,
   ChangePasswordCommandHandler,
@@ -35,6 +40,13 @@ const commandHandlers = [
   AssignRoleCommandHandler,
   RemoveRoleCommandHandler,
   VerifyPasswordCommandHandler,
+];
+
+const eventHandlers = [
+  UserRegisteredEventHandler,
+  UserActivatedEventHandler,
+  UserRoleAssignedEventHandler,
+  UserTwoFactorEnabledEventHandler,
 ];
 
 @Module({
@@ -62,6 +74,9 @@ const commandHandlers = [
 
     // Command handlers
     ...commandHandlers,
+
+    // Event handlers
+    ...eventHandlers,
   ],
   exports: [UserService],
 })

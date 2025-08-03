@@ -1,10 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { UserCreatedEvent } from '@modules/user/events/user-created.event';
 import { LoggerService } from '@core/logger/logger.service';
+import { DomainEvent } from '@core/events/domain-event.base';
+
+export class UserCreatedEvent extends DomainEvent {
+  constructor(
+    public readonly userId: bigint,
+    public readonly email: string,
+  ) {
+    super();
+  }
+
+  getEventName(): string {
+    return 'UserCreatedEvent';
+  }
+}
 
 @Injectable()
-export class UserEventsListener {
+export class UserCreatedEventHandler {
   constructor(private readonly logger: LoggerService) {}
 
   @OnEvent('UserCreatedEvent')

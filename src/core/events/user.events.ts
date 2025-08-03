@@ -1,30 +1,5 @@
 import { DomainEvent } from './domain-event.base';
 
-export class UserRegisteredEvent extends DomainEvent {
-  constructor(
-    public readonly userId: bigint,
-    public readonly email: string,
-    public readonly firstName: string,
-    public readonly lastName: string,
-  ) {
-    super();
-  }
-
-  getEventName(): string {
-    return 'user.registered';
-  }
-}
-
-export class UserActivatedEvent extends DomainEvent {
-  constructor(public readonly userId: bigint) {
-    super();
-  }
-
-  getEventName(): string {
-    return 'user.activated';
-  }
-}
-
 export class UserDeactivatedEvent extends DomainEvent {
   constructor(public readonly userId: bigint) {
     super();
@@ -32,20 +7,6 @@ export class UserDeactivatedEvent extends DomainEvent {
 
   getEventName(): string {
     return 'user.deactivated';
-  }
-}
-
-export class UserRoleAssignedEvent extends DomainEvent {
-  constructor(
-    public readonly userId: bigint,
-    public readonly roleId: bigint,
-    public readonly roleName: string,
-  ) {
-    super();
-  }
-
-  getEventName(): string {
-    return 'user.role.assigned';
   }
 }
 
@@ -84,16 +45,6 @@ export class UserEmailChangedEvent extends DomainEvent {
 
   getEventName(): string {
     return 'user.email.changed';
-  }
-}
-
-export class UserTwoFactorEnabledEvent extends DomainEvent {
-  constructor(public readonly userId: bigint) {
-    super();
-  }
-
-  getEventName(): string {
-    return 'user.two_factor.enabled';
   }
 }
 

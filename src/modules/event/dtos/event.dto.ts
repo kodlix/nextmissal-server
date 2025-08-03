@@ -126,4 +126,7 @@ export class EventDto implements Event {
     nullable: true,
   })
   updatedBy: number | null;
+
+  @ApiProperty({ description: 'The number of views the event has', example: 0 })
+  views: number;
 }

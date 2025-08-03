@@ -4,17 +4,15 @@ import { FirstName, LastName } from '@core/value-objects/name.vo';
 
 import { AggregateRoot } from '@core/events/domain-event.base';
 import {
-  UserRegisteredEvent,
-  UserActivatedEvent,
   UserDeactivatedEvent,
-  UserRoleAssignedEvent,
   UserRoleRemovedEvent,
   UserPasswordChangedEvent,
   UserEmailChangedEvent,
-  UserTwoFactorEnabledEvent,
   UserTwoFactorDisabledEvent,
   UserLastLoginUpdatedEvent,
 } from '@core/events/user.events';
+import { UserRoleAssignedEvent } from '@modules/user/events/user-role-assigned.event-handler';
+import { UserTwoFactorEnabledEvent } from '@modules/user/events/user-two-factor-enabled.event-handler';
 import {
   UserNotEligibleForRoleException,
   UserAlreadyHasRoleException,
@@ -24,6 +22,8 @@ import {
 } from '@core/exceptions/domain-exceptions';
 import { CanAssignRoleSpecification } from '@modules/user/specifications/user.specifications';
 import { RolesCollection } from '@core/value-objects/collections/roles.collection';
+import { UserRegisteredEvent } from '../events/user-registered.event-handler';
+import { UserActivatedEvent } from '../events/user-activated.event-handler';
 
 export class User extends AggregateRoot {
   private readonly _id: bigint;

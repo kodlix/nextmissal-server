@@ -18,6 +18,7 @@ export class EventEntity extends AggregateRoot implements Event {
   updatedAt: Date;
   createdBy: number | null;
   updatedBy: number | null;
+  views: number;
 
   constructor(properties: Partial<EventEntity>) {
     super();
@@ -57,6 +58,7 @@ export class EventEntity extends AggregateRoot implements Event {
       maxAttendees: this.maxAttendees,
       price: this.price,
       status: this.status,
+      views: this.views,
     };
   }
 }

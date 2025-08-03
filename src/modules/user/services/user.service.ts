@@ -15,7 +15,7 @@ import { FirstName, LastName } from '@core/value-objects/name.vo';
 
 import { DomainValidationService } from '@core/services/domain-validation.service';
 import { DomainEventService } from '@core/services/domain-event.service';
-import { UserCreatedEvent } from '@modules/user/events/user-created.event';
+import { UserRegisteredEvent } from '@modules/user/events/user-registered.event-handler';
 
 @Injectable()
 export class UserService {
@@ -76,7 +76,12 @@ export class UserService {
 
     // Dispatch UserCreatedEvent
     await this.domainEventService.dispatchEvent(
-      new UserCreatedEvent(createdUser.id, createdUser.email.getValue()),
+      new UserRegisteredEvent(
+        createdUser.id,
+        createdUser.email.getValue(),
+        createdUser.firstName.getValue(),
+        createdUser.lastName.getValue(),
+      ),
     );
 
     return createdUser;

@@ -48,7 +48,6 @@ import { ResetPasswordCommandHandler } from '@modules/auth/commands/reset-passwo
 
 // Strategies
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { UserEventsListener } from './listeners/user-events.listener';
 
 const commandHandlers = [
   RegisterUserCommandHandler,
@@ -119,9 +118,6 @@ const commandHandlers = [
 
     // Strategy
     JwtStrategy,
-
-    // Event Listeners
-    UserEventsListener,
 
     // Command handlers
     ...commandHandlers,
