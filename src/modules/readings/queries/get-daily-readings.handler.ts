@@ -13,7 +13,7 @@ export class GetDailyReadingsHandler implements IQueryHandler<GetDailyReadingsQu
     try {
       const response = await firstValueFrom(this.httpService.get(url).pipe(map(res => res.data)));
 
-      console.log('Daily readings response:', response);
+      console.warn('Daily readings response:', response);
 
       return {
         date: query.date,

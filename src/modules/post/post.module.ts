@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { PrismaService } from 'src/core/database/prisma/prisma.service';
+import { PrismaService } from '@core/database/prisma/prisma.service';
 import { PostController } from './post.controller';
 import { PostRepository } from './repositories/post.repository';
 import { CreatePostHandler } from './commands/create-post.command';
@@ -18,6 +18,7 @@ import { LikePostHandler } from './commands/like-post.command';
 import { UnlikePostHandler } from './commands/unlike-post.command';
 import { LikeCommentHandler } from './commands/like-comment.command';
 import { UnlikeCommentHandler } from './commands/unlike-comment.command';
+import { PostViewedEventHandler } from './events/post-viewed.event-handler';
 
 const commandHandlers = [
   CreatePostHandler,
@@ -37,6 +38,7 @@ const queryHandlers = [
   GetCommentByIdHandler,
   GetCommentsHandler,
 ];
+const eventHandlers = [PostViewedEventHandler];
 
 @Module({
   imports: [CqrsModule],
@@ -47,6 +49,7 @@ const queryHandlers = [
     CommentRepository,
     ...commandHandlers,
     ...queryHandlers,
+    ...eventHandlers,
   ],
 })
 export class PostModule {}

@@ -9,8 +9,9 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  Req,
 } from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus, EventBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { CreateEventCommand } from './commands/create-event.command';
 import { UpdateEventCommand } from './commands/update-event.command';
@@ -27,6 +28,8 @@ import { RegisterEventAttendeeDto } from './dtos/register-event-attendee.dto';
 import { EventAttendeeDto } from './dtos/event-attendee.dto';
 import { GetEventAttendeesDto } from './dtos/get-event-attendees.dto';
 import { CurrentUser } from '@shared/decorators/current-user.decorator';
+import { EventViewedEvent } from './events/event-viewed.event-handler';
+import { Request } from 'express';
 
 @ApiTags('Event')
 @Controller('events')
@@ -34,6 +37,7 @@ export class EventController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly eventBus: EventBus,
   ) {}
 
   @Post()
@@ -90,8 +94,15 @@ export class EventController {
   @ApiParam({ name: 'id', description: 'The ID of the event to retrieve', type: Number })
   @ApiResponse({ status: 200, description: 'The event details.', type: EventDto })
   @ApiResponse({ status: 404, description: 'Not Found.' })
-  async getById(@Param('id') id: number): Promise<EventDto> {
+  async getById(
+    @Param('id') id: number,
+    @CurrentUser() user: { id: bigint },
+    @Req() request: Request,
+  ): Promise<EventDto> {
     const event = await this.queryBus.execute(new GetEventByIdQuery(id));
+
+    const ipAddress = request.ip;
+    this.eventBus.publish(new EventViewedEvent(id, user?.id, ipAddress));
 
     return event.props;
   }

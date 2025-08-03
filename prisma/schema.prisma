@@ -570,23 +570,33 @@ enum ContentType {
 }
 
 model PostView {
-  userId    BigInt
-  postId    Int
-  createdAt DateTime @default(now())
+  id          BigInt   @id @default(autoincrement())
+  userId      BigInt?
+  postId      Int
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+  lastViewedAt DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-  @@id([userId, postId])
+  @@unique([userId, postId, ipAddress])
+  @@index([ipAddress])
+  @@map("post_views")
 }
 
 model EventView {
-  userId    BigInt
-  eventId   Int
-  createdAt DateTime @default(now())
+  id          BigInt   @id @default(autoincrement())
+  userId      BigInt?
+  eventId     Int
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+  lastViewedAt DateTime @updatedAt
 
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user  User?  @relation(fields: [userId], references: [id], onDelete: Cascade)
   event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
-  @@id([userId, eventId])
+  @@unique([userId, eventId, ipAddress])
+  @@index([ipAddress])
+  @@map("event_views")
 }

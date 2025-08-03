@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { PrismaService } from 'src/core/database/prisma/prisma.service';
+import { PrismaService } from '@core/database/prisma/prisma.service';
 import { EventController } from './event.controller';
 import { EventRepository } from './repositories/event.repository';
 import { EventAttendeeRepository } from './repositories/event-attendee.repository';
@@ -12,6 +12,7 @@ import { UpdateEventAttendeeHandler } from './commands/update-event-attendee.com
 import { GetEventByIdHandler } from './queries/get-event-by-id.query';
 import { GetEventsHandler } from './queries/get-events.query';
 import { GetEventAttendeesHandler } from './queries/get-event-attendees.query';
+import { EventViewedEventHandler } from './events/event-viewed.event-handler';
 
 const commandHandlers = [
   CreateEventHandler,
@@ -23,6 +24,8 @@ const commandHandlers = [
 
 const queryHandlers = [GetEventByIdHandler, GetEventsHandler, GetEventAttendeesHandler];
 
+const eventHandlers = [EventViewedEventHandler];
+
 @Module({
   imports: [CqrsModule],
   controllers: [EventController],
@@ -32,6 +35,7 @@ const queryHandlers = [GetEventByIdHandler, GetEventsHandler, GetEventAttendeesH
     EventAttendeeRepository,
     ...commandHandlers,
     ...queryHandlers,
+    ...eventHandlers,
   ],
 })
 export class EventModule {}

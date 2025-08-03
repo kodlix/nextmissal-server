@@ -9,8 +9,9 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  Req,
 } from '@nestjs/common';
-import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus, EventBus } from '@nestjs/cqrs';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { CreatePostCommand } from './commands/create-post.command';
 import { UpdatePostCommand } from './commands/update-post.command';
@@ -32,6 +33,8 @@ import { LikePostCommand } from './commands/like-post.command';
 import { UnlikePostCommand } from './commands/unlike-post.command';
 import { CommentDto } from './dtos/comment.dto';
 import { CreateCommentDto } from './dtos/create-comment.dto';
+import { PostViewedEvent } from './events/post-viewed.event-handler';
+import { Request } from 'express';
 
 @ApiTags('Post')
 @Controller('posts')
@@ -39,6 +42,7 @@ export class PostController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly eventBus: EventBus,
   ) {}
 
   @Post()
@@ -89,8 +93,15 @@ export class PostController {
   @ApiParam({ name: 'id', description: 'The ID of the post to retrieve', type: Number })
   @ApiResponse({ status: 200, description: 'The post details.', type: PostDto })
   @ApiResponse({ status: 404, description: 'Not Found.' })
-  async getById(@Param('id') id: number): Promise<PostDto> {
+  async getById(
+    @Param('id') id: number,
+    @CurrentUser() user: { id: bigint },
+    @Req() request: Request,
+  ): Promise<PostDto> {
     const post = await this.queryBus.execute(new GetPostByIdQuery(id));
+
+    const ipAddress = request.ip;
+    this.eventBus.publish(new PostViewedEvent(id, user?.id, ipAddress));
 
     return post.props;
   }
