@@ -31,6 +31,19 @@ export class UserRegisteredEventHandler {
     });
     // Here you could add additional side effects like:
     // - Send welcome email
+    // - Log user registration
+    // - Trigger analytics events
+    // - Notify other services
+    // - Update user statistics
+    // - Create user profile in external systems
+    // - Initialize user preferences
+    // - Send notifications to admins or other users
+    // - Log the event for auditing purposes
+    // - Update user statistics
+    // - Send welcome email
+    // - Notify other services
+    // - Log the event for auditing purposes
+    // - Trigger analytics events
     // - Create user profile
     // - Initialize user preferences
   }
